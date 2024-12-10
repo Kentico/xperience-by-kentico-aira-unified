@@ -1,0 +1,25 @@
+name: Install & test
+
+on:
+  workflow_dispatch:
+  push:
+    branches-ignore:
+      - master
+      - main
+      - development
+      - push-action/**
+  pull_request:
+    branches-ignore:
+      - master
+      - main
+      - development
+      - push-action/**
+
+jobs:
+  Install_and_test:
+    uses: nittin-cz/.github/.github/workflows/install_test_dot_net_app.yml@main
+    with:
+      csproj_path: src/Kentico.Xperience.Aira/Kentico.Xperience.Aira.csproj
+      dot_net_version: 8
+    secrets:
+      token: ${{ secrets.NITTIN_CI_TOKEN }}
