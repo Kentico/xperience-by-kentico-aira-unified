@@ -8,6 +8,7 @@ on:
       - main
       - master
       - development
+      - dev
 
 jobs:
   Build_and_publish:
