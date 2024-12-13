@@ -1,18 +1,21 @@
 ﻿using CMS.DataEngine;
 
 using HotChocolate.Authorization;
+using Kentico.Xperience.Admin.Base;
 using Kentico.Xperience.Aira.Admin.InfoModels;
 using Kentico.Xperience.Aira.Chat.Models;
 using Kentico.Xperience.Aira.NavBar;
 using Htmx;
 
 using Kentico.Membership;
-using Kentico.Xperience.Aira.Models;
 
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 using SignInResult = Microsoft.AspNetCore.Identity.SignInResult;
+using Microsoft.AspNetCore.Http;
+using Kentico.Xperience.Aira.Authentication;
+using Kentico.Xperience.Aira.Assets;
 
 namespace Kentico.Xperience.Aira;
 
@@ -21,7 +24,8 @@ namespace Kentico.Xperience.Aira;
 public sealed class AiraCompanionAppController(
     SignInManager<ApplicationUser> signInManager,
     UserManager<ApplicationUser> userManager,
-    IInfoProvider<AiraConfigurationItemInfo> airaConfigurationInfoProvider
+    IInfoProvider<AiraConfigurationItemInfo> airaConfigurationInfoProvider,
+    IAiraAiraAssetService airaAssetService
 ) : Controller
 {
     [HttpGet]
@@ -61,13 +65,17 @@ public sealed class AiraCompanionAppController(
     }
 
     [HttpPost]
-    public async Task<IActionResult> PostChatMessage([FromBody] AiraChatRequest request)
-        => Ok(new AiraChatMessageModel { Role = "ai", Text = "Ok" });
+    public async Task<IActionResult> PostChatMessage(IFormCollection request)
+    {
+        await airaAssetService.HandleFileUpload(request.Files);
+
+        return Ok(new AiraChatMessageModel { Role = "ai", Text = "Ok" });
+    }
 
     [HttpGet]
     [AllowAnonymous]
-    public Task<IActionResult> SignIn()
-        => Task.FromResult((IActionResult)View("~/Authentication/_SignIn.cshtml"));
+    public Task<IActionResult> Signin()
+        => Task.FromResult((IActionResult)View("~/Authentication/SignIn.cshtml"));
 
     [HttpPost]
     [AllowAnonymous]
@@ -79,7 +87,7 @@ public sealed class AiraCompanionAppController(
             return PartialView("~/Authentication/_SignIn.cshtml", model);
         }
 
-        var signInResult = SignInResult.Failed;
+        SignInResult signInResult;
         try
         {
             var member = await GetMember();
@@ -109,7 +117,11 @@ public sealed class AiraCompanionAppController(
             return PartialView("~/Authentication/_SignIn.cshtml", model);
         }
 
-        string redirectUrl = $"{Request.PathBase}/aira/chat";
+        var configuration = await airaConfigurationInfoProvider.Get().GetEnumerableTypedResultAsync();
+        string airaPathBase = configuration.First().AiraConfigurationItemAiraPathBase;
+
+        string baseUrl = $"{Request.Scheme}://{Request.Host}";
+        string redirectUrl = $"{baseUrl}{airaPathBase}/chat";
 
         Response.Htmx(h => h.Redirect(redirectUrl));
 

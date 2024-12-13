@@ -28,7 +28,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <None Include="Features\Authentication\_SignIn.cshtml" />
+	  <None Include="Authentication\_SignIn.cshtml" />
 	</ItemGroup>
 	<ItemGroup>
 		<PackageReference Include="Htmx" />

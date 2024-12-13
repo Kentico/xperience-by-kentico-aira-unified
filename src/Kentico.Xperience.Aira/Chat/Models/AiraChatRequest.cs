@@ -1,6 +1,9 @@
-﻿namespace Kentico.Xperience.Aira.Chat.Models;
+﻿using Microsoft.AspNetCore.Http;
+
+namespace Kentico.Xperience.Aira.Chat.Models;
 
 public class AiraChatRequest
 {
-    public List<AiraChatMessageModel> Messages { get; set; } = [];
+    public string Message { get; set; } = string.Empty;
+    public List<IFormFile> Files { get; set; } = [];
 }

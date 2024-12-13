@@ -8,10 +8,8 @@ using Microsoft.AspNetCore.Mvc;
 using CMS.DataEngine;
 using Kentico.Xperience.Aira.Admin;
 using Microsoft.AspNetCore.Authorization;
-using Kentico.Xperience.Aira.Models;
-using Kentico.Xperience.Aira.Widgets;
 
-namespace Kentico.Xperience.Aira.Controllers;
+namespace Kentico.Xperience.Aira.Registration;
 
 [Route("[controller]/[action]")]
 public class AiraRegistrationWidgetController(
@@ -104,7 +102,7 @@ public class AiraRegistrationWidgetController(
                 Model = model
             };
 
-            return PartialView("~/Features/Registration/_RegistrationWidget.cshtml", properties);
+            return PartialView("~/Registration/_RegistrationWidget.cshtml", properties);
         }
     }
 }

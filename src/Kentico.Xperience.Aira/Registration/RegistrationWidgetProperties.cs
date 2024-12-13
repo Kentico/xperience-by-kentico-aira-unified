@@ -1,7 +1,6 @@
 ﻿using Kentico.PageBuilder.Web.Mvc;
-using Kentico.Xperience.Aira.Models;
 
-namespace Kentico.Xperience.Aira.Widgets;
+namespace Kentico.Xperience.Aira.Registration;
 
 public class RegistrationWidgetProperties : IWidgetProperties
 {

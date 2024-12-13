@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel;
 
-namespace Kentico.Xperience.Aira.Models;
+namespace Kentico.Xperience.Aira.Authentication;
 
 public class SignInViewModel
 {
@@ -14,5 +14,4 @@ public class SignInViewModel
     [DisplayName("Password")]
     [MaxLength(100, ErrorMessage = "Maximum allowed length of the input text is {1}")]
     public string Password { get; set; } = "";
-    public bool StaySignedIn { get; set; }
 }

@@ -1,4 +1,6 @@
-﻿using Kentico.Xperience.Aira.Admin;
+﻿using Kentico.Xperience.Admin.Base.Forms;
+using Kentico.Xperience.Aira.Admin;
+using Kentico.Xperience.Aira.Assets;
 
 using Microsoft.AspNetCore.Routing;
 
@@ -16,7 +18,9 @@ public static class AiraServiceCollectionExtensions
         services
             .AddSingleton<IAiraModuleInstaller, AiraModuleInstaller>()
             .AddSingleton<AiraEndpointDataSource>()
-            .AddScoped<AiraConfigurationService>();
+            .AddScoped<ContentItemAssetUploaderComponent>()
+            .AddScoped<AiraConfigurationService>()
+            .AddScoped<IAiraAiraAssetService, AiraAssetService>();
 
         return services;
     }

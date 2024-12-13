@@ -138,16 +138,57 @@ export default {
                 }
             };
         },
-        setRequestInterceptor()
-        {
+        setRequestInterceptor() {
             this.$refs.chatElementRef.requestInterceptor = async (requestDetails) => {
-            const newMessageText = requestDetails.body.messages[0].text;
-            //db.chatItems.add({ messageType: 1, message: newMessageText });
+                const formData = new FormData();
+                
+                if (Object.hasOwn(requestDetails.body, 'messages'))
+                {
+                    formData.append('message', requestDetails.body.messages[0].text);
+                }
+                else
+                {
+                    const entries = requestDetails.body.entries();
+                    if (entries !== null)
+                    {
+                        let hasMessages = false;
+                        for (const [key, value] of requestDetails.body.entries()) {
+                            if (key === 'message1')
+                            {
+                                let parsedValue;
+                                try {
+                                    parsedValue = JSON.parse(value);
+                                } catch (e) {
+                                    parsedValue = value;
+                                }
+                                if (parsedValue && parsedValue.text) {
+                                    formData.append('message', parsedValue.text);
+                                    hasMessages = true;
+                                }
+                            }
+                            else if (key === 'files') {
+                                formData.append(key, value);
+                                console.log(`${key} ${value}`);
+                            }
+                        }
 
-            requestDetails.body.messages = [{ role: 'user', text: newMessageText }];
-            console.log(requestDetails);
-            return requestDetails 
-        };},
+                        if (!hasMessages) {
+                            formData.append('messages', "");
+                        }
+                    }
+                }
+                
+                const modifiedRequestDetails = {
+                    ...requestDetails,
+                    body: formData,
+                    headers: {
+                        ...requestDetails.headers,
+                    },
+                };
+
+                return modifiedRequestDetails;
+            };
+        },
         setBorders(){
             this.$refs.chatElementRef.style.borderLeftStyle = 'none';
             this.$refs.chatElementRef.style.borderTopStyle = 'none';
@@ -263,6 +304,14 @@ export default {
                 }`
             shadowRoot.appendChild(style);
         },
+        isJSONWithProperty(string, property) {
+            try {
+                const json = JSON.parse(string);
+                return json && typeof json === 'object' && property in json;
+            } catch (e) {
+                return false;
+            }
+        }
     }
 };
 </script>

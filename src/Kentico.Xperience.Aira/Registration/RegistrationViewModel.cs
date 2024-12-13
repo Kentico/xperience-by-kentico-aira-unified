@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel;
 
-namespace Kentico.Xperience.Aira.Models;
+namespace Kentico.Xperience.Aira.Registration;
 
 public class RegistrationViewModel
 {

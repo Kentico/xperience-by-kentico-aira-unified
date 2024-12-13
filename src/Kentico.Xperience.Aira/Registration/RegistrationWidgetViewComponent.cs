@@ -4,9 +4,8 @@ using CMS.DataEngine;
 using CMS.Membership;
 using Kentico.Membership;
 using Kentico.Membership.Internal;
-using Kentico.Xperience.Aira.Models;
 using Kentico.PageBuilder.Web.Mvc;
-using Kentico.Xperience.Aira.Widgets;
+using Kentico.Xperience.Aira.Registration;
 
 [assembly: RegisterWidget(
     identifier: RegistrationWidgetViewComponent.IDENTIFIER,
@@ -14,7 +13,7 @@ using Kentico.Xperience.Aira.Widgets;
     name: "Registration Widget",
     propertiesType: typeof(RegistrationWidgetProperties))]
 
-namespace Kentico.Xperience.Aira.Widgets;
+namespace Kentico.Xperience.Aira.Registration;
 public class RegistrationWidgetViewComponent(
         AdminUserManager adminUserManager,
         IUserInfoProvider userInfoProvider,
@@ -34,6 +33,6 @@ public class RegistrationWidgetViewComponent(
     public IViewComponentResult Invoke(RegistrationWidgetProperties properties)
     {
         properties.Model ??= new RegistrationViewModel();
-        return View("~/Features/Registration/_RegistrationWidget.cshtml", properties);
+        return View("~/Registration/_RegistrationWidget.cshtml", properties);
     }
 }
