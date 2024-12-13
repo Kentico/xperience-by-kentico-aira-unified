@@ -11,6 +11,8 @@ on:
       - push-action/**
   pull_request:
     branches-ignore:
+      - master
+      - main
       - development
       - dev
       - push-action/**
