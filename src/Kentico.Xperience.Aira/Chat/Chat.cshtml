@@ -10,5 +10,7 @@
 <div id="chat-app"
      data-paths-model='@Html.Raw(Json.Serialize(Model.PathsModel))'
      data-base-url="@baseUrl"
-     data-nav-bar-model='@Html.Raw(Json.Serialize(Model.NavBarViewModel))'>
+     data-nav-bar-model='@Html.Raw(Json.Serialize(Model.NavBarViewModel))'
+     data-history='@Html.Raw(Json.Serialize(Model.History))'
+     data-initial-aira-message='@Model.InitialAiraMessage'>
 </div>

@@ -8,6 +8,11 @@ using Microsoft.AspNetCore.Mvc;
 using CMS.DataEngine;
 using Kentico.Xperience.Aira.Admin;
 using Microsoft.AspNetCore.Authorization;
+using CMS.EmailEngine;
+using Kentico.Web.Mvc;
+using Kentico.PageBuilder.Web.Mvc;
+using Kentico.Content.Web.Mvc;
+using Kentico.Xperience.Aira.Membership;
 
 namespace Kentico.Xperience.Aira.Registration;
 
@@ -15,16 +20,18 @@ namespace Kentico.Xperience.Aira.Registration;
 public class AiraRegistrationWidgetController(
     AdminUserManager adminUserManager,
     IUserInfoProvider userInfoProvider,
-    UserManager<ApplicationUser> userManager,
+    UserManager<Member> userManager,
     IInfoProvider<RoleInfo> roleInfoProvider,
-    IUserManagementService userManagementService
+    IUserManagementService userManagementService,
+    SystemEmailOptions systemEmailOptions,
+    IEmailService emailService
 ) : Controller
 {
     [HttpPost]
     [AllowAnonymous]
     public async Task<IActionResult> Register(RegistrationViewModel model)
     {
-        var member = new ApplicationUser
+        var member = new Member
         {
             UserName = model.UserName,
             Email = model.Email,
@@ -88,7 +95,9 @@ public class AiraRegistrationWidgetController(
 
         if (result.Succeeded)
         {
-            return Ok("Ok");
+            await SendVerificationEmail(member);
+
+            return Ok("<h3>Verify your email to finish signing up</h3><p>A confirmation email has been sent to your inbox. To complete your registration, please click the verification link in the email.</p>");
         }
         else
         {
@@ -103,6 +112,120 @@ public class AiraRegistrationWidgetController(
             };
 
             return PartialView("~/Registration/_RegistrationWidget.cshtml", properties);
+        }
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> Confirm([FromQuery] string memberEmail, [FromQuery] string confirmToken)
+    {
+        string username = "johnDoe";
+        if (!(HttpContext.Kentico().PageBuilder().EditMode || HttpContext.Kentico().Preview().Enabled))
+        {
+            IdentityResult confirmResult;
+
+            var member = await userManager.FindByEmailAsync(memberEmail);
+
+            if (member is null)
+            {
+                return View("~/Registration/_EmailConfirmation.csthml", new EmailConfirmationViewModel
+                {
+                    State = EmailConfirmationState.Failure_ConfirmationFailed,
+                    Message = "Email Confirmation failed",
+                    SendButtonText = "Send Again",
+                    Username = ""
+                });
+            }
+
+            if (member.Enabled)
+            {
+                return View("~/Registration/_EmailConfirmation.cshtml", new EmailConfirmationViewModel
+                {
+                    State = EmailConfirmationState.Success_AlreadyConfirmed,
+                    Message = "Your email is already confirmed"
+                });
+            }
+
+            try
+            {
+                confirmResult = await userManager.ConfirmEmailAsync(member, confirmToken);
+            }
+            catch
+            {
+                confirmResult = IdentityResult.Failed(new IdentityError() { Description = "User not found." });
+            }
+
+            if (confirmResult.Succeeded)
+            {
+                var adminUserInfo = userInfoProvider.Get().WhereEquals(nameof(UserInfo.Email), member.Email).First();
+
+                using (new CMSActionContext
+                {
+                    UseGlobalAdminContext = true
+                })
+                {
+                    adminUserInfo.UserEnabled = true;
+                    adminUserInfo.Update();
+                }
+
+                return View("~/Registration/EmailConfirmation.cshtml", new EmailConfirmationViewModel
+                {
+                    State = EmailConfirmationState.Success_Confirmed,
+                    Message = "<h3>Success!Your Email is Verified</h3><p>Your email has been successfully verified. Thank you! You can now enjoy full access to your account.</p>"
+                });
+            }
+
+            if (member.UserName != null)
+            {
+                username = member.UserName;
+            }
+        }
+
+        return View("~/Registration/_EmailConfirmation.csthml", new EmailConfirmationViewModel()
+        {
+            State = EmailConfirmationState.Failure_ConfirmationFailed,
+            Message = "Email Confirmation failed",
+            SendButtonText = "Send Again",
+            Username = username
+        });
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> ResendVerificationEmail([FromQuery] string username)
+    {
+        var member = await userManager.FindByNameAsync(username);
+
+        if (member is not null)
+        {
+            await SendVerificationEmail(member);
+        }
+
+        return View("~/Registration/_VerifyEmail.cshtml");
+    }
+
+    private async Task SendVerificationEmail(Member member)
+    {
+        try
+        {
+            string confirmToken = await userManager.GenerateEmailConfirmationTokenAsync(member);
+            string confirmationURL = Url.Action(nameof(Confirm), "AiraRegistrationWidget",
+                new
+                {
+                    memberEmail = member.Email,
+                    confirmToken
+                },
+                Request.Scheme) ?? "";
+
+            await emailService.SendEmail(new EmailMessage()
+            {
+                From = $"test@{systemEmailOptions.SendingDomain}",
+                Recipients = member.Email,
+                Subject = $"Confirm your email here",
+                Body = $@"Click this link to confirm your email: {confirmationURL}"
+            });
+        }
+        catch (Exception ex)
+        {
+            string aa = "aa";
         }
     }
 }

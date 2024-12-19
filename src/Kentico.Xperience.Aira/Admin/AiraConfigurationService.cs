@@ -30,11 +30,7 @@ internal class AiraConfigurationService
                     return false;
                 }
 
-                var newConfigurationInfo = new AiraConfigurationItemInfo
-                {
-                    AiraConfigurationItemAiraPathBase = configurationModel.RelativePathBase
-                };
-
+                var newConfigurationInfo = configurationModel.MapToAiraConfigurationInfo();
                 airaConfigurationProvider.Set(newConfigurationInfo);
 
                 return true;
@@ -42,7 +38,8 @@ internal class AiraConfigurationService
             return false;
         }
 
-        existingConfiguration.AiraConfigurationItemAiraPathBase = configurationModel.RelativePathBase;
+        existingConfiguration = configurationModel.MapToAiraConfigurationInfo(existingConfiguration);
+
         airaConfigurationProvider.Set(existingConfiguration);
 
         airaEndpointDataSource.UpdateEndpoints();

@@ -1,5 +1,5 @@
-﻿using System.Data;
-using System.Runtime.Serialization;
+﻿using System.ComponentModel.DataAnnotations;
+using System.Data;
 
 using CMS;
 using CMS.DataEngine;
@@ -40,19 +40,84 @@ public partial class AiraConfigurationItemInfo : AbstractInfo<AiraConfigurationI
     }
 
 
+    [DatabaseField]
     public virtual Guid AiraConfigurationItemGuid
     {
-        get => ValidationHelper.GetGuid(GetValue(nameof(AiraConfigurationItemGuid)), default);
+        get => ValidationHelper.GetGuid(GetValue(nameof(AiraConfigurationItemGuid)), Guid.Empty);
         set => SetValue(nameof(AiraConfigurationItemGuid), value);
     }
 
 
+    [DatabaseField]
+    [Required]
     public virtual string AiraConfigurationItemAiraPathBase
     {
         get => ValidationHelper.GetString(GetValue(nameof(AiraConfigurationItemAiraPathBase)), string.Empty);
         set => SetValue(nameof(AiraConfigurationItemAiraPathBase), value);
     }
 
+    [DatabaseField]
+    [Required]
+    public virtual string AiraConfigurationItemAiraRelativeLogoId
+    {
+        get => ValidationHelper.GetString(GetValue(nameof(AiraConfigurationItemAiraRelativeLogoId)), string.Empty);
+        set => SetValue(nameof(AiraConfigurationItemAiraRelativeLogoId), value);
+    }
+
+    [DatabaseField]
+    [Required]
+    public virtual string AiraConfigurationItemAiraRelativeChatImgId
+    {
+        get => ValidationHelper.GetString(GetValue(nameof(AiraConfigurationItemAiraRelativeChatImgId)), string.Empty);
+        set => SetValue(nameof(AiraConfigurationItemAiraRelativeChatImgId), value);
+    }
+
+    [DatabaseField]
+    [Required]
+    public virtual string AiraConfigurationItemAiraRelativeChatUrl
+    {
+        get => ValidationHelper.GetString(GetValue(nameof(AiraConfigurationItemAiraRelativeChatUrl)), string.Empty);
+        set => SetValue(nameof(AiraConfigurationItemAiraRelativeChatUrl), value);
+    }
+
+    [DatabaseField]
+    [Required]
+    public virtual string AiraConfigurationItemAiraChatTitle
+    {
+        get => ValidationHelper.GetString(GetValue(nameof(AiraConfigurationItemAiraChatTitle)), string.Empty);
+        set => SetValue(nameof(AiraConfigurationItemAiraChatTitle), value);
+    }
+
+    [DatabaseField]
+    [Required]
+    public virtual string AiraConfigurationItemAiraSmartUploadTitle
+    {
+        get => ValidationHelper.GetString(GetValue(nameof(AiraConfigurationItemAiraSmartUploadTitle)), string.Empty);
+        set => SetValue(nameof(AiraConfigurationItemAiraSmartUploadTitle), value);
+    }
+
+    [DatabaseField]
+    [Required]
+    public virtual string AiraConfigurationItemAiraSmartUploadImgId
+    {
+        get => ValidationHelper.GetString(GetValue(nameof(AiraConfigurationItemAiraSmartUploadImgId)), string.Empty);
+        set => SetValue(nameof(AiraConfigurationItemAiraSmartUploadImgId), value);
+    }
+
+    [DatabaseField]
+    [Required]
+    public string AiraConfigurationItemAiraRelativeSmartUploadUrl
+    {
+        get => ValidationHelper.GetString(GetValue(nameof(AiraConfigurationItemAiraRelativeSmartUploadUrl)), string.Empty);
+        set => SetValue(nameof(AiraConfigurationItemAiraRelativeSmartUploadUrl), value);
+    }
+
+    [DatabaseField]
+    public string Test
+    {
+        get => ValidationHelper.GetString(GetValue(nameof(Test)), string.Empty);
+        set => SetValue(nameof(Test), value);
+    }
 
     /// <summary>
     /// Deletes the object using appropriate provider.
@@ -64,12 +129,6 @@ public partial class AiraConfigurationItemInfo : AbstractInfo<AiraConfigurationI
     /// Updates the object using appropriate provider.
     /// </summary>
     protected override void SetObject() => Provider.Set(this);
-
-
-    protected AiraConfigurationItemInfo(SerializationInfo info, StreamingContext context)
-        : base(info, context)
-    {
-    }
 
 
     public AiraConfigurationItemInfo()

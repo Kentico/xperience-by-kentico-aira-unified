@@ -55,7 +55,13 @@
                         url: `${this.baseUrl}${this.pathsModel.pathBase}/${pathsModel.chatMessagePath}`,
                         method: 'POST'
                     }"
+                    :names="{
+                        ai: { text: 'AIRA' },
+                        default: { text: '' },
+                        user: { text: '' }
+                    }"
                     :chatStyle="{ height: '100%', width: '100%' }"
+                    :history="[]"
                     id="chatElement"
                     ref="chatElementRef"
                     :requestBodyLimits="{ maxMessages: 1 }"
@@ -88,7 +94,9 @@ export default {
     props: {
         pathsModel: null,
         baseUrl: null,
-        navBarModel: null
+        navBarModel: null,
+        history: [],
+        initialAiraMessage: null
     },
     data() {
         return {
@@ -129,6 +137,8 @@ export default {
                     });
 
                     this.setRequestInterceptor();
+                    this.setResponseInterceptor();
+                    this.setHistory();
                 }
 
                 const newSubmitButton = this.$refs.chatElementRef.shadowRoot.querySelector('.input-button');
@@ -187,6 +197,11 @@ export default {
                 };
 
                 return modifiedRequestDetails;
+            };
+        },
+        setResponseInterceptor() {
+            this.$refs.chatElementRef.responseInterceptor = (response) => {
+                return this.getMessageViewModel(response);
             };
         },
         setBorders(){
@@ -303,6 +318,36 @@ export default {
                     }
                 }`
             shadowRoot.appendChild(style);
+        },
+        setHistory() {
+            for (const x of this.history) {
+                const viewModel = this.getMessageViewModel(x)
+                this.$refs.chatElementRef.history.push(viewModel);
+            }
+
+            this.$refs.chatElementRef.history.push({
+                role: "ai",
+                text: this.initialAiraMessage
+            });
+        },
+        getMessageViewModel(message) {
+            if (message.url !== null)
+            {
+                return {
+                    role: "user",
+                    files: [
+                        {
+                            src: message.url,
+                            type: "image"
+                        }
+                    ]
+                };
+            }
+
+            return {
+                role: message.role,
+                text: message.message
+            }
         },
         isJSONWithProperty(string, property) {
             try {

@@ -4,10 +4,7 @@ using HotChocolate.Authorization;
 using Kentico.Xperience.Admin.Base;
 using Kentico.Xperience.Aira.Admin.InfoModels;
 using Kentico.Xperience.Aira.Chat.Models;
-using Kentico.Xperience.Aira.NavBar;
 using Htmx;
-
-using Kentico.Membership;
 
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -16,16 +13,20 @@ using SignInResult = Microsoft.AspNetCore.Identity.SignInResult;
 using Microsoft.AspNetCore.Http;
 using Kentico.Xperience.Aira.Authentication;
 using Kentico.Xperience.Aira.Assets;
+using Kentico.Xperience.Aira.Registration;
+using Kentico.Xperience.Aira.Membership;
+using Kentico.Xperience.Aira.Services;
 
 namespace Kentico.Xperience.Aira;
 
 [ApiController]
 [Route("[controller]/[action]")]
 public sealed class AiraCompanionAppController(
-    SignInManager<ApplicationUser> signInManager,
-    UserManager<ApplicationUser> userManager,
+    SignInManager<Member> signInManager,
+    UserManager<Member> userManager,
     IInfoProvider<AiraConfigurationItemInfo> airaConfigurationInfoProvider,
-    IAiraAiraAssetService airaAssetService
+    IAiraAiraAssetService airaAssetService,
+    AiraUIService airaUIService
 ) : Controller
 {
     [HttpGet]
@@ -34,6 +35,8 @@ public sealed class AiraCompanionAppController(
     {
         var configuration = await airaConfigurationInfoProvider.Get().GetEnumerableTypedResultAsync();
 
+        var assets = await airaAssetService.GetUsersUploadedAssetUrls(53);
+
         var chatModel = new ChatViewModel
         {
             PathsModel = new AiraPathsModel
@@ -41,25 +44,17 @@ public sealed class AiraCompanionAppController(
                 PathBase = configuration.First().AiraConfigurationItemAiraPathBase,
                 ChatMessagePath = "chat/message",
             },
-            NavBarViewModel = new NavBarViewModel
+            NavBarViewModel = airaUIService.GetNavBarViewModel("chat"),
+            History = assets.Select(x => new AiraChatMessage
             {
-                LogoImgRelativePath = AiraCompanionAppConstants.RelativeLogoUrl,
-                TitleImagePath = AiraCompanionAppConstants.RelativeChatImgUrl,
-                TitleText = AiraCompanionAppConstants.ChatTitle,
-                ChatItem = new MenuItemModel
-                {
-                    Title = AiraCompanionAppConstants.ChatTitle,
-                    ImagePath = AiraCompanionAppConstants.RelativeChatImgUrl,
-                    Url = AiraCompanionAppConstants.ChatRelativeUrl
-                },
-                SmartUploadItem = new MenuItemModel
-                {
-                    Title = AiraCompanionAppConstants.SmartUploadTitle,
-                    ImagePath = AiraCompanionAppConstants.RelativeSmartUploadUrl,
-                    Url = AiraCompanionAppConstants.ChatRelativeUrl
-                }
-            }
+                Url = x,
+                Role = "user"
+            }).ToList(),
         };
+
+        chatModel.InitialAiraMessage = chatModel.History.Count == 0
+            ? "This is initial Aira message"
+            : "What can I help you with ?";
 
         return View("~/Chat/Chat.cshtml", chatModel);
     }
@@ -67,9 +62,9 @@ public sealed class AiraCompanionAppController(
     [HttpPost]
     public async Task<IActionResult> PostChatMessage(IFormCollection request)
     {
-        await airaAssetService.HandleFileUpload(request.Files);
+        await airaAssetService.HandleFileUpload(request.Files, 53);
 
-        return Ok(new AiraChatMessageModel { Role = "ai", Text = "Ok" });
+        return Ok(new AiraChatMessage { Role = "ai", Message = "Ok" });
     }
 
     [HttpGet]
@@ -98,7 +93,15 @@ public sealed class AiraCompanionAppController(
             }
             else if (!member.Enabled)
             {
-                return PartialView("~/Authentication/_SignIn.cshtml", model);
+                var emailConfirmationModel = new EmailConfirmationViewModel()
+                {
+                    State = EmailConfirmationState.Failure_NotYetConfirmed,
+                    Message = "This Email Is Not Verified Yet",
+                    SendButtonText = "Send Verification Email",
+                    Username = member.UserName!
+                };
+
+                return PartialView("~/Registration/_EmailConfirmation.cshtml", emailConfirmationModel);
             }
             else
             {
@@ -129,7 +132,7 @@ public sealed class AiraCompanionAppController(
         ? Ok()
         : Redirect(redirectUrl);
 
-        async Task<ApplicationUser?> GetMember()
+        async Task<Member?> GetMember()
         {
             var member = await userManager.FindByNameAsync(model.UserNameOrEmail);
 

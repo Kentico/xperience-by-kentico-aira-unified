@@ -1,0 +1,63 @@
+﻿@using Kentico.Xperience.Aira.Registration
+
+@model EmailConfirmationViewModel
+
+@{
+    ViewBag.CultureCode = "en";
+    ViewBag.Title = "Email confirmation";
+}
+
+<section class="hero hero--low">
+    <a class="anchor-offset"></a>
+    <div class=" site-wide">
+        <div class="grid-container grid-container--full ">
+            <div class="grid-column">
+                <div class="fr-view">
+                    <h1>@ViewBag.ConnectionTitle</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<section class="vert-margin-75">
+    <div class="site-wide">
+        <div class="grid-container grid-container--full">
+            <div class="grid-column">
+                @if (Model.State == EmailConfirmationState.Success_Confirmed || Model.State == EmailConfirmationState.Success_AlreadyConfirmed)
+                {
+                    @if (Model.State == EmailConfirmationState.Success_AlreadyConfirmed)
+                    {
+                        <h3 test-id="confirmationMessage">Your email is already verified</h3>
+                    }
+                    else
+                    {
+                        <h3 test-id="confirmationMessage">Success! Your Email is Verified.</h3>
+                    }
+
+                    <p>
+                        Your email has been successfully verified. Thank you! You can now enjoy full access to your account.<br /><br />
+                        <a asp-controller="Authentication" asp-action="Signin" test-id="confirmationSignIn" class="btn btn--primary">sign in</a>
+                    </p>
+                }
+                else
+                {
+                    <form hx-post
+                          hx-controller="AiraRegistrationWidget" hx-action="ResendVerificationEmail" hx-swap="outerHTML" hx-target=""
+                          hx-route-username="@Model.Username" method="post">
+                        <p>@Model.Message</p>
+
+                        <button type="submit" class="btn btn--primary">@Model.SendButtonText</button>
+                    </form>
+                }
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+    if (!window.htmx) {
+        var script = document.createElement('script');
+        script.src="https://unpkg.com/htmx.org@2.0.3/dist/htmx.js"
+        document.head.appendChild(script);
+    }
+</script>

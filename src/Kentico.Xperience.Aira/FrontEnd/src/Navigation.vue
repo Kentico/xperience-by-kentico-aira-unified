@@ -2,10 +2,10 @@
     <nav class="navbar">
         <div class="container">
             <div class="navbar-brand">
-                <img alt="Kentico" id="aira-app-logo" :src="`${this.baseUrl}/${this.navBarModel.logoImgRelativePath}`">  
+                <img alt="Kentico" id="aira-app-logo" :src="`${this.baseUrl}${this.navBarModel.logoImgRelativePath}`">  
             </div>
             <h1 class="c-app_title" id="aira-title">
-                <img alt="Kentico" id="aira-title-img" class="c-icon text-primary" :src="`${this.baseUrl}/${this.navBarModel.titleImagePath}`">
+                <img alt="Kentico" id="aira-title-img" class="c-icon text-primary" :src="`${this.baseUrl}${this.navBarModel.titleImagePath}`">
                 <span id="aira-title-text">
                     {{ `${this.navBarModel.titleText}` }}
                 </span>
@@ -23,11 +23,11 @@
                     <div class="c-nav">
                         <div class="c-nav_content" id="aira-menu-submenu-items">
                             <a class="d-flex align-items-center gap-2 btn" :href="`${this.baseUrl}${this.airaPathBase}/${this.navBarModel.chatItem.url}`">
-                                <img :src="`${this.baseUrl}/${this.navBarModel.chatItem.imagePath}`" class="c-icon text-primary" />
+                                <img :src="`${this.baseUrl}${this.navBarModel.chatItem.imagePath}`" class="c-icon text-primary" />
                                 {{`${this.navBarModel.chatItem.title}`}}
                             </a>
                             <a class="d-flex align-tems-center gap-2 btn" :href="`${this.baseUrl}${this.airaPathBase}/${this.navBarModel.chatItem.url}`">
-                                <img :src="`${this.baseUrl}/${this.navBarModel.smartUploadItem.imagePath}`" class="c-icon text-primary" />
+                                <img :src="`${this.baseUrl}${this.navBarModel.smartUploadItem.imagePath}`" class="c-icon text-primary" />
                                 {{`${this.navBarModel.smartUploadItem.title}`}}
                             </a>
                         </div>
