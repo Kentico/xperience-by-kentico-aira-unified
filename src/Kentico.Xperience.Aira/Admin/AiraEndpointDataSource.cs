@@ -1,7 +1,6 @@
 ﻿using CMS.DataEngine;
 
 using Kentico.Xperience.Aira.Admin.InfoModels;
-using Kentico.Xperience.Aira.Chat.Models;
 
 using Microsoft.AspNetCore.Routing;
 using Microsoft.AspNetCore.Http;
@@ -58,6 +57,17 @@ internal class AiraEndpointDataSource : MutableEndpointDataSource
                 nameof(AiraCompanionAppController.PostChatMessage),
                 (controller, request) => controller.PostChatMessage(request)
             ),
+            CreateAiraIFormCollectionEndpoint(configuration,
+                "assets/upload",
+                controllerShortName,
+                nameof(AiraCompanionAppController.PostImages),
+                (controller, request) => controller.PostImages(request)),
+            CreateAiraEndpoint(configuration,
+                "assets",
+                controllerShortName,
+                nameof(AiraCompanionAppController.Assets),
+                controller => controller.Assets()
+            ),
             CreateAiraEndpoint<SignInViewModel>(configuration,
                 "signin",
                 controllerShortName,
@@ -65,6 +75,13 @@ internal class AiraEndpointDataSource : MutableEndpointDataSource
                 controller => controller.Signin(),
                 (controller, request) => controller.SignIn(request)
             )
+            //),
+            //CreateAiraEndpoint(configuration,
+            //    "manifest.json",
+            //    controllerShortName,
+            //    nameof(AiraCompanionAppController.GetPwaManifest),
+            //    controller => controller.GetPwaManifest()
+            //)
         ];
     }
     private Endpoint CreateAiraEndpoint<T>(AiraConfigurationItemInfo configurationInfo,

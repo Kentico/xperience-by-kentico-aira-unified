@@ -1,0 +1,21 @@
+﻿@using Kentico.Xperience.Aira;
+@using Kentico.Xperience.Aira.AssetUploader.Models
+
+@model AssetsViewModel
+
+@{
+    Layout = "_AiraLayout";
+    var baseUrl = Context.Request.GetBaseUrl();
+}
+
+@section styles {
+    <link href="@baseUrl/_content/Kentico.Xperience.Aira/css/assets.css" rel="stylesheet" type="text/css">
+}
+
+<div id="assets-app"
+    data-paths-model='@Html.Raw(Json.Serialize(Model.PathsModel))'
+    data-base-url="@baseUrl"
+    data-nav-bar-model='@Html.Raw(Json.Serialize(Model.NavBarViewModel))'
+>
+
+</div>

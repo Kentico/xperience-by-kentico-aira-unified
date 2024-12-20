@@ -13,7 +13,7 @@ internal class AiraConfigurationModel
 
     [RequiredValidationRule]
     [AssetSelectorComponent(Label = "Logo", Order = 1, ExplanationText = "Logo Image from a library.", AllowedExtensions = "jpg;jpeg;png", MaximumAssets = 1)]
-    public IEnumerable<AssetRelatedItem> Logo { get; set; } = [];
+    public IEnumerable<AssetRelatedItem>? Logo { get; set; }
 
     [RequiredValidationRule]
     [TextInputComponent(Label = "Chat Title", Order = 2, ExplanationText = "Title of the chat.")]
@@ -21,7 +21,7 @@ internal class AiraConfigurationModel
 
     [RequiredValidationRule]
     [AssetSelectorComponent(Label = "Relative Chat Image Url", Order = 3, ExplanationText = "Chat image from a library.", AllowedExtensions = "jpg;jpeg;png", MaximumAssets = 1)]
-    public IEnumerable<AssetRelatedItem> ChatImage { get; set; } = [];
+    public IEnumerable<AssetRelatedItem>? ChatImage { get; set; }
 
     [RequiredValidationRule]
     [TextInputComponent(Label = "Relative Chat Url", Order = 4, ExplanationText = "Relative path to the chat.")]
@@ -33,7 +33,7 @@ internal class AiraConfigurationModel
 
     [RequiredValidationRule]
     [AssetSelectorComponent(Label = "Smart Upload Image", Order = 6, ExplanationText = "Smart Upload Image from a library.", AllowedExtensions = "jpg;jpeg;png", MaximumAssets = 1)]
-    public IEnumerable<AssetRelatedItem> SmartUploadImage { get; set; } = [];
+    public IEnumerable<AssetRelatedItem>? SmartUploadImage { get; set; }
 
     [RequiredValidationRule]
     [TextInputComponent(Label = "Relative Smart Upload Url", Order = 7, ExplanationText = "Relative path to the smart upload.")]
@@ -88,16 +88,22 @@ internal class AiraConfigurationModel
     {
         info ??= new AiraConfigurationItemInfo();
         info.AiraConfigurationItemAiraPathBase = RelativePathBase;
-        info.AiraConfigurationItemAiraRelativeLogoId = Logo.First().Identifier.ToString();
+        info.AiraConfigurationItemAiraRelativeLogoId = GetImageIdentifier(Logo);
 
         info.AiraConfigurationItemAiraChatTitle = ChatTitle;
-        info.AiraConfigurationItemAiraRelativeChatImgId = ChatImage.First().Identifier.ToString();
+        info.AiraConfigurationItemAiraRelativeChatImgId = GetImageIdentifier(ChatImage);
         info.AiraConfigurationItemAiraRelativeChatUrl = RelativeChatUrl;
 
         info.AiraConfigurationItemAiraSmartUploadTitle = SmartUploadTitle;
-        info.AiraConfigurationItemAiraSmartUploadImgId = SmartUploadImage.First().Identifier.ToString();
+        info.AiraConfigurationItemAiraSmartUploadImgId = GetImageIdentifier(SmartUploadImage);
         info.AiraConfigurationItemAiraRelativeSmartUploadUrl = RelativeSmartUploadUrl;
 
         return info;
     }
+
+    private string GetImageIdentifier(IEnumerable<AssetRelatedItem>? asset)
+    {
+        return asset?.FirstOrDefault()?.Identifier.ToString() ?? "";
+    }
+
 }

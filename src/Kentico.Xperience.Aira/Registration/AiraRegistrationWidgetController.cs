@@ -167,7 +167,7 @@ public class AiraRegistrationWidgetController(
                     adminUserInfo.Update();
                 }
 
-                return View("~/Registration/EmailConfirmation.cshtml", new EmailConfirmationViewModel
+                return View("~/Registration/_EmailConfirmation.cshtml", new EmailConfirmationViewModel
                 {
                     State = EmailConfirmationState.Success_Confirmed,
                     Message = "<h3>Success!Your Email is Verified</h3><p>Your email has been successfully verified. Thank you! You can now enjoy full access to your account.</p>"
@@ -215,6 +215,7 @@ public class AiraRegistrationWidgetController(
                 },
                 Request.Scheme) ?? "";
 
+            ;
             await emailService.SendEmail(new EmailMessage()
             {
                 From = $"test@{systemEmailOptions.SendingDomain}",

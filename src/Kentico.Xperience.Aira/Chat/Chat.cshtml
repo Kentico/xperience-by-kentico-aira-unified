@@ -7,6 +7,10 @@
     var baseUrl = Context.Request.GetBaseUrl();
 }
 
+@section styles {
+    <link href="@baseUrl/_content/Kentico.Xperience.Aira/css/style.css" rel="stylesheet" type="text/css">
+}
+
 <div id="chat-app"
      data-paths-model='@Html.Raw(Json.Serialize(Model.PathsModel))'
      data-base-url="@baseUrl"
@@ -14,3 +18,7 @@
      data-history='@Html.Raw(Json.Serialize(Model.History))'
      data-initial-aira-message='@Model.InitialAiraMessage'>
 </div>
+
+<script>
+    navigator.serviceWorker.register('/_content/Kentico.Xperience.Aira/sw.js')
+</script>

@@ -139,7 +139,12 @@ static void ConfigureMembershipServices(IServiceCollection services)
         .AddUserStore<ApplicationUserStore<Member>>()
         .AddRoleStore<NoOpApplicationRoleStore>()
         .AddUserManager<UserManager<Member>>()
-        .AddSignInManager<SignInManager<Member>>();
+        .AddSignInManager<SignInManager<Member>>()
+        .AddDefaultTokenProviders();
+
+
+    services.AddAuthentication(options => options.DefaultScheme = "Identity.Application")
+        .AddCookie("Identity.Application", options => options.LoginPath = "/AiraCompanionApp/SignIn");
 
     services.AddXperienceSystemSmtp(options =>
     {

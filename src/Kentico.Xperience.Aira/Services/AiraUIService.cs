@@ -31,7 +31,7 @@ namespace Kentico.Xperience.Aira.Services
 
         public NavBarViewModel GetNavBarViewModel(string activePage)
         {
-            string defaultImageUrl = "~/path-to-not-found/image.jpg";
+            string defaultImageUrl = "path-to-not-found/image.jpg";
 
             string logoUrl = GetMediaFileUrl(airaConfiguration.AiraConfigurationItemAiraRelativeLogoId)?.RelativePath ?? defaultImageUrl;
             string chatImageUrl = GetMediaFileUrl(airaConfiguration.AiraConfigurationItemAiraRelativeChatImgId)?.RelativePath ?? defaultImageUrl;
@@ -46,13 +46,13 @@ namespace Kentico.Xperience.Aira.Services
                 {
                     Title = airaConfiguration.AiraConfigurationItemAiraChatTitle,
                     ImagePath = chatImageUrl,
-                    Url = "/Chat"
+                    Url = airaConfiguration.AiraConfigurationItemAiraRelativeChatUrl
                 },
                 SmartUploadItem = new MenuItemModel
                 {
-                    Title = "Smart Upload",
+                    Title = airaConfiguration.AiraConfigurationItemAiraSmartUploadTitle,
                     ImagePath = smartUploadImageUrl,
-                    Url = "/SmartUpload"
+                    Url = airaConfiguration.AiraConfigurationItemAiraRelativeSmartUploadUrl
                 }
             };
         }

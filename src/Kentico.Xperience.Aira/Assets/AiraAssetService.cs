@@ -165,6 +165,11 @@ internal class AiraAssetService : IAiraAiraAssetService
         var fileSource = new ContentItemAssetStreamSource((CancellationToken cancellationToken) => Task.FromResult<Stream>(fileStream));
         var assetMetadataWithSource = new ContentItemAssetMetadataWithSource(fileSource, assetMetadata);
 
+        //assetMetadataWithSource.SetOptimizationParameters(new ImageOptimizationParameters
+        //{
+        //    Quality = 100
+        //});
+
         var itemData = new ContentItemData(new Dictionary<string, object>{
             { contentItemAssetColumnCodeName, assetMetadataWithSource }
         });

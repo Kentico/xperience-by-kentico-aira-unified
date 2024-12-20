@@ -16,6 +16,7 @@ using Kentico.Xperience.Aira.Assets;
 using Kentico.Xperience.Aira.Registration;
 using Kentico.Xperience.Aira.Membership;
 using Kentico.Xperience.Aira.Services;
+using Kentico.Xperience.Aira.AssetUploader.Models;
 
 namespace Kentico.Xperience.Aira;
 
@@ -65,6 +66,74 @@ public sealed class AiraCompanionAppController(
         await airaAssetService.HandleFileUpload(request.Files, 53);
 
         return Ok(new AiraChatMessage { Role = "ai", Message = "Ok" });
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> PostImages(IFormCollection request)
+    {
+        await airaAssetService.HandleFileUpload(request.Files, 53);
+        return Ok();
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> Assets()
+    {
+        //var member = await userManager.GetUserAsync(User);
+
+        //if (member is null)
+        //{
+        //    return Redirect($"{Request.PathBase}/aira/signin");
+        //}
+
+        var configuration = await airaConfigurationInfoProvider.Get().GetEnumerableTypedResultAsync();
+
+        var model = new AssetsViewModel
+        {
+            NavBarViewModel = airaUIService.GetNavBarViewModel("smart-upload"),
+            PathsModel = new AiraPathsModel
+            {
+                PathBase = configuration.First().AiraConfigurationItemAiraPathBase
+            }
+        };
+
+        return View("~/AssetUploader/Assets.cshtml", model);
+    }
+
+    [HttpGet("/_content/Kentico.Xperience.Aira/manifest.json")]
+    [Produces("application/json")]
+    public async Task<IActionResult> GetPwaManifest()
+    {
+        var configuration = (await airaConfigurationInfoProvider.Get().GetEnumerableTypedResultAsync()).First();
+
+        string libraryBasePath = "/_content/Kentico.Xperience.Aira";
+
+        var manifest = new
+        {
+            name = "Aira",
+            short_name = "Aira",
+            start_url = $".{configuration.AiraConfigurationItemAiraPathBase}",
+            display = "standalone",
+            background_color = "#ffffff",
+            theme_color = "#ffffff",
+            scope = "./",
+            icons = new[]
+            {
+                new
+                {
+                    src = $"{libraryBasePath}/img/favicon/android-chrome-192x192.png",
+                    sizes = "192x192",
+                    type = "image/png"
+                },
+                new
+                {
+                    src = $"{libraryBasePath}/img/favicon/android-chrome-512x512.png",
+                    sizes = "512x512",
+                    type = "image/png"
+                }
+            }
+        };
+
+        return Json(manifest);
     }
 
     [HttpGet]
