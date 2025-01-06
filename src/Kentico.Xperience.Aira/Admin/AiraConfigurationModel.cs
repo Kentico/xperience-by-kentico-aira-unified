@@ -8,7 +8,7 @@ namespace Kentico.Xperience.Aira.Admin;
 internal class AiraConfigurationModel
 {
     [RequiredValidationRule]
-    [TextInputComponent(Label = "Relative Path Base", Order = 0, ExplanationText = "Relative path where the ACA is available.")]
+    [TextInputComponent(Label = "Relative Path Base", Order = 0, ExplanationText = "Relative path where the ACA is available. The path is relative to the base url of your application.")]
     public string RelativePathBase { get; set; } = string.Empty;
 
     [RequiredValidationRule]
@@ -24,20 +24,12 @@ internal class AiraConfigurationModel
     public IEnumerable<AssetRelatedItem>? ChatImage { get; set; }
 
     [RequiredValidationRule]
-    [TextInputComponent(Label = "Relative Chat Url", Order = 4, ExplanationText = "Relative path to the chat.")]
-    public string RelativeChatUrl { get; set; } = string.Empty;
-
-    [RequiredValidationRule]
     [TextInputComponent(Label = "Smart Upload Title", Order = 5, ExplanationText = "Title of the smart upload.")]
     public string SmartUploadTitle { get; set; } = string.Empty;
 
     [RequiredValidationRule]
     [AssetSelectorComponent(Label = "Smart Upload Image", Order = 6, ExplanationText = "Smart Upload Image from a library.", AllowedExtensions = "jpg;jpeg;png", MaximumAssets = 1)]
     public IEnumerable<AssetRelatedItem>? SmartUploadImage { get; set; }
-
-    [RequiredValidationRule]
-    [TextInputComponent(Label = "Relative Smart Upload Url", Order = 7, ExplanationText = "Relative path to the smart upload.")]
-    public string RelativeSmartUploadUrl { get; set; } = string.Empty;
 
     public AiraConfigurationModel() { }
 
@@ -68,8 +60,6 @@ internal class AiraConfigurationModel
             ChatImage = [relativeChatImageUrlAsset];
         }
 
-        RelativeChatUrl = info.AiraConfigurationItemAiraRelativeChatUrl;
-
         SmartUploadTitle = info.AiraConfigurationItemAiraSmartUploadTitle;
 
         if (Guid.TryParse(info.AiraConfigurationItemAiraSmartUploadImgId, out var relativeSmartUploadImgUrlGuid))
@@ -80,8 +70,6 @@ internal class AiraConfigurationModel
             };
             SmartUploadImage = [relativeSmartUploadImgUrl];
         }
-
-        RelativeSmartUploadUrl = info.AiraConfigurationItemAiraRelativeSmartUploadUrl;
     }
 
     public AiraConfigurationItemInfo MapToAiraConfigurationInfo(AiraConfigurationItemInfo? info = null)
@@ -92,11 +80,9 @@ internal class AiraConfigurationModel
 
         info.AiraConfigurationItemAiraChatTitle = ChatTitle;
         info.AiraConfigurationItemAiraRelativeChatImgId = GetImageIdentifier(ChatImage);
-        info.AiraConfigurationItemAiraRelativeChatUrl = RelativeChatUrl;
 
         info.AiraConfigurationItemAiraSmartUploadTitle = SmartUploadTitle;
         info.AiraConfigurationItemAiraSmartUploadImgId = GetImageIdentifier(SmartUploadImage);
-        info.AiraConfigurationItemAiraRelativeSmartUploadUrl = RelativeSmartUploadUrl;
 
         return info;
     }

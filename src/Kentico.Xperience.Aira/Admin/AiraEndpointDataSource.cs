@@ -46,24 +46,24 @@ internal class AiraEndpointDataSource : MutableEndpointDataSource
         return
         [
             CreateAiraEndpoint(configuration,
-                "chat",
+                AiraCompanionAppConstants.ChatRelativeUrl,
                 controllerShortName,
                 nameof(AiraCompanionAppController.Index),
                 controller => controller.Index()
             ),
             CreateAiraIFormCollectionEndpoint(configuration,
-                "chat/message",
+                $"{AiraCompanionAppConstants.ChatRelativeUrl}/message",
                 controllerShortName,
                 nameof(AiraCompanionAppController.PostChatMessage),
                 (controller, request) => controller.PostChatMessage(request)
             ),
             CreateAiraIFormCollectionEndpoint(configuration,
-                "assets/upload",
+                 $"{AiraCompanionAppConstants.SmartUploadRelativeUrl}/upload",
                 controllerShortName,
                 nameof(AiraCompanionAppController.PostImages),
                 (controller, request) => controller.PostImages(request)),
             CreateAiraEndpoint(configuration,
-                "assets",
+                AiraCompanionAppConstants.SmartUploadRelativeUrl,
                 controllerShortName,
                 nameof(AiraCompanionAppController.Assets),
                 controller => controller.Assets()

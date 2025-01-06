@@ -41,16 +41,6 @@
                             }
                         }
                     }"
-                    :images="{
-                        button: { 
-                            position: 'dropup-menu' 
-                        }
-                    }"
-                    :camera="{
-                        button: {
-                            position: 'dropup-menu'
-                        }
-                    }"
                     :connect="{
                         url: `${this.baseUrl}${this.pathsModel.pathBase}/${pathsModel.chatMessagePath}`,
                         method: 'POST'
@@ -62,6 +52,9 @@
                     }"
                     :chatStyle="{ height: '100%', width: '100%' }"
                     :history="[]"
+                    :textInput="{
+                        placeholder: { text: 'Message AIRA' }
+                    }"
                     id="chatElement"
                     ref="chatElementRef"
                     :requestBodyLimits="{ maxMessages: 1 }"

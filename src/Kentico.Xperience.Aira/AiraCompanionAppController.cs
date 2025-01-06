@@ -111,11 +111,11 @@ public sealed class AiraCompanionAppController(
         {
             name = "Aira",
             short_name = "Aira",
-            start_url = $".{configuration.AiraConfigurationItemAiraPathBase}/chat",
+            start_url = $"{configuration.AiraConfigurationItemAiraPathBase}/chat",
             display = "standalone",
             background_color = "#ffffff",
             theme_color = "#ffffff",
-            scope = "./",
+            scope = "/",
             icons = new[]
             {
                 new

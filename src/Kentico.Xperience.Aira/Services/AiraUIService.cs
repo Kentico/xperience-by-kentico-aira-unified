@@ -9,7 +9,6 @@ namespace Kentico.Xperience.Aira.Services
 {
     public class AiraUIService
     {
-        private readonly IInfoProvider<AiraConfigurationItemInfo>? airaConfigurationProvider;
         private readonly AiraConfigurationItemInfo airaConfiguration;
         private readonly IMediaFileUrlRetriever mediaFileUrlRetriever;
         private readonly IInfoProvider<MediaFileInfo> mediaFileInfoProvider;
@@ -46,13 +45,13 @@ namespace Kentico.Xperience.Aira.Services
                 {
                     Title = airaConfiguration.AiraConfigurationItemAiraChatTitle,
                     ImagePath = chatImageUrl,
-                    Url = airaConfiguration.AiraConfigurationItemAiraRelativeChatUrl
+                    Url = AiraCompanionAppConstants.ChatRelativeUrl
                 },
                 SmartUploadItem = new MenuItemModel
                 {
                     Title = airaConfiguration.AiraConfigurationItemAiraSmartUploadTitle,
                     ImagePath = smartUploadImageUrl,
-                    Url = airaConfiguration.AiraConfigurationItemAiraRelativeSmartUploadUrl
+                    Url = AiraCompanionAppConstants.SmartUploadRelativeUrl
                 }
             };
         }

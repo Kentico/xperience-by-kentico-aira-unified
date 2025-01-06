@@ -8,8 +8,8 @@ using Kentico.Xperience.Aira.Admin.UIPages;
 [assembly: UIApplication(
     identifier: AiraApplicationPage.IDENTIFIER,
     type: typeof(AiraApplicationPage),
-    slug: "aira-management",
-    name: "Aira Management",
+    slug: "aira-companion-app",
+    name: "Aira Companion App",
     category: BaseApplicationCategories.CONFIGURATION,
     icon: Icons.RectangleAInverted,
     templateName: TemplateNames.SECTION_LAYOUT
