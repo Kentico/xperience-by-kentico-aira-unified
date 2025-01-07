@@ -6,14 +6,14 @@ const chatElement = document.getElementById("chat-app");
 const assetsElement = document.getElementById("assets-app");
 
 if (chatElement) {
-    const pathsModel = JSON.parse(chatElement.dataset.pathsModel || "{}");
+    const airaBaseUrl = chatElement.dataset.airaBaseUrl;
     const baseUrl = chatElement.dataset.baseUrl || "";
     const navBarModel = JSON.parse(chatElement.dataset.navBarModel || "{}");
     const history = JSON.parse(chatElement.dataset.history || {});
     const initialAiraMessage = chatElement.dataset.initialAiraMessage;
 
     createApp(ChatComponent, {
-        pathsModel,
+        airaBaseUrl,
         baseUrl,
         navBarModel,
         history,
@@ -22,12 +22,12 @@ if (chatElement) {
 }
 
 if (assetsElement) {
-    const pathsModel = JSON.parse(assetsElement.dataset.pathsModel || "{}");
+    const airaBaseUrl = assetsElement.dataset.airaBaseUrl;
     const baseUrl = assetsElement.dataset.baseUrl || "";
     const navBarModel = JSON.parse(assetsElement.dataset.navBarModel || "{}");
     
     createApp(AssetsComponent, {
-        pathsModel,
+        airaBaseUrl,
         baseUrl,
         navBarModel
     }).mount("#assets-app");

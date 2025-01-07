@@ -40,11 +40,7 @@ public sealed class AiraCompanionAppController(
 
         var chatModel = new ChatViewModel
         {
-            PathsModel = new AiraPathsModel
-            {
-                PathBase = configuration.First().AiraConfigurationItemAiraPathBase,
-                ChatMessagePath = "chat/message",
-            },
+            PathBase = configuration.First().AiraConfigurationItemAiraPathBase,
             NavBarViewModel = airaUIService.GetNavBarViewModel("chat"),
             History = assets.Select(x => new AiraChatMessage
             {
@@ -90,10 +86,7 @@ public sealed class AiraCompanionAppController(
         var model = new AssetsViewModel
         {
             NavBarViewModel = airaUIService.GetNavBarViewModel("smart-upload"),
-            PathsModel = new AiraPathsModel
-            {
-                PathBase = configuration.First().AiraConfigurationItemAiraPathBase
-            }
+            PathBase = configuration.First().AiraConfigurationItemAiraPathBase
         };
 
         return View("~/AssetUploader/Assets.cshtml", model);

@@ -5,7 +5,7 @@
         </div>
 
         <div class="c-app_header">
-            <NavBarComponent :airaPathBase="pathsModel.pathBase" :navBarModel="navBarModel" :baseUrl="baseUrl" />
+            <NavBarComponent :airaBaseUrl="airaBaseUrl" :navBarModel="navBarModel" :baseUrl="baseUrl" />
         </div>
 
         <template v-if="phase == 'uploading'">
@@ -38,9 +38,7 @@
                 </div>
                 <div>
                     <a href="/aira/assets" class="btn btn-primary text-uppercase">
-                        <svg class="c-icon fs-6 me-2">
-                            <use :xlink:href="`${this.baseUrl}/_content/Kentico.Xperience.Aira/img/icons.svg#plus-circle`"></use>
-                        </svg>
+                        <img :src="`${this.baseUrl}/_content/Kentico.Xperience.Aira/img/icons/plus-circle.svg`" class="c-icon fs-6" />
                         upload more
                     </a>
                 </div>
@@ -62,9 +60,7 @@
                     </div>
                     <div>
                         <button class="btn btn-secondary text-uppercase" @click="pickImage();">
-                            <svg class="c-icon fs-6">
-                                <use :xlink:href="`${this.baseUrl}/_content/Kentico.Xperience.Aira/img/icons.svg#plus-circle`"></use>
-                            </svg>
+                            <img :src="`${this.baseUrl}/_content/Kentico.Xperience.Aira/img/icons/plus-circle.svg`" class="c-icon fs-6" />
                             upload assets
                         </button>
                     </div>
@@ -80,20 +76,9 @@
                                     <div class="c-message_img ratio ratio-1x1 position-relative">
                                         <img class="object-fit-cover" v-bind:src="createObjectURL(file)" alt="uploaded image">
                                         <button class="btn btn-remove-img" aria-label="Remove" @click="removeFile2(file, index);">
-                                            <svg class="c-icon">
-                                                <use xlink:href="`${this.baseUrl}/_content/Kentico.Xperience.Aira/img/icons.svg#cross`"></use>
-                                            </svg>
+                                            <img :src="`${this.baseUrl}/_content/Kentico.Xperience.Aira/img/icons/cross.svg`" class="c-icon fs-6" />
                                         </button>
                                     </div>
-                                </div>
-
-                                <div class="c-add-asset-div">
-                                    <button class="btn btn-secondary text-uppercase" @click="pickImage();">
-                                        <svg class="c-icon fs-6">
-                                            <use xlink:href="`${this.baseUrl}/_content/Kentico.Xperience.Aira/img/icons.svg#plus-circle`"></use>
-                                        </svg>
-                                        upload assets
-                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -101,6 +86,12 @@
                 </div>
             </template>
             <div class="mt-5" v-if="phase == 'selection'">
+                <div class="c-empty-page-layout">
+                    <button class="btn btn-secondary text-uppercase" @click="pickImage();">
+                        <img :src="`${this.baseUrl}/_content/Kentico.Xperience.Aira/img/icons/plus-circle.svg`" class="c-icon fs-6" />
+                        upload assets
+                    </button>
+                </div>
                 <button type="button" class="btn btn-primary btn-lg w-100" :disabled="!formIsValid" @click="fireUpload()">
                     UPLOAD FILES
                 </button>
@@ -118,7 +109,7 @@
             NavBarComponent
         },
         props: {
-            pathsModel: null,
+            airaBaseUrl: null,
             baseUrl: null,
             navBarModel: null
         },
@@ -190,7 +181,7 @@
                     formData.append('files', f);
                 });
 
-                fetch(`${this.baseUrl}${this.pathsModel.pathBase}/assets/upload`, {
+                fetch(`${this.baseUrl}${this.airaBaseUrl}/${this.navBarModel.smartUploadItem.url}/upload`, {
                     method: 'POST',
                     body: formData,
                     mode: "same-origin",

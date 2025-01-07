@@ -5,6 +5,6 @@ namespace Kentico.Xperience.Aira.AssetUploader.Models;
 
 public class AssetsViewModel
 {
-    public AiraPathsModel PathsModel { get; set; } = new AiraPathsModel();
+    public string PathBase { get; set; } = string.Empty;
     public NavBarViewModel NavBarViewModel { get; set; } = new NavBarViewModel();
 }
