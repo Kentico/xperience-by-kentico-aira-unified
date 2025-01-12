@@ -13,6 +13,7 @@ using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
 using System.Text.Json;
 using Kentico.Xperience.Aira.Authentication;
+using Microsoft.AspNetCore.Authentication;
 
 namespace Kentico.Xperience.Aira.Admin;
 
@@ -41,282 +42,171 @@ internal class AiraEndpointDataSource : MutableEndpointDataSource
             return [];
         }
 
-        string controllerShortName = "AiraCompanionApp";
-
         return
         [
             CreateAiraEndpoint(configuration,
                 AiraCompanionAppConstants.ChatRelativeUrl,
-                controllerShortName,
                 nameof(AiraCompanionAppController.Index),
                 controller => controller.Index()
             ),
             CreateAiraIFormCollectionEndpoint(configuration,
-                $"{AiraCompanionAppConstants.ChatRelativeUrl}/message",
-                controllerShortName,
+                $"{AiraCompanionAppConstants.ChatRelativeUrl}/{AiraCompanionAppConstants.ChatMessageUrl}",
                 nameof(AiraCompanionAppController.PostChatMessage),
                 (controller, request) => controller.PostChatMessage(request)
             ),
             CreateAiraIFormCollectionEndpoint(configuration,
-                 $"{AiraCompanionAppConstants.SmartUploadRelativeUrl}/upload",
-                controllerShortName,
+                 $"{AiraCompanionAppConstants.SmartUploadRelativeUrl}/{AiraCompanionAppConstants.SmartUploadUploadUrl}",
                 nameof(AiraCompanionAppController.PostImages),
                 (controller, request) => controller.PostImages(request)),
             CreateAiraEndpoint(configuration,
                 AiraCompanionAppConstants.SmartUploadRelativeUrl,
-                controllerShortName,
                 nameof(AiraCompanionAppController.Assets),
                 controller => controller.Assets()
             ),
             CreateAiraEndpoint<SignInViewModel>(configuration,
-                "signin",
-                controllerShortName,
+                AiraCompanionAppConstants.SigninRelativeUrl,
                 nameof(AiraCompanionAppController.SignIn),
                 controller => controller.Signin(),
                 (controller, request) => controller.SignIn(request)
             )
-            //),
-            //CreateAiraEndpoint(configuration,
-            //    "manifest.json",
-            //    controllerShortName,
-            //    nameof(AiraCompanionAppController.GetPwaManifest),
-            //    controller => controller.GetPwaManifest()
-            //)
         ];
     }
-    private Endpoint CreateAiraEndpoint<T>(AiraConfigurationItemInfo configurationInfo,
+    private static Endpoint CreateAiraEndpoint<T>(AiraConfigurationItemInfo configurationInfo,
         string subPath,
-        string controllerName,
         string actionName,
         Func<AiraCompanionAppController, Task<IActionResult>> paramlessAction,
         Func<AiraCompanionAppController, T, Task<IActionResult>> actionWithForm) where T : class, new()
         => CreateEndpoint($"{configurationInfo.AiraConfigurationItemAiraPathBase}/{subPath}", async context =>
         {
-            var routeData = new RouteData();
-            routeData.Values["controller"] = controllerName;
-            routeData.Values["action"] = actionName;
+            var airaController = await GetAiraCompanionAppControllerInContext(context, actionName);
 
-            var actionDescriptor = new ControllerActionDescriptor
+            if (context.Request.ContentType != null &&
+                context.Request.ContentType.Contains("application/x-www-form-urlencoded"))
             {
-                ControllerName = controllerName,
-                ActionName = actionName,
-                ControllerTypeInfo = typeof(AiraCompanionAppController).GetTypeInfo()
-            };
+                var form = await context.Request.ReadFormAsync();
+                var requestObject = new T();
+                foreach (string key in form.Keys)
+                {
+                    var property = typeof(T).GetProperty(key, BindingFlags.Public | BindingFlags.Instance | BindingFlags.IgnoreCase);
 
-            var actionContext = new ActionContext(context, routeData, actionDescriptor);
-            var controllerContext = new ControllerContext(actionContext);
-            var controllerFactory = context.RequestServices.GetRequiredService<IControllerFactory>();
-            object controller = controllerFactory.CreateController(controllerContext);
+                    string value = form[key].ToString();
 
-            if (controller is AiraCompanionAppController airaController)
+                    property?.SetValue(requestObject, Convert.ChangeType(value, property.PropertyType));
+                }
+
+                var result = await actionWithForm.Invoke(airaController, requestObject);
+
+                await result.ExecuteResultAsync(airaController.ControllerContext);
+            }
+            else if (context.Request.ContentLength > 0 && context.Request.ContentType == "application/json")
             {
-                airaController.ControllerContext = controllerContext;
-                airaController.ControllerContext.HttpContext = context;
-
-                if (context.Request.ContentType != null &&
-                    context.Request.ContentType.Contains("application/x-www-form-urlencoded"))
+                var requestObject = new T();
+                using var reader = new StreamReader(context.Request.Body);
+                string body = await reader.ReadToEndAsync();
+                requestObject = JsonSerializer.Deserialize<T>(body, new JsonSerializerOptions
                 {
-                    var form = await context.Request.ReadFormAsync(); // Parse form data
-                    var requestObject = new T();
-                    foreach (string key in form.Keys)
-                    {
-                        var property = typeof(T).GetProperty(key, BindingFlags.Public | BindingFlags.Instance | BindingFlags.IgnoreCase);
-                        property?.SetValue(requestObject, Convert.ChangeType(form[key], property.PropertyType));
-                    }
+                    PropertyNameCaseInsensitive = true
+                })!;
 
-                    var result = await actionWithForm.Invoke(airaController, requestObject);
+                var result = await actionWithForm.Invoke(airaController, requestObject);
 
-                    await result.ExecuteResultAsync(controllerContext);
-                }
-                else if (context.Request.ContentLength > 0 && context.Request.ContentType == "application/json")
-                {
-                    var requestObject = new T();
-                    using var reader = new StreamReader(context.Request.Body);
-                    string body = await reader.ReadToEndAsync();
-                    requestObject = JsonSerializer.Deserialize<T>(body, new JsonSerializerOptions
-                    {
-                        PropertyNameCaseInsensitive = true
-                    })!;
+                await result.ExecuteResultAsync(airaController.ControllerContext);
+            }
+            else
+            {
+                var result = await paramlessAction.Invoke(airaController);
 
-                    var result = await actionWithForm.Invoke(airaController, requestObject);
-
-                    await result.ExecuteResultAsync(controllerContext);
-                }
-                else
-                {
-                    var result = await paramlessAction.Invoke(airaController);
-
-                    await result.ExecuteResultAsync(controllerContext);
-                }
+                await result.ExecuteResultAsync(airaController.ControllerContext);
             }
         });
-    private Endpoint CreateAiraEndpoint(AiraConfigurationItemInfo configurationInfo, string subPath, string controllerName, string actionName, Func<AiraCompanionAppController, Task<IActionResult>> action) =>
+
+    private static Endpoint CreateAiraEndpoint(AiraConfigurationItemInfo configurationInfo, string subPath, string actionName, Func<AiraCompanionAppController, Task<IActionResult>> action) =>
         CreateEndpoint($"{configurationInfo.AiraConfigurationItemAiraPathBase}/{subPath}", async context =>
         {
-            var routeData = new RouteData();
-            routeData.Values["controller"] = controllerName;
-            routeData.Values["action"] = actionName;
+            var airaController = await GetAiraCompanionAppControllerInContext(context, actionName);
 
-            var actionDescriptor = new ControllerActionDescriptor
-            {
-                ControllerName = controllerName,
-                ActionName = actionName,
-                ControllerTypeInfo = typeof(AiraCompanionAppController).GetTypeInfo()
-            };
+            var result = await action.Invoke(airaController);
 
-            var actionContext = new ActionContext(context, routeData, actionDescriptor);
-            var controllerContext = new ControllerContext(actionContext);
-            var controllerFactory = context.RequestServices.GetRequiredService<IControllerFactory>();
-            object controller = controllerFactory.CreateController(controllerContext);
-
-            if (controller is AiraCompanionAppController airaController)
-            {
-                airaController.ControllerContext = controllerContext;
-                airaController.ControllerContext.HttpContext = context;
-
-                var result = await action.Invoke(airaController);
-
-                await result.ExecuteResultAsync(controllerContext);
-            }
+            await result.ExecuteResultAsync(airaController.ControllerContext);
         });
-    private Endpoint CreateAiraIFormCollectionEndpoint(AiraConfigurationItemInfo configurationItemInfo, string subPath, string controllerName, string actionName, Func<AiraCompanionAppController, IFormCollection, Task<IActionResult>> action)
-        => CreateEndpoint($"{configurationItemInfo.AiraConfigurationItemAiraPathBase}/{subPath}", async context =>
+
+    private static Endpoint CreateAiraIFormCollectionEndpoint(AiraConfigurationItemInfo configurationItemInfo, string subPath, string actionName, Func<AiraCompanionAppController, IFormCollection, Task<IActionResult>> action)
+    => CreateEndpoint($"{configurationItemInfo.AiraConfigurationItemAiraPathBase}/{subPath}", async context =>
+    {
+        var airaController = await GetAiraCompanionAppControllerInContext(context, actionName);
+
+        if (context.Request.ContentType == null)
         {
-            var routeData = new RouteData();
-            routeData.Values["controller"] = controllerName;
-            routeData.Values["action"] = actionName;
-
-            var actionDescriptor = new ControllerActionDescriptor
-            {
-                ControllerName = controllerName,
-                ActionName = actionName,
-                ControllerTypeInfo = typeof(AiraCompanionAppController).GetTypeInfo()
-            };
-
-            var actionContext = new ActionContext(context, routeData, actionDescriptor);
-            var controllerContext = new ControllerContext(actionContext);
-            var controllerFactory = context.RequestServices.GetRequiredService<IControllerFactory>();
-            object controller = controllerFactory.CreateController(controllerContext);
-
-            if (controller is AiraCompanionAppController airaController)
-            {
-                airaController.ControllerContext = controllerContext;
-                airaController.ControllerContext.HttpContext = context;
-
-                if (context.Request.ContentType == null)
-                {
-                    return;
-                }
-                if (context.Request.ContentType.Contains("multipart/form-data"))
-                {
-                    var requestObject = await context.Request.ReadFormAsync();
-                    var result = await action.Invoke(airaController, requestObject);
-                    await result.ExecuteResultAsync(controllerContext);
-                }
-                else if (context.Request.ContentType == "application/json")
-                {
-                    using var reader = new StreamReader(context.Request.Body);
-                    string body = await reader.ReadToEndAsync();
-
-                    var formCollection = new FormCollection(new Dictionary<string, StringValues>
-                    {
-                        { "message", body }
-                    });
-
-                    var result = await action.Invoke(airaController, formCollection);
-                    await result.ExecuteResultAsync(controllerContext);
-                }
-            }
-        });
-    private Endpoint CreateAiraEndpoint<T>(AiraConfigurationItemInfo configurationInfo, string subPath, string controllerName, string actionName, Func<AiraCompanionAppController, T, Task<IActionResult>> action) where T : class, new()
-        => CreateEndpoint($"{configurationInfo.AiraConfigurationItemAiraPathBase}/{subPath}", async context =>
+            return;
+        }
+        if (context.Request.ContentType.Contains("multipart/form-data"))
         {
-            var routeData = new RouteData();
-            routeData.Values["controller"] = controllerName;
-            routeData.Values["action"] = actionName;
+            var requestObject = await context.Request.ReadFormAsync();
+            var result = await action.Invoke(airaController, requestObject);
+            await result.ExecuteResultAsync(airaController.ControllerContext);
+        }
+        else if (context.Request.ContentType == "application/json")
+        {
+            using var reader = new StreamReader(context.Request.Body);
+            string body = await reader.ReadToEndAsync();
 
-            var actionDescriptor = new ControllerActionDescriptor
+            var formCollection = new FormCollection(new Dictionary<string, StringValues>
             {
-                ControllerName = controllerName,
-                ActionName = actionName,
-                ControllerTypeInfo = typeof(AiraCompanionAppController).GetTypeInfo()
-            };
+                { "message", body }
+            });
 
-            var actionContext = new ActionContext(context, routeData, actionDescriptor);
-            var controllerContext = new ControllerContext(actionContext);
-            var controllerFactory = context.RequestServices.GetRequiredService<IControllerFactory>();
-            object controller = controllerFactory.CreateController(controllerContext);
+            var result = await action.Invoke(airaController, formCollection);
+            await result.ExecuteResultAsync(airaController.ControllerContext);
+        }
+    });
 
-            if (controller is AiraCompanionAppController airaController)
+    private static async Task<AiraCompanionAppController> GetAiraCompanionAppControllerInContext(HttpContext context, string actionName)
+    {
+        string controllerShortName = nameof(AiraCompanionAppController).Replace("Controller", string.Empty);
+
+        var routeData = new RouteData();
+        routeData.Values["controller"] = controllerShortName;
+        routeData.Values["action"] = actionName;
+
+        var actionDescriptor = new ControllerActionDescriptor
+        {
+            ControllerName = controllerShortName,
+            ActionName = actionName,
+            ControllerTypeInfo = typeof(AiraCompanionAppController).GetTypeInfo()
+        };
+
+        await AuthenticateAiraEndpoint(context);
+
+        var actionContext = new ActionContext(context, routeData, actionDescriptor);
+        var controllerContext = new ControllerContext(actionContext);
+        var controllerFactory = context.RequestServices.GetRequiredService<IControllerFactory>();
+        var airaController = (AiraCompanionAppController)controllerFactory.CreateController(controllerContext);
+
+        airaController.ControllerContext = controllerContext;
+        airaController.ControllerContext.HttpContext = context;
+
+        return airaController;
+    }
+
+    private static async Task AuthenticateAiraEndpoint(HttpContext context)
+    {
+        if (context.User?.Identity == null || !context.User.Identity.IsAuthenticated)
+        {
+            var authenticateResult = await context.RequestServices
+                .GetRequiredService<IAuthenticationService>()
+                .AuthenticateAsync(context, AiraCompanionAppConstants.XperienceAdminSchemeName);
+
+            if (authenticateResult.Succeeded && authenticateResult.Principal != null)
             {
-                airaController.ControllerContext = controllerContext;
-                airaController.ControllerContext.HttpContext = context;
-                var requestObject = new T();
-
-                if (context.Request.ContentType == null)
-                {
-                    return;
-                }
-
-                if (context.Request.ContentType.Contains("application/x-www-form-urlencoded"))
-                {
-                    var form = await context.Request.ReadFormAsync();
-                    foreach (string key in form.Keys)
-                    {
-                        var property = typeof(T).GetProperty(key, BindingFlags.Public | BindingFlags.Instance | BindingFlags.IgnoreCase);
-                        property?.SetValue(requestObject, Convert.ChangeType(form[key], property.PropertyType));
-                    }
-                }
-                else if (context.Request.ContentLength > 0 && (context.Request.ContentType == "application/json"))
-                {
-                    using var reader = new StreamReader(context.Request.Body);
-                    string body = await reader.ReadToEndAsync();
-                    requestObject = JsonSerializer.Deserialize<T>(body, new JsonSerializerOptions
-                    {
-                        PropertyNameCaseInsensitive = true
-                    })!;
-                }
-                else
-                {
-                    return;
-                }
-
-                var result = await action.Invoke(airaController, requestObject);
-
-                await result.ExecuteResultAsync(controllerContext);
+                context.User = authenticateResult.Principal;
             }
-        });
+        }
+    }
+
     private static Endpoint CreateEndpoint(string pattern, RequestDelegate requestDelegate) =>
         new RouteEndpointBuilder(
             requestDelegate: requestDelegate,
             routePattern: RoutePatternFactory.Parse(pattern),
             order: 0)
         .Build();
-}
-
-internal abstract class MutableEndpointDataSource : EndpointDataSource
-{
-    private readonly object endpointLock = new();
-    private IReadOnlyList<Endpoint> endpoints = [];
-    private CancellationTokenSource cancellationTokenSource;
-    private IChangeToken changeToken;
-    protected MutableEndpointDataSource(CancellationTokenSource cancellationTokenSource, IChangeToken changeToken)
-    {
-        SetEndpoints(endpoints);
-        this.cancellationTokenSource = cancellationTokenSource;
-        this.changeToken = changeToken;
-    }
-    public override IChangeToken GetChangeToken() => changeToken;
-    public override IReadOnlyList<Endpoint> Endpoints => endpoints;
-    protected void SetEndpoints(IReadOnlyList<Endpoint> endpoints)
-    {
-        lock (endpointLock)
-        {
-            var oldCancellationTokenSource = cancellationTokenSource;
-            this.endpoints = endpoints;
-            cancellationTokenSource = new CancellationTokenSource();
-            changeToken = new CancellationChangeToken(cancellationTokenSource.Token);
-            oldCancellationTokenSource?.Cancel();
-        }
-    }
 }

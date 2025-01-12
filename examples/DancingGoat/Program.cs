@@ -16,10 +16,6 @@ using Microsoft.AspNetCore.Mvc;
 using Samples.DancingGoat;
 
 using CMS.Base;
-using CMS.EmailEngine;
-using System.Text;
-using Kentico.Xperience.Aira.Membership;
-
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -117,7 +113,7 @@ app.Run();
 
 static void ConfigureMembershipServices(IServiceCollection services)
 {
-    services.AddIdentityCore<ApplicationUser>(options =>
+    services.AddIdentity<ApplicationUser, NoOpApplicationRole>(options =>
     {
         options.Password.RequireDigit = false;
         options.Password.RequireNonAlphanumeric = false;
@@ -128,36 +124,10 @@ static void ConfigureMembershipServices(IServiceCollection services)
         // Ensures, that disabled member cannot sign in.
         options.SignIn.RequireConfirmedAccount = true;
     })
-        .AddRoles<NoOpApplicationRole>()
-        .AddUserStore<ApplicationUserStore<ApplicationUser>>()
-        .AddRoleStore<NoOpApplicationRoleStore>()
-        .AddUserManager<UserManager<ApplicationUser>>()
-        .AddSignInManager<SignInManager<ApplicationUser>>();
-
-    services.AddIdentityCore<Member>()
-        .AddRoles<NoOpApplicationRole>()
-        .AddUserStore<ApplicationUserStore<Member>>()
-        .AddRoleStore<NoOpApplicationRoleStore>()
-        .AddUserManager<UserManager<Member>>()
-        .AddSignInManager<SignInManager<Member>>()
-        .AddDefaultTokenProviders();
-
-
-    services.AddAuthentication(options => options.DefaultScheme = "Identity.Application")
-        .AddCookie("Identity.Application", options => options.LoginPath = "/AiraCompanionApp/SignIn");
-
-    services.AddXperienceSystemSmtp(options =>
-    {
-        options.Server = new SmtpServer
-        {
-            Host = "smtp.gmail.com",
-            Port = 587,
-            UserName = "ivana.tacikova@gmail.com",
-            Password = "gfsx twjx jyhr adni"
-        };
-        options.Encoding = Encoding.UTF8;
-        options.TransferEncoding = System.Net.Mime.TransferEncoding.QuotedPrintable;
-    });
+       .AddUserStore<ApplicationUserStore<ApplicationUser>>()
+       .AddRoleStore<NoOpApplicationRoleStore>()
+       .AddUserManager<UserManager<ApplicationUser>>()
+       .AddSignInManager<SignInManager<ApplicationUser>>();
 
     services.ConfigureApplicationCookie(options =>
     {

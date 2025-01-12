@@ -5,7 +5,6 @@ using CMS.FormEngine;
 using CMS.Membership;
 using CMS.Modules;
 
-using Kentico.Xperience.Admin.Base.Forms;
 using Kentico.Xperience.Aira.Admin.InfoModels;
 
 namespace Kentico.Xperience.Aira.Admin;
@@ -31,14 +30,13 @@ internal class AiraModuleInstaller(
     }
     private ResourceInfo InstallModule()
     {
-        var resourceInfo = resourceInfoProvider.Get(AiraConstants.ResourceName)
-            ?? resourceInfoProvider.Get("Kentico.Xperience.Aira")
+        var resourceInfo = resourceInfoProvider.Get(AiraCompanionAppConstants.ResourceName)
             ?? new ResourceInfo();
 
-        resourceInfo.ResourceDisplayName = AiraConstants.ResourceDisplayName;
-        resourceInfo.ResourceName = AiraConstants.ResourceName;
-        resourceInfo.ResourceDescription = AiraConstants.ResourceDescription;
-        resourceInfo.ResourceIsInDevelopment = AiraConstants.ResourceIsInDevelopment;
+        resourceInfo.ResourceDisplayName = AiraCompanionAppConstants.ResourceDisplayName;
+        resourceInfo.ResourceName = AiraCompanionAppConstants.ResourceName;
+        resourceInfo.ResourceDescription = AiraCompanionAppConstants.ResourceDescription;
+        resourceInfo.ResourceIsInDevelopment = AiraCompanionAppConstants.ResourceIsInDevelopment;
         if (resourceInfo.HasChanged)
         {
             resourceInfoProvider.Set(resourceInfo);
@@ -66,36 +64,6 @@ internal class AiraModuleInstaller(
         var formInfo = FormHelper.GetBasicFormDefinition(nameof(AiraConfigurationItemInfo.AiraConfigurationItemId));
 
         formInfo = AddFormItems(formInfo);
-
-        //var formItem = new FormFieldInfo
-        //{
-        //    Name = nameof(AiraConfigurationItemInfo.AiraConfigurationItemAiraPathBase),
-        //    Visible = true,
-        //    DataType = FieldDataType.Text,
-        //    Enabled = true,
-        //    AllowEmpty = false
-        //};
-        //formInfo.AddFormItem(formItem);
-
-        //formItem = new FormFieldInfo
-        //{
-        //    Name = nameof(AiraConfigurationItemInfo.AiraConfigurationItemAiraRelativeLogoUrl),
-        //    Visible = true,
-        //    DataType = FieldDataType.Text,
-        //    Enabled = true,
-        //    AllowEmpty = false
-        //};
-        //formInfo.AddFormItem(formItem);
-
-        //formItem = new FormFieldInfo
-        //{
-        //    Name = nameof(AiraConfigurationItemInfo.AiraConfigurationItemGuid),
-        //    Visible = false,
-        //    DataType = FieldDataType.Guid,
-        //    Enabled = true,
-        //    AllowEmpty = false
-        //};
-        //formInfo.AddFormItem(formItem);
 
         SetFormDefinition(info, formInfo);
 
@@ -216,15 +184,15 @@ internal class AiraModuleInstaller(
     /// </summary>
     private void CreateAdminRole()
     {
-        var existingRole = roleInfoProvider.Get(AiraConstants.AiraRoleName);
+        var existingRole = roleInfoProvider.Get(AiraCompanionAppConstants.AiraRoleName);
 
         if (existingRole == null)
         {
             RoleInfo newRole = new()
             {
-                RoleDisplayName = AiraConstants.AiraRoleDisplayName,
-                RoleName = AiraConstants.AiraRoleName,
-                RoleDescription = AiraConstants.AiraRoleDescription
+                RoleDisplayName = AiraCompanionAppConstants.AiraRoleDisplayName,
+                RoleName = AiraCompanionAppConstants.AiraRoleName,
+                RoleDescription = AiraCompanionAppConstants.AiraRoleDescription
             };
 
             roleInfoProvider.Set(newRole);

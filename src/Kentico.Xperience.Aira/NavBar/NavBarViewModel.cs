@@ -8,10 +8,3 @@ public class NavBarViewModel
     public MenuItemModel ChatItem { get; set; } = new MenuItemModel();
     public MenuItemModel SmartUploadItem { get; set; } = new MenuItemModel();
 }
-
-public class MenuItemModel
-{
-    public string Title { get; set; } = string.Empty;
-    public string ImagePath { get; set; } = string.Empty;
-    public string Url { get; set; } = string.Empty;
-}

@@ -20,7 +20,7 @@ internal class AiraConfigurationModel
     public string ChatTitle { get; set; } = string.Empty;
 
     [RequiredValidationRule]
-    [AssetSelectorComponent(Label = "Relative Chat Image Url", Order = 3, ExplanationText = "Chat image from a library.", AllowedExtensions = "jpg;jpeg;png", MaximumAssets = 1)]
+    [AssetSelectorComponent(Label = "Chat Image", Order = 3, ExplanationText = "Chat image from a library.", AllowedExtensions = "jpg;jpeg;png", MaximumAssets = 1)]
     public IEnumerable<AssetRelatedItem>? ChatImage { get; set; }
 
     [RequiredValidationRule]

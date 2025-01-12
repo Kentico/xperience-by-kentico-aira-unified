@@ -3,9 +3,12 @@
 using CMS.ContentEngine;
 using CMS.Core;
 using CMS.DataEngine;
+using CMS.DataEngine.Query;
+using CMS.Membership;
 
 using Kentico.Xperience.Aira.Admin;
 using Kentico.Xperience.Aira.Admin.InfoModels;
+using Kentico.Xperience.Aira.Admin.UIPages;
 
 using Microsoft.AspNetCore.Http;
 
@@ -14,27 +17,25 @@ using Path = CMS.IO.Path;
 
 namespace Kentico.Xperience.Aira.Assets;
 
-public interface IAiraAiraAssetService
-{
-    Task HandleFileUpload(IFormFileCollection files, int userId);
-    Task<List<string>> GetUsersUploadedAssetUrls(int userId);
-}
-
-internal class AiraAssetService : IAiraAiraAssetService
+internal class AiraAssetService : IAiraAssetService
 {
     private readonly IInfoProvider<ContentLanguageInfo> contentLanguageProvider;
     private readonly IInfoProvider<SettingsKeyInfo> settingsKeyProvider;
     private readonly IInfoProvider<AiraChatContentItemAssetReferenceInfo> airaChatContentItemAssetReferenceProvider;
     private readonly IContentQueryExecutor contentQueryExecutor;
     private readonly IContentItemAssetRetriever contentItemAssetRetriever;
+    private readonly IInfoProvider<RoleInfo> roleProvider;
 
     public AiraAssetService(IInfoProvider<ContentLanguageInfo> contentLanguageProvider,
         IInfoProvider<SettingsKeyInfo> settingsKeyProvider,
         IInfoProvider<AiraChatContentItemAssetReferenceInfo> airaChatContentItemAssetReferenceProvider,
         IContentQueryExecutor contentQueryExecutor,
-        IContentItemAssetRetriever contentItemAssetRetriever)
+        IContentItemAssetRetriever contentItemAssetRetriever,
+        IInfoProvider<RoleInfo> roleProvider
+        )
     {
         this.contentLanguageProvider = contentLanguageProvider;
+        this.roleProvider = roleProvider;
         this.contentItemAssetRetriever = contentItemAssetRetriever;
         this.contentQueryExecutor = contentQueryExecutor;
         this.settingsKeyProvider = settingsKeyProvider;
@@ -96,11 +97,35 @@ internal class AiraAssetService : IAiraAiraAssetService
         return resultingContentItemAssets.OrderBy(x => x.Created).Select(x => x.Url).ToList();
     }
 
+    public async Task<bool> DoesUserHaveAiraCompanionAppPermission(string permission, int userId)
+    {
+        int countOfRolesWithTheRightWhereUserIsContained = await roleProvider
+            .Get()
+            .Source(x =>
+            {
+                x.InnerJoin<ApplicationPermissionInfo>(
+                    nameof(RoleInfo.RoleID),
+                    nameof(ApplicationPermissionInfo.RoleID)
+                );
+
+                x.InnerJoin<UserRoleInfo>(
+                    nameof(RoleInfo.RoleID),
+                    nameof(UserRoleInfo.RoleID)
+                );
+            })
+            .WhereEquals(nameof(UserRoleInfo.UserID), userId)
+            .WhereEquals(nameof(ApplicationPermissionInfo.ApplicationName), AiraApplicationPage.IDENTIFIER)
+            .WhereEquals(nameof(ApplicationPermissionInfo.PermissionName), permission)
+            .GetCountAsync();
+
+        return countOfRolesWithTheRightWhereUserIsContained > 0;
+    }
+
     public async Task HandleFileUpload(IFormFileCollection files, int userId)
     {
         var massAssetUploadConfiguration = (await settingsKeyProvider
             .Get()
-            .WhereEquals(nameof(SettingsKeyInfo.KeyName), AiraConstants.MassAssetUploadConfigurationKey)
+            .WhereEquals(nameof(SettingsKeyInfo.KeyName), Admin.AiraCompanionAppConstants.MassAssetUploadConfigurationKey)
             .GetEnumerableTypedResultAsync())
             .First();
 
@@ -196,11 +221,4 @@ internal class AiraAssetService : IAiraAiraAssetService
 
         airaChatContentItemAssetReferenceProvider.Set(referenceItem);
     }
-}
-
-public class AiraContentItemAsset
-{
-    public string Url { get; set; } = string.Empty;
-    public int ContentItemID { get; set; }
-    public DateTime? Created { get; set; }
 }
