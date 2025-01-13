@@ -2,10 +2,8 @@
 @using Kentico.Xperience.Aira.Authentication
 @model SignInViewModel
 
-<form asp-route-returnUrl='@Context.Request.Query["ReturnUrl"]' method="post" hx-swap="outerHTML" hx-post
-      hx-controller="Signin" hx-route-returnUrl='@Context.Request.Query["ReturnUrl"]' id="signInForm" test-id="signIn">
+<form asp-route="@Context.Request.Query["Route"]" method="post" id="signInForm" test-id="signIn">
     <div class="form-horizontal">
-
         <div asp-validation-summary="ModelOnly" class="text-danger validation-summary"></div>
 
         <div class="form-group">

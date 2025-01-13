@@ -9,6 +9,10 @@
     var routeUrl = Url.RouteUrl(ViewContext.RouteData.Values)?.ToLowerInvariant() ?? string.Empty;
 }
 
+@section styles {
+    <link href="@baseUrl/_content/Kentico.Xperience.Aira/css/style.css" rel="stylesheet" type="text/css">
+}
+
 <div class="c-app_inner is-loaded">
 
     <div class="c-app_header"></div>

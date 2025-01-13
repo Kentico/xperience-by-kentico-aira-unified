@@ -1,5 +1,4 @@
-﻿using Kentico.Xperience.Aira.Chat.Models;
-using Kentico.Xperience.Aira.NavBar;
+﻿using Kentico.Xperience.Aira.NavBar;
 
 namespace Kentico.Xperience.Aira.AssetUploader.Models;
 

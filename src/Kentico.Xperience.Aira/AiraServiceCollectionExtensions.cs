@@ -1,9 +1,7 @@
-﻿using CMS.EmailEngine;
-
-using Kentico.Xperience.Admin.Base.Forms;
+﻿using Kentico.Xperience.Admin.Base.Forms;
 using Kentico.Xperience.Aira.Admin;
 using Kentico.Xperience.Aira.Assets;
-using Kentico.Xperience.Aira.Services;
+using Kentico.Xperience.Aira.NavBar;
 
 using Microsoft.AspNetCore.Routing;
 
@@ -23,9 +21,9 @@ public static class AiraServiceCollectionExtensions
             .AddSingleton<AiraEndpointDataSource>()
             .AddScoped<ContentItemAssetUploaderComponent>()
             .AddScoped<AiraConfigurationService>()
-            .AddScoped<IAiraAiraAssetService, AiraAssetService>()
-            .AddScoped<AiraUIService>()
-            .AddScoped<SystemEmailOptions>();
+            .AddScoped<IAiraConfigurationService, AiraConfigurationService>()
+            .AddScoped<IAiraAssetService, AiraAssetService>()
+            .AddScoped<INavBarService, NavBarService>();
 
         return services;
     }

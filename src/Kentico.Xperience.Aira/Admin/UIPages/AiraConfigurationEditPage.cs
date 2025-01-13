@@ -20,12 +20,12 @@ namespace Kentico.Xperience.Aira.Admin.UIPages;
 internal class AiraConfigurationEditPage : ModelEditPage<AiraConfigurationModel>
 {
     private AiraConfigurationModel? model = null;
-    private readonly AiraConfigurationService airaConfigurationService;
+    private readonly IAiraConfigurationService airaConfigurationService;
     private readonly IInfoProvider<AiraConfigurationItemInfo> airaConfigurationProvider;
 
     public AiraConfigurationEditPage(Xperience.Admin.Base.Forms.Internal.IFormItemCollectionProvider formItemCollectionProvider,
         IFormDataBinder formDataBinder,
-        AiraConfigurationService airaConfigurationService,
+        IAiraConfigurationService airaConfigurationService,
         IInfoProvider<AiraConfigurationItemInfo> airaConfigurationProvider)
         : base(formItemCollectionProvider, formDataBinder)
     {

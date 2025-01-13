@@ -5,7 +5,7 @@ using Kentico.Xperience.Aira.Admin.InfoModels;
 
 namespace Kentico.Xperience.Aira.Admin;
 
-internal class AiraConfigurationModel
+public class AiraConfigurationModel
 {
     [RequiredValidationRule]
     [TextInputComponent(Label = "Relative Path Base", Order = 0, ExplanationText = "Relative path where the ACA is available. The path is relative to the base url of your application.")]
@@ -20,7 +20,7 @@ internal class AiraConfigurationModel
     public string ChatTitle { get; set; } = string.Empty;
 
     [RequiredValidationRule]
-    [AssetSelectorComponent(Label = "Relative Chat Image Url", Order = 3, ExplanationText = "Chat image from a library.", AllowedExtensions = "jpg;jpeg;png", MaximumAssets = 1)]
+    [AssetSelectorComponent(Label = "Chat Image", Order = 3, ExplanationText = "Chat image from a library.", AllowedExtensions = "jpg;jpeg;png", MaximumAssets = 1)]
     public IEnumerable<AssetRelatedItem>? ChatImage { get; set; }
 
     [RequiredValidationRule]
@@ -87,9 +87,6 @@ internal class AiraConfigurationModel
         return info;
     }
 
-    private string GetImageIdentifier(IEnumerable<AssetRelatedItem>? asset)
-    {
-        return asset?.FirstOrDefault()?.Identifier.ToString() ?? "";
-    }
+    private static string GetImageIdentifier(IEnumerable<AssetRelatedItem>? asset) => asset?.FirstOrDefault()?.Identifier.ToString() ?? "";
 
 }
