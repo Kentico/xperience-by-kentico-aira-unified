@@ -12,7 +12,25 @@
             <div class="container">
                 <deep-chat
                     :avatars="{
-                        ai : { src: `${this.baseUrl}${this.aiIconUrl}` }
+                        ai : { 
+                            src: `${this.baseUrl}${this.aiIconUrl}`,
+                            styles: {
+                                avatar:
+                                {
+                                    height: '3rem',
+                                    width: '3rem'
+                                }
+                            }
+                        },
+                        user : {
+                            styles: {
+                                avatar:
+                                {
+                                    height: '3rem',
+                                    width: '3rem'
+                                }
+                            }
+                        }
                     }"
                     :dropupStyles="{
                         button: {
@@ -47,11 +65,6 @@
                     :connect="{
                         url: `${this.baseUrl}${this.airaBaseUrl}/${this.navBarModel.chatItem.url}/message`,
                         method: 'POST'
-                    }"
-                    :names="{
-                        ai: { text: 'AIRA' },
-                        default: { text: '' },
-                        user: { text: '' }
                     }"
                     :chatStyle="{ height: '100%', width: '100%' }"
                     :history="[]"
