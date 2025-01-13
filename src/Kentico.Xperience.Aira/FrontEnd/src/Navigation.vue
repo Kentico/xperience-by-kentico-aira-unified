@@ -22,11 +22,11 @@
                 <div class="navbar-nav">
                     <div class="c-nav">
                         <div class="c-nav_content" id="aira-menu-submenu-items">
-                            <a class="d-flex align-items-center gap-2 btn" :href="`${this.baseUrl}${this.airaPathBase}/${this.navBarModel.chatItem.url}`">
+                            <a class="d-flex align-items-center gap-2 btn" :href="`${this.baseUrl}${this.airaBaseUrl}/${this.navBarModel.chatItem.url}`">
                                 <img :src="`${this.baseUrl}${this.navBarModel.chatItem.imagePath}`" class="c-icon text-primary" />
                                 {{`${this.navBarModel.chatItem.title}`}}
                             </a>
-                            <a class="d-flex align-tems-center gap-2 btn" :href="`${this.baseUrl}${this.airaPathBase}/${this.navBarModel.smartUploadItem.url}`">
+                            <a class="d-flex align-tems-center gap-2 btn" :href="`${this.baseUrl}${this.airaBaseUrl}/${this.navBarModel.smartUploadItem.url}`">
                                 <img :src="`${this.baseUrl}${this.navBarModel.smartUploadItem.imagePath}`" class="c-icon text-primary" />
                                 {{`${this.navBarModel.smartUploadItem.title}`}}
                             </a>
@@ -52,7 +52,7 @@ export default {
     props: {
         baseUrl: null,
         navBarModel: null,
-        airaPathBase: null
+        airaBaseUrl: null
     },
     data() {
         return {

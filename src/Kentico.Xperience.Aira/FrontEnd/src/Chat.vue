@@ -5,7 +5,7 @@
         </div>
 
         <div class="c-app_header">
-            <NavBarComponent :airaPathBase="pathsModel.pathBase" :navBarModel="navBarModel" :baseUrl="baseUrl"/>
+            <NavBarComponent :airaBaseUrl="airaBaseUrl" :navBarModel="navBarModel" :baseUrl="baseUrl"/>
         </div>
 
         <div class="c-app_body">
@@ -42,7 +42,7 @@
                         }
                     }"
                     :connect="{
-                        url: `${this.baseUrl}${this.pathsModel.pathBase}/${pathsModel.chatMessagePath}`,
+                        url: `${this.baseUrl}${this.airaBaseUrl}/${this.navBarModel.chatItem.url}/message`,
                         method: 'POST'
                     }"
                     :names="{
@@ -85,7 +85,7 @@ export default {
         NavBarComponent
     },
     props: {
-        pathsModel: null,
+        airaBaseUrl: null,
         baseUrl: null,
         navBarModel: null,
         history: [],

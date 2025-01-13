@@ -129,7 +129,7 @@ internal class AiraAssetService : IAiraAiraAssetService
             var createContentItemParameters = new CreateContentItemParameters(contentType.ClassName, null, file.FileName, languageName, "KenticoDefault");
 
             int contentItemId = await CreateContentAssetItem(createContentItemParameters, file, userId, contentItemAssetColumnCodeName);
-            CreateContentAssetItemChatReference(userId, contentType.ClassID, contentItemAssetColumnCodeName, contentItemId);
+            //CreateContentAssetItemChatReference(userId, contentType.ClassID, contentItemAssetColumnCodeName, contentItemId);
         }
     }
 
