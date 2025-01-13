@@ -48,11 +48,13 @@ public class AiraUIService
             {
                 Title = airaConfiguration.AiraConfigurationItemAiraChatTitle,
                 ImagePath = chatImageUrl,
+                MenuImage = $"/{AiraCompanionAppConstants.RCLUrlPrefix}/{AiraCompanionAppConstants.PictureNetworkGraphImgPath}",
                 Url = AiraCompanionAppConstants.ChatRelativeUrl
             },
             SmartUploadItem = new MenuItemModel
             {
                 Title = airaConfiguration.AiraConfigurationItemAiraSmartUploadTitle,
+                MenuImage = $"/{AiraCompanionAppConstants.RCLUrlPrefix}/{AiraCompanionAppConstants.PicturePlaceholderImgPath}",
                 ImagePath = smartUploadImageUrl,
                 Url = AiraCompanionAppConstants.SmartUploadRelativeUrl
             }

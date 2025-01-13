@@ -15,6 +15,9 @@ public static class AiraCompanionAppConstants
     public const string AiraChatAIWelcomeBackMessage = "What can I help you with ?";
 
     public const string RCLUrlPrefix = "_content/Kentico.Xperience.Aira";
+    public const string PicturePlaceholderImgPath = "img/icons/picture-placeholder-purple.svg";
+    public const string PictureNetworkGraphImgPath = "img/icons/network-purple.svg";
+    public const string PictureHatImgPath = "img/icons/magic-hat.svg";
 
     public const string AiraRoleName = "AiraUser";
     public const string AiraRoleDisplayName = "Aira User";

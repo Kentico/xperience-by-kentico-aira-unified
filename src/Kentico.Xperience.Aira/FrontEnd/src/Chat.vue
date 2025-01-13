@@ -11,6 +11,9 @@
         <div class="c-app_body">
             <div class="container">
                 <deep-chat
+                    :avatars="{
+                        ai : { src: `${this.baseUrl}${this.aiIconUrl}` }
+                    }"
                     :dropupStyles="{
                         button: {
                             styles: {
@@ -86,6 +89,7 @@ export default {
     },
     props: {
         airaBaseUrl: null,
+        aiIconUrl: null,
         baseUrl: null,
         navBarModel: null,
         history: [],

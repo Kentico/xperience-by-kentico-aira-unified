@@ -125,7 +125,7 @@ internal class AiraAssetService : IAiraAssetService
     {
         var massAssetUploadConfiguration = (await settingsKeyProvider
             .Get()
-            .WhereEquals(nameof(SettingsKeyInfo.KeyName), Admin.AiraCompanionAppConstants.MassAssetUploadConfigurationKey)
+            .WhereEquals(nameof(SettingsKeyInfo.KeyName), AiraCompanionAppConstants.MassAssetUploadConfigurationKey)
             .GetEnumerableTypedResultAsync())
             .First();
 
@@ -200,7 +200,6 @@ internal class AiraAssetService : IAiraAssetService
         });
 
         int contentItemId = await contentItemManager.Create(createContentItemParameters, itemData);
-        _ = await contentItemManager.TryPublish(contentItemId, createContentItemParameters.LanguageName);
 
         File.Delete(tempFilePath);
         tempDirectory.Delete(true);
