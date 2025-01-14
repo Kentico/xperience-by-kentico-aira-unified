@@ -97,7 +97,7 @@ internal class AiraModuleInstaller : IAiraModuleInstaller
                 continue; // Exclude AiraConfigurationItemId from the loop
             }
 
-            if (property.GetCustomAttributes(typeof(DatabaseFieldAttribute), true).FirstOrDefault() is DatabaseFieldAttribute databaseFieldAttribute)
+            if (property.GetCustomAttributes(typeof(DatabaseFieldAttribute), true).FirstOrDefault() is DatabaseFieldAttribute)
             {
                 var formItem = new FormFieldInfo()
                 {

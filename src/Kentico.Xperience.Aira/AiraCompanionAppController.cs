@@ -1,24 +1,24 @@
-﻿using HotChocolate.Authorization;
+﻿using CMS.Membership;
+
+using HotChocolate.Authorization;
 
 using Htmx;
 
 using Kentico.Membership;
 using Kentico.Xperience.Admin.Base;
 using Kentico.Xperience.Admin.Base.Authentication.Internal;
-
-using Kentico.Xperience.Aira.Chat.Models;
-using Kentico.Xperience.Aira.Authentication;
+using Kentico.Xperience.Aira.Admin;
 using Kentico.Xperience.Aira.Assets;
 using Kentico.Xperience.Aira.AssetUploader.Models;
+using Kentico.Xperience.Aira.Authentication;
+using Kentico.Xperience.Aira.Chat.Models;
+using Kentico.Xperience.Aira.NavBar;
 
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 using SignInResult = Microsoft.AspNetCore.Identity.SignInResult;
-using Kentico.Xperience.Aira.Admin;
-using CMS.Membership;
-using Kentico.Xperience.Aira.NavBar;
 
 namespace Kentico.Xperience.Aira;
 
@@ -80,9 +80,11 @@ public sealed class AiraCompanionAppController : Controller
         return View("~/Chat/Chat.cshtml", chatModel);
     }
 
+#pragma warning disable IDE0060 // Kept for development. We do not yet have AIRA AI api which we could give the messages to.
     [HttpPost]
     public async Task<IActionResult> PostChatMessage(IFormCollection request)
     {
+#pragma warning restore IDE0060 // 
         string airaPathBase = await GetAiraPathBase();
 
         var user = await adminUserManager.GetUserAsync(User);
