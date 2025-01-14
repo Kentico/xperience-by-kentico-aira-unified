@@ -14,7 +14,6 @@ parameters:
     type: string
     default: " "
 
-
 resources:
   repositories:
     - repository: self
@@ -49,7 +48,7 @@ stages:
             value: Release
 
           - name: ProjectPath
-            value: src/PROJECT_NAME/PROJECT_NAME.csproj
+            value: src/Kentico.Xperience.Aira/Kentico.Xperience.Aira.csproj
 
         steps:
           - task: DotNetCoreCLI@2
@@ -59,6 +58,7 @@ stages:
               custom: tool
               arguments: restore
               workingDirectory: $(System.DefaultWorkingDirectory)
+
 
           - task: DotNetCoreCLI@2
             displayName: Restore dependencies
