@@ -35,8 +35,10 @@ internal class NavBarService : INavBarService
         return new NavBarViewModel
         {
             LogoImgRelativePath = logoUrl,
-            TitleImagePath = activePage == AiraCompanionAppConstants.ChatRelativeUrl ? chatImageUrl : smartUploadImageUrl,
-            TitleText = activePage == AiraCompanionAppConstants.ChatRelativeUrl ? airaConfiguration.AiraConfigurationItemAiraChatTitle : airaConfiguration.AiraConfigurationItemAiraSmartUploadTitle,
+            TitleImagePath = string.Equals(activePage, AiraCompanionAppConstants.ChatRelativeUrl) ?
+                chatImageUrl : smartUploadImageUrl,
+            TitleText = string.Equals(activePage, AiraCompanionAppConstants.ChatRelativeUrl) ?
+                airaConfiguration.AiraConfigurationItemAiraChatTitle : airaConfiguration.AiraConfigurationItemAiraSmartUploadTitle,
             ChatItem = new MenuItemModel
             {
                 Title = airaConfiguration.AiraConfigurationItemAiraChatTitle,

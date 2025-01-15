@@ -80,7 +80,7 @@ internal class AiraEndpointDataSource : MutableEndpointDataSource
         {
             var airaController = await GetAiraCompanionAppControllerInContext(context, actionName);
 
-            if (context.Request.ContentType != null &&
+            if (context.Request.ContentType is not null &&
                 context.Request.ContentType.Contains("application/x-www-form-urlencoded"))
             {
                 var form = await context.Request.ReadFormAsync();
@@ -98,7 +98,8 @@ internal class AiraEndpointDataSource : MutableEndpointDataSource
 
                 await result.ExecuteResultAsync(airaController.ControllerContext);
             }
-            else if (context.Request.ContentLength > 0 && context.Request.ContentType == "application/json")
+            else if (context.Request.ContentLength > 0
+                && string.Equals(context.Request.ContentType, "application/json"))
             {
                 var requestObject = new T();
                 using var reader = new StreamReader(context.Request.Body);
@@ -135,7 +136,7 @@ internal class AiraEndpointDataSource : MutableEndpointDataSource
     {
         var airaController = await GetAiraCompanionAppControllerInContext(context, actionName);
 
-        if (context.Request.ContentType == null)
+        if (context.Request.ContentType is null)
         {
             return;
         }
@@ -145,7 +146,7 @@ internal class AiraEndpointDataSource : MutableEndpointDataSource
             var result = await action.Invoke(airaController, requestObject);
             await result.ExecuteResultAsync(airaController.ControllerContext);
         }
-        else if (context.Request.ContentType == "application/json")
+        else if (string.Equals(context.Request.ContentType, "application/json"))
         {
             using var reader = new StreamReader(context.Request.Body);
             string body = await reader.ReadToEndAsync();
@@ -190,13 +191,13 @@ internal class AiraEndpointDataSource : MutableEndpointDataSource
 
     private static async Task AuthenticateAiraEndpoint(HttpContext context)
     {
-        if (context.User?.Identity == null || !context.User.Identity.IsAuthenticated)
+        if (context.User?.Identity is null || !context.User.Identity.IsAuthenticated)
         {
             var authenticateResult = await context.RequestServices
                 .GetRequiredService<IAuthenticationService>()
                 .AuthenticateAsync(context, AiraCompanionAppConstants.XperienceAdminSchemeName);
 
-            if (authenticateResult.Succeeded && authenticateResult.Principal != null)
+            if (authenticateResult.Succeeded && authenticateResult.Principal is not null)
             {
                 context.User = authenticateResult.Principal;
             }

@@ -22,6 +22,9 @@ using SignInResult = Microsoft.AspNetCore.Identity.SignInResult;
 
 namespace Kentico.Xperience.Aira;
 
+/// <summary>
+/// The main controller exposing the PWA.
+/// </summary>
 [ApiController]
 [Route("[controller]/[action]")]
 public sealed class AiraCompanionAppController : Controller
@@ -45,6 +48,9 @@ public sealed class AiraCompanionAppController : Controller
         this.airaUIService = airaUIService;
     }
 
+    /// <summary>
+    /// Endpoint exposing access to the Chat page.
+    /// </summary>
     [HttpGet]
     public async Task<IActionResult> Index()
     {
@@ -80,6 +86,9 @@ public sealed class AiraCompanionAppController : Controller
         return View("~/Chat/Chat.cshtml", chatModel);
     }
 
+    /// <summary>
+    /// Endpoint allowing chat communication via the chat interface.
+    /// </summary>
 #pragma warning disable IDE0060 // Kept for development. We do not yet have AIRA AI api which we could give the messages to.
     [HttpPost]
     public async Task<IActionResult> PostChatMessage(IFormCollection request)
@@ -106,6 +115,9 @@ public sealed class AiraCompanionAppController : Controller
         return Ok(new AiraChatMessage { Role = AiraCompanionAppConstants.AiraChatRoleName, Message = "Ok" });
     }
 
+    /// <summary>
+    /// Endpoint allowing upload of the files via smart upload.
+    /// </summary>
     [HttpPost]
     public async Task<IActionResult> PostImages(IFormCollection request)
     {
@@ -131,6 +143,9 @@ public sealed class AiraCompanionAppController : Controller
         return Ok();
     }
 
+    /// <summary>
+    /// Endpoint allowing accessing the smart upload page.
+    /// </summary>
     [HttpGet]
     public async Task<IActionResult> Assets()
     {
@@ -161,6 +176,10 @@ public sealed class AiraCompanionAppController : Controller
         return View("~/AssetUploader/Assets.cshtml", model);
     }
 
+    /// <summary>
+    /// Endpoint exposing the manifest file for the PWA.
+    /// </summary>
+    /// <returns></returns>
     [HttpGet($"/{AiraCompanionAppConstants.RCLUrlPrefix}/manifest.json")]
     [Produces("application/json")]
     public async Task<IActionResult> GetPwaManifest()
@@ -212,11 +231,17 @@ public sealed class AiraCompanionAppController : Controller
         return $"{baseUrl}{airaPathBase}/{relativeUrl}";
     }
 
+    /// <summary>
+    /// Endpoint retrieving the signin page.
+    /// </summary>
     [HttpGet]
     [AllowAnonymous]
     public Task<IActionResult> Signin()
         => Task.FromResult((IActionResult)View("~/Authentication/SignIn.cshtml"));
 
+    /// <summary>
+    /// Endpoint for signin.
+    /// </summary>
     [HttpPost]
     [AllowAnonymous]
     [ValidateAntiForgeryToken]
