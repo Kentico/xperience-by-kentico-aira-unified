@@ -4,7 +4,7 @@ using CMS.DataEngine.Query;
 using Kentico.Xperience.Aira.Admin.InfoModels;
 
 namespace Kentico.Xperience.Aira.Admin;
-internal class AiraConfigurationService
+internal class AiraConfigurationService : IAiraConfigurationService
 {
     private readonly IInfoProvider<AiraConfigurationItemInfo> airaConfigurationProvider;
     private readonly AiraEndpointDataSource airaEndpointDataSource;
@@ -45,5 +45,13 @@ internal class AiraConfigurationService
         airaEndpointDataSource.UpdateEndpoints();
 
         return true;
+    }
+
+    public async Task<AiraConfigurationItemInfo> GetAiraConfiguration()
+    {
+        var airaConfigurationItemList = await airaConfigurationProvider.Get().GetEnumerableTypedResultAsync();
+
+        return airaConfigurationItemList.SingleOrDefault()
+            ?? throw new InvalidOperationException("Aira has not been configured yet.");
     }
 }

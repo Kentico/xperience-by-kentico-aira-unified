@@ -5,7 +5,7 @@ using Kentico.Xperience.Aira.Admin.InfoModels;
 
 namespace Kentico.Xperience.Aira.Admin;
 
-internal class AiraConfigurationModel
+public class AiraConfigurationModel
 {
     [RequiredValidationRule]
     [TextInputComponent(Label = "Relative Path Base", Order = 0, ExplanationText = "Relative path where the ACA is available. The path is relative to the base url of your application.")]
@@ -20,16 +20,8 @@ internal class AiraConfigurationModel
     public string ChatTitle { get; set; } = string.Empty;
 
     [RequiredValidationRule]
-    [AssetSelectorComponent(Label = "Chat Image", Order = 3, ExplanationText = "Chat image from a library.", AllowedExtensions = "jpg;jpeg;png", MaximumAssets = 1)]
-    public IEnumerable<AssetRelatedItem>? ChatImage { get; set; }
-
-    [RequiredValidationRule]
     [TextInputComponent(Label = "Smart Upload Title", Order = 5, ExplanationText = "Title of the smart upload.")]
     public string SmartUploadTitle { get; set; } = string.Empty;
-
-    [RequiredValidationRule]
-    [AssetSelectorComponent(Label = "Smart Upload Image", Order = 6, ExplanationText = "Smart Upload Image from a library.", AllowedExtensions = "jpg;jpeg;png", MaximumAssets = 1)]
-    public IEnumerable<AssetRelatedItem>? SmartUploadImage { get; set; }
 
     public AiraConfigurationModel() { }
 
@@ -51,25 +43,7 @@ internal class AiraConfigurationModel
 
         ChatTitle = info.AiraConfigurationItemAiraChatTitle;
 
-        if (Guid.TryParse(info.AiraConfigurationItemAiraRelativeChatImgId, out var relativeChatImageUrlGuid))
-        {
-            var relativeChatImageUrlAsset = new AssetRelatedItem
-            {
-                Identifier = relativeChatImageUrlGuid
-            };
-            ChatImage = [relativeChatImageUrlAsset];
-        }
-
         SmartUploadTitle = info.AiraConfigurationItemAiraSmartUploadTitle;
-
-        if (Guid.TryParse(info.AiraConfigurationItemAiraSmartUploadImgId, out var relativeSmartUploadImgUrlGuid))
-        {
-            var relativeSmartUploadImgUrl = new AssetRelatedItem
-            {
-                Identifier = relativeSmartUploadImgUrlGuid
-            };
-            SmartUploadImage = [relativeSmartUploadImgUrl];
-        }
     }
 
     public AiraConfigurationItemInfo MapToAiraConfigurationInfo(AiraConfigurationItemInfo? info = null)
@@ -79,17 +53,12 @@ internal class AiraConfigurationModel
         info.AiraConfigurationItemAiraRelativeLogoId = GetImageIdentifier(Logo);
 
         info.AiraConfigurationItemAiraChatTitle = ChatTitle;
-        info.AiraConfigurationItemAiraRelativeChatImgId = GetImageIdentifier(ChatImage);
 
         info.AiraConfigurationItemAiraSmartUploadTitle = SmartUploadTitle;
-        info.AiraConfigurationItemAiraSmartUploadImgId = GetImageIdentifier(SmartUploadImage);
 
         return info;
     }
 
-    private string GetImageIdentifier(IEnumerable<AssetRelatedItem>? asset)
-    {
-        return asset?.FirstOrDefault()?.Identifier.ToString() ?? "";
-    }
+    private static string GetImageIdentifier(IEnumerable<AssetRelatedItem>? asset) => asset?.FirstOrDefault()?.Identifier.ToString() ?? "";
 
 }

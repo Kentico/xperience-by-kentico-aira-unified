@@ -8,6 +8,5 @@ public class ChatViewModel
     public int HistoryMessageCount { get; set; }
     public List<AiraChatMessage> History { get; set; } = [];
     public string PathBase { get; set; } = string.Empty;
-    public string InitialAiraMessage { get; set; } = string.Empty;
     public string AIIconImagePath { get; set; } = string.Empty;
 }

@@ -7,7 +7,6 @@ using CMS.DataEngine.Query;
 using CMS.Membership;
 
 using Kentico.Xperience.Aira.Admin;
-using Kentico.Xperience.Aira.Admin.InfoModels;
 using Kentico.Xperience.Aira.Admin.UIPages;
 
 using Microsoft.AspNetCore.Http;
@@ -21,80 +20,16 @@ internal class AiraAssetService : IAiraAssetService
 {
     private readonly IInfoProvider<ContentLanguageInfo> contentLanguageProvider;
     private readonly IInfoProvider<SettingsKeyInfo> settingsKeyProvider;
-    private readonly IInfoProvider<AiraChatContentItemAssetReferenceInfo> airaChatContentItemAssetReferenceProvider;
-    private readonly IContentQueryExecutor contentQueryExecutor;
-    private readonly IContentItemAssetRetriever contentItemAssetRetriever;
     private readonly IInfoProvider<RoleInfo> roleProvider;
 
     public AiraAssetService(IInfoProvider<ContentLanguageInfo> contentLanguageProvider,
         IInfoProvider<SettingsKeyInfo> settingsKeyProvider,
-        IInfoProvider<AiraChatContentItemAssetReferenceInfo> airaChatContentItemAssetReferenceProvider,
-        IContentQueryExecutor contentQueryExecutor,
-        IContentItemAssetRetriever contentItemAssetRetriever,
         IInfoProvider<RoleInfo> roleProvider
         )
     {
         this.contentLanguageProvider = contentLanguageProvider;
         this.roleProvider = roleProvider;
-        this.contentItemAssetRetriever = contentItemAssetRetriever;
-        this.contentQueryExecutor = contentQueryExecutor;
         this.settingsKeyProvider = settingsKeyProvider;
-        this.airaChatContentItemAssetReferenceProvider = airaChatContentItemAssetReferenceProvider;
-    }
-
-    public async Task<List<string>> GetUsersUploadedAssetUrls(int userId)
-    {
-        var contentItemAssetReferences = (await airaChatContentItemAssetReferenceProvider
-            .Get()
-            .Source(x => x.InnerJoin<DataClassInfo>(
-                nameof(AiraChatContentItemAssetReferenceInfo.AiraChatContentItemAssetReferenceContentTypeDataClassInfoID),
-                nameof(DataClassInfo.ClassID)
-            ))
-            .WhereEquals(nameof(AiraChatContentItemAssetReferenceInfo.AiraChatContentItemAssetReferenceUserID), userId)
-            .Columns(nameof(AiraChatContentItemAssetReferenceInfo.AiraChatContentItemAssetReferenceContentItemID),
-                nameof(DataClassInfo.ClassName),
-                nameof(AiraChatContentItemAssetReferenceInfo.AiraChatContentItemAssetReferenceContentTypeAssetFieldName),
-                nameof(AiraChatContentItemAssetReferenceInfo.AiraChatContentItemAssetReferenceUploadTime))
-            .GetDataContainerResultAsync())
-            .GroupBy(x =>
-                new
-                {
-                    className = x[nameof(DataClassInfo.ClassName)] as string,
-                    columnName = x[nameof(AiraChatContentItemAssetReferenceInfo.AiraChatContentItemAssetReferenceContentTypeAssetFieldName)] as string
-                }
-            );
-
-        var resultingContentItemAssets = new List<AiraContentItemAsset>();
-
-        foreach (var contentType in contentItemAssetReferences)
-        {
-            var builder = new ContentItemQueryBuilder();
-            builder.ForContentType(contentType.Key.className, parameters => parameters
-                .Where(where => where.WhereIn(nameof(ContentItemFields.ContentItemID), contentType
-                        .Select(x => (int)x[nameof(AiraChatContentItemAssetReferenceInfo.AiraChatContentItemAssetReferenceContentItemID)])
-                        .ToList()
-                    )
-                )
-            );
-
-            var contentItemAssets = await contentQueryExecutor.GetResult(builder, async x => new AiraContentItemAsset
-            {
-                Url = (await contentItemAssetRetriever.Retrieve(x, contentType.Key.columnName)).Url,
-                ContentItemID = x.ContentItemID
-            });
-
-            resultingContentItemAssets.AddRange(contentItemAssets.Join(contentType.ToList(),
-                x => x.ContentItemID,
-                y => y[nameof(AiraChatContentItemAssetReferenceInfo.AiraChatContentItemAssetReferenceContentItemID)],
-                (x, y) =>
-                {
-                    x.Created = (DateTime)y[nameof(AiraChatContentItemAssetReferenceInfo.AiraChatContentItemAssetReferenceUploadTime)];
-                    return x;
-                })
-            );
-        }
-
-        return resultingContentItemAssets.OrderBy(x => x.Created).Select(x => x.Url).ToList();
     }
 
     public async Task<bool> DoesUserHaveAiraCompanionAppPermission(string permission, int userId)
@@ -153,8 +88,7 @@ internal class AiraAssetService : IAiraAssetService
         {
             var createContentItemParameters = new CreateContentItemParameters(contentType.ClassName, null, file.FileName, languageName, "KenticoDefault");
 
-            int contentItemId = await CreateContentAssetItem(createContentItemParameters, file, userId, contentItemAssetColumnCodeName);
-            //CreateContentAssetItemChatReference(userId, contentType.ClassID, contentItemAssetColumnCodeName, contentItemId);
+            await CreateContentAssetItem(createContentItemParameters, file, userId, contentItemAssetColumnCodeName);
         }
     }
 
@@ -190,11 +124,6 @@ internal class AiraAssetService : IAiraAssetService
         var fileSource = new ContentItemAssetStreamSource((CancellationToken cancellationToken) => Task.FromResult<Stream>(fileStream));
         var assetMetadataWithSource = new ContentItemAssetMetadataWithSource(fileSource, assetMetadata);
 
-        //assetMetadataWithSource.SetOptimizationParameters(new ImageOptimizationParameters
-        //{
-        //    Quality = 100
-        //});
-
         var itemData = new ContentItemData(new Dictionary<string, object>{
             { contentItemAssetColumnCodeName, assetMetadataWithSource }
         });
@@ -205,19 +134,5 @@ internal class AiraAssetService : IAiraAssetService
         tempDirectory.Delete(true);
 
         return contentItemId;
-    }
-
-    private void CreateContentAssetItemChatReference(int userId, int classId, string fieldName, int contentItemId)
-    {
-        var referenceItem = new AiraChatContentItemAssetReferenceInfo
-        {
-            AiraChatContentItemAssetReferenceUserID = userId,
-            AiraChatContentItemAssetReferenceContentTypeDataClassInfoID = classId,
-            AiraChatContentItemAssetReferenceContentTypeAssetFieldName = fieldName,
-            AiraChatContentItemAssetReferenceUploadTime = DateTime.Now,
-            AiraChatContentItemAssetReferenceContentItemID = contentItemId
-        };
-
-        airaChatContentItemAssetReferenceProvider.Set(referenceItem);
     }
 }

@@ -12,7 +12,25 @@
             <div class="container">
                 <deep-chat
                     :avatars="{
-                        ai : { src: `${this.baseUrl}${this.aiIconUrl}` }
+                        ai : { 
+                            src: `${this.baseUrl}${this.aiIconUrl}`,
+                            styles: {
+                                avatar:
+                                {
+                                    height: '3rem',
+                                    width: '3rem'
+                                }
+                            }
+                        },
+                        user : {
+                            styles: {
+                                avatar:
+                                {
+                                    height: '3rem',
+                                    width: '3rem'
+                                }
+                            }
+                        }
                     }"
                     :dropupStyles="{
                         button: {
@@ -47,11 +65,6 @@
                     :connect="{
                         url: `${this.baseUrl}${this.airaBaseUrl}/${this.navBarModel.chatItem.url}/message`,
                         method: 'POST'
-                    }"
-                    :names="{
-                        ai: { text: 'AIRA' },
-                        default: { text: '' },
-                        user: { text: '' }
                     }"
                     :chatStyle="{ height: '100%', width: '100%' }"
                     :history="[]"
@@ -92,8 +105,7 @@ export default {
         aiIconUrl: null,
         baseUrl: null,
         navBarModel: null,
-        history: [],
-        initialAiraMessage: null
+        history: []
     },
     data() {
         return {
@@ -321,11 +333,6 @@ export default {
                 const viewModel = this.getMessageViewModel(x)
                 this.$refs.chatElementRef.history.push(viewModel);
             }
-
-            this.$refs.chatElementRef.history.push({
-                role: "ai",
-                text: this.initialAiraMessage
-            });
         },
         getMessageViewModel(message) {
             if (message.url !== null)
