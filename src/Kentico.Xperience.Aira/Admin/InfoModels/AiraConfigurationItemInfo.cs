@@ -66,14 +66,6 @@ public partial class AiraConfigurationItemInfo : AbstractInfo<AiraConfigurationI
 
     [DatabaseField]
     [Required]
-    public virtual string AiraConfigurationItemAiraRelativeChatImgId
-    {
-        get => ValidationHelper.GetString(GetValue(nameof(AiraConfigurationItemAiraRelativeChatImgId)), string.Empty);
-        set => SetValue(nameof(AiraConfigurationItemAiraRelativeChatImgId), value);
-    }
-
-    [DatabaseField]
-    [Required]
     public virtual string AiraConfigurationItemAiraChatTitle
     {
         get => ValidationHelper.GetString(GetValue(nameof(AiraConfigurationItemAiraChatTitle)), string.Empty);
@@ -86,14 +78,6 @@ public partial class AiraConfigurationItemInfo : AbstractInfo<AiraConfigurationI
     {
         get => ValidationHelper.GetString(GetValue(nameof(AiraConfigurationItemAiraSmartUploadTitle)), string.Empty);
         set => SetValue(nameof(AiraConfigurationItemAiraSmartUploadTitle), value);
-    }
-
-    [DatabaseField]
-    [Required]
-    public virtual string AiraConfigurationItemAiraSmartUploadImgId
-    {
-        get => ValidationHelper.GetString(GetValue(nameof(AiraConfigurationItemAiraSmartUploadImgId)), string.Empty);
-        set => SetValue(nameof(AiraConfigurationItemAiraSmartUploadImgId), value);
     }
 
     [DatabaseField]

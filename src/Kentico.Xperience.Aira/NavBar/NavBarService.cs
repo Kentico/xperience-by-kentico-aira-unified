@@ -29,26 +29,29 @@ internal class NavBarService : INavBarService
         var airaConfiguration = await airaConfigurationService.GetAiraConfiguration();
 
         string logoUrl = GetMediaFileUrl(airaConfiguration.AiraConfigurationItemAiraRelativeLogoId)?.RelativePath ?? defaultImageUrl;
-        string chatImageUrl = GetMediaFileUrl(airaConfiguration.AiraConfigurationItemAiraRelativeChatImgId)?.RelativePath ?? defaultImageUrl;
-        string smartUploadImageUrl = GetMediaFileUrl(airaConfiguration.AiraConfigurationItemAiraSmartUploadImgId)?.RelativePath ?? defaultImageUrl;
+
+
 
         return new NavBarViewModel
         {
             LogoImgRelativePath = logoUrl,
-            TitleImagePath = activePage == AiraCompanionAppConstants.ChatRelativeUrl ? chatImageUrl : smartUploadImageUrl,
+            TitleImagePath = activePage == AiraCompanionAppConstants.ChatRelativeUrl ?
+             $"/{AiraCompanionAppConstants.RCLUrlPrefix}/{AiraCompanionAppConstants.PictureNetworkGraphImgPath}"
+             : $"/{AiraCompanionAppConstants.RCLUrlPrefix}/{AiraCompanionAppConstants.PicturePlaceholderImgPath}",
+
             TitleText = activePage == AiraCompanionAppConstants.ChatRelativeUrl ? airaConfiguration.AiraConfigurationItemAiraChatTitle : airaConfiguration.AiraConfigurationItemAiraSmartUploadTitle,
+
             ChatItem = new MenuItemModel
             {
                 Title = airaConfiguration.AiraConfigurationItemAiraChatTitle,
-                ImagePath = chatImageUrl,
                 MenuImage = $"/{AiraCompanionAppConstants.RCLUrlPrefix}/{AiraCompanionAppConstants.PictureNetworkGraphImgPath}",
                 Url = AiraCompanionAppConstants.ChatRelativeUrl
             },
+
             SmartUploadItem = new MenuItemModel
             {
                 Title = airaConfiguration.AiraConfigurationItemAiraSmartUploadTitle,
                 MenuImage = $"/{AiraCompanionAppConstants.RCLUrlPrefix}/{AiraCompanionAppConstants.PicturePlaceholderImgPath}",
-                ImagePath = smartUploadImageUrl,
                 Url = AiraCompanionAppConstants.SmartUploadRelativeUrl
             }
         };
