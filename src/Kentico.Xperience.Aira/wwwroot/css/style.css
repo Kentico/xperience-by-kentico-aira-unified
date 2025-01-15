@@ -19361,6 +19361,8 @@ button.c-link {
         display: flex;
         flex-direction: column;
         height: 100%;
+        flex-grow: 1;
+        overflow-y: auto;
         width: 100%;
     }
     .c-app_body h1, .c-app_body .h1, .c-app_body h2, .c-app_body .h2, .c-app_body h3, .c-app_body .h3, .c-app_body h4, .c-app_body .h4, .c-app_body h5, .c-app_body .h5, .c-app_body h6, .c-app_body .h6, .c-app_body p {
@@ -20133,5 +20135,22 @@ button.c-link {
 
 .u-text-balanced {
     text-wrap: balance;
+}
+html, body {
+    overflow: hidden;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+.c-app_inner {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.c-app_body {
+    flex-grow: 1;
+    overflow: hidden;
 }
 /*# sourceMappingURL=style.css.map */
