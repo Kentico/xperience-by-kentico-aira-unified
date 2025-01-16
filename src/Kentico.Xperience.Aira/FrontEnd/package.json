@@ -10,8 +10,8 @@
     "build:dev": "webpack --mode=development",
     "build:prod": "webpack --mode=production --node-env=production",
     "watch": "webpack --watch",
-    "build-css": "sass ./src/assets/sass/style.scss ../../wwwroot/css/style.css",
-    "watch-css": "sass --watch ./src/assets/sass/style.scss:../../wwwroot/css/style.css"
+    "build-css": "sass ./src/assets/sass/style.scss ../../Kentico.Xperience.Aira/wwwroot/css/style.css",
+    "watch-css": "sass --watch ./src/assets/sass/style.scss:../../Kentico.Xperience.Aira/wwwroot/css/style.css"
   },
   "devDependencies": {
     "@babel/cli": "^7.25.9",
