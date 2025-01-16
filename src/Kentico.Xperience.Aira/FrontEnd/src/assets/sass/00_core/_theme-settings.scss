@@ -1,0 +1,114 @@
+$k-body-bg: var(--k-body-bg, #fff);
+$k-body-color: var(--k-body-color, #1e1a1b);
+$k-body-color-light: var(--k-body-color, #fff);         // unused
+$k-body-font: var(--k-body-font, "GT Walsheim Pro");
+
+$k-section-bg: var(--k-section-bg,#fff);         // unused
+
+$k-primary: var(--k-primary, #f0561a);
+$k-primary-hover: var(--k-primary-hover, $k-primary);
+$k-primary-active: var(--k-primary-active, $k-primary-hover);
+$k-secondary: var(--k-secondary, #8107c1);
+//$k-secondary-2: var(--k-secondary-2, #AF00FA);
+$k-secondary-hover: var(--k-secondary-hover, $k-secondary);
+$k-secondary-active: var(--k-secondary-active, $k-secondary-hover);
+$k-secondary-light: var(--k-secondary-light, #F7F1FF);
+
+$k-border-radius: var(--k-border-radius, 2rem);
+$k-border-radius-2: var(--k-border-radius-2, $k-border-radius);
+
+$k-nav-link-color: var(--k-nav-link-color, $k-body-color);
+$k-nav-link-hover: var(--k-nav-link-hover, $k-primary);
+$k-nav-link-active: var(--k-nav-link-active, $k-nav-link-hover);
+
+$k-card-bg: var(--k-card-bg, #efe6f9);
+$k-card-bg-hover: var(--k-card-bg-hover, #EBD8FF);
+$k-card-bg-2: var(--k-card-bg-2, $k-secondary);
+$k-card-color: var(--k-card-color, $k-body-color);
+
+$k-hero-color: var(--k-hero-color, $k-body-color);
+$k-hero-color-light: var(--k-hero-color-light, $k-body-color-light);
+$k-hero-overlay-color: var(--k-hero-overlay-color, $k-secondary);
+$k-hero-overlay-opacity: var(--k-hero-overlay-opacity, .5);
+
+$k-circles-hero-small-bg: var(--k-circles-hero-smalle-bg, $k-secondary);
+$k-circles-hero-medium-bg: var(--k-circles-hero-medium-bg, $k-primary);
+$k-circles-hero-big-outline: var(--k-circles-hero-big-outline, $k-body-color);
+
+$k-mock-bg-left: var(--k-mock-bg-left, $k-secondary);
+$k-mock-bg-right: var(--k-mock-bg-right, $k-primary);
+$k-mock-color: var(--k-mock-color, #fff);
+$k-mock-heading-color: var(--k-mock-heading-color, $k-mock-color);
+$k-mock-circle1: var(--k-mock-circle1, $k-primary-hover);
+$k-mock-circle2: var(--k-mock-circle2, rgba(255,255,255,.13));
+
+$k-pricelist-color: var(--k-pricelist-color, $k-card-color);
+$k-pricelist-heading-color: var(--k-pricelist-heading-color, $k-pricelist-color);
+$k-pricelist-bg: var(--k-pricelist-bg, $k-card-bg);
+$k-pricelist-table-bg: var(--k-pricelist-table-bg, $k-body-bg);
+$k-pricelist-table-color: var(--k-pricelist-table-color, $k-body-color);
+$k-pricelist-table-lines: var(--k-pricelist-table-lines, #f0f0f2);
+$k-pricelist-price-color: var(--k-pricelist-price-color, $k-primary);
+
+$k-why-heading-color: var(--k-why-heading-color, $k-body-color);
+$k-why-heading-dot: var(--k-why-heading-dot, $k-primary);
+
+$k-faq-color: var(--k-faq-color, $k-card-color);
+$k-faq-heading-color: var(--k-faq-heading-color, $k-faq-color);
+$k-faq-heading-dot: var(--k-faq-heading-dot, $k-primary);
+$k-faq-bg: var(--k-faq-bg, $k-card-bg);
+$k-faq-accordion-color: var(--k-faq-accordion-color, $k-body-color);
+$k-faq-accordion-bg: var(--k-faq-accordion-bg, $k-body-bg);
+$k-faq-section-bg: var(--k-faq-section-bg, $k-body-bg);
+
+$k-photo-circle1: var(--k-photo-circle1, $k-secondary-hover);
+$k-photo-circle2: var(--k-photo-circle2, rgba(255,255,255,.5));
+
+$k-hero-circle: var(--k-hero-circle, $k-secondary-hover );    // unused
+$k-hero-circle-opacity: var(--k-hero-circle-opacity, .5);     // unused
+
+$k-form-heading-color: var(--k-form-heading-color, $k-body-color);
+$k-form-heading-dot: var(--k-form-heading-dot, $k-primary);
+
+$k-products-grid-bg: var(--k-products-grid-bg, $k-card-bg);
+$k-products-grid-tile-bg: var(--k-products-grid-tile-bg, $k-body-bg);
+$k-products-grid-highlight-shadow: var(--k-products-grid-highlight-shadow, $k-secondary);
+$k-products-grid-del-price: var(--k-products-grid-del-price, $k-pricelist-price-color);
+$k-products-grid-check-color: var(--k-products-grid-check-color, $k-secondary);
+$k-products-grid-hover-overlay: var(--k-products-grid-hover-overlay, rgba(0, 0, 0, 0.05));
+$k-products-grid-col-color: var(--k-products-grid-col-color, $k-body-color);
+$k-pricelist-section-bg: var(--k-pricelist-section-bg, $k-body-bg);
+
+$k-scrollbar-width: var(--k-scrollbar-width, 6px);
+$k-scrollbar-thumb-color: var(--k-scrollbar-thumb-color, $k-primary);
+$k-scrollbar-track-color: var(--k-scrollbar-track-color, $k-body-bg);
+
+$k-app-bg: var(--k-app-bg, $k-body-bg);
+$k-app-header-bg: var(--k-app-header-bg, $k-primary);
+$k-app-header-color: var(--k-app-header-color, #fff);
+$k-app-nav-bg: var(--k-app-nav-bg, $k-secondary);
+$k-app-nav-color: var(--k-app-nav-color, $k-app-bg);
+$k-app-nav-active-color: var(--k-app-active-nav-color, $k-secondary);
+$k-app-nav-active-bg: var(--k-app-active-nav-color, $k-app-bg);
+$k-app-nav-active-icon-color: var(--k-app-nav-active-icon-color, $k-primary);
+$k-app-card-bg: var(--k-app-card-bg, $k-card-bg);
+$k-app-card-bg-2: var(--k-app-card-bg-2, $k-card-bg-2);
+
+$k-dashboard-prop-color: var(--k-dashboard-prop-color, #BCA39A);
+$k-dashboard-hover-color: var(--k-dashboard-hover-color, #AF00FA);
+$k-dashboard-hover-shadow: var(--k-dashboard-hover-shadow);
+
+$k-dashboard-circle-1-border: var(--k-dashboard-circle-1-border, #000);
+$k-dashboard-circle-1-bg: var(--k-dashboard-circle-1-bg, transparent);
+$k-dashboard-circle-2-border: var(--k-dashboard-circle-2-border, transparent);
+$k-dashboard-circle-2-bg: var(--k-dashboard-circle-2-bg, #00B3FC);
+$k-dashboard-circle-3-border: var(--k-dashboard-circle-3-border, transparent);
+$k-dashboard-circle-3-bg: var(--k-dashboard-circle-3-bg, $k-card-bg-hover);
+$k-dashboard-circle-4-border: var(--k-dashboard-circle-4-border, transparent);
+$k-dashboard-circle-4-bg: var(--k-dashboard-circle-4-bg, $k-dashboard-hover-color);
+$k-dashboard-circle-5-border: var(--k-dashboard-circle-5-border, transparent);
+$k-dashboard-circle-5-bg: var(--k-dashboard-circle-5-bg, $k-primary);
+$k-dashboard-circle-6-border: var(--k-dashboard-circle-6-border, transparent);
+$k-dashboard-circle-6-bg: var(--k-dashboard-circle-6-bg, $k-dashboard-circle-3-bg);
+$k-dashboard-circle-7-border: var(--k-dashboard-circle-7-border, #7F09B7);
+$k-dashboard-circle-7-bg: var(--k-dashboard-circle-7-bg, transparent);

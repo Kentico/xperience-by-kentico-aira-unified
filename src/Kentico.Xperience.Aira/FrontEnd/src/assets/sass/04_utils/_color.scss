@@ -1,0 +1,29 @@
+.bg{
+  &-body-secondary{
+    background-color: #f2eeec;
+  }
+}
+
+.u-secondary-accent{
+  .form-check-input,
+  .form-select,
+  .btn-add{
+    &:focus{
+      border-color: transparentize(#8107c1, .25);
+    }
+  }
+  .form-check-input{
+    &:checked{
+      background-color: $k-secondary;
+      border-color: $k-secondary;
+    }
+  }
+  .btn-add{
+    .c-icon{
+      color: $k-secondary;
+    }
+  }
+  .form-select{
+    background-image: url('data:image/svg+xml,<svg width="18" height="10" viewBox="0 0 18 10" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M1.5 1L9 8.5L16.5 1" stroke="%237F09B7" stroke-width="2"/></svg>');
+  }
+}

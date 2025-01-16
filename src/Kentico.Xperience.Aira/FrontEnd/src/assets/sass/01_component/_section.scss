@@ -1,0 +1,13 @@
+.c-section{
+  &.app{
+    min-height: 100vh;
+    display: flex;
+    align-items: stretch;
+    justify-content: center;
+    @include media-breakpoint-up(md){
+      background: $black;
+      padding: 3rem 0;
+      align-items: center;
+    }
+  }
+}

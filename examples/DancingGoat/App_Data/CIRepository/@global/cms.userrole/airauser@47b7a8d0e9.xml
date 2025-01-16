@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<cms.userrole>
+  <Parent>
+    <CodeName>AiraUser</CodeName>
+    <GUID>833d8111-df65-4843-bc72-cd908be45bb0</GUID>
+    <ObjectType>cms.role</ObjectType>
+  </Parent>
+  <Bindings>
+    <Binding id="cms.user_ugrinmil@gmail.com">
+      <UserID>
+        <CodeName>ugrinmil@gmail.com</CodeName>
+        <GUID>0d95a37e-6fe9-4bfe-bfde-277e7bcc1ffa</GUID>
+        <ObjectType>cms.user</ObjectType>
+      </UserID>
+    </Binding>
+  </Bindings>
+</cms.userrole>

@@ -1,0 +1,94 @@
+.c-nav{
+  line-height: 1.5rem;
+  &_hr{
+    opacity: 1;
+    border-top-color: $black;
+    margin-block: 1.5rem;
+  }
+  &_buttons{
+    display: flex;
+    justify-content: space-evenly;
+  }
+  &_item{
+    display: flex;
+    flex-direction: column;
+    gap: .625rem;
+    padding: 1rem 1.25rem 1.5rem;
+    position: relative;
+    text-align: center;
+    &.primary{
+      .c-nav_underline{
+        background-color: $k-primary;
+      }
+      .c-icon{
+        color: $k-primary;
+      }
+    }
+    &.secondary{
+      .c-nav_underline{
+        background-color: $k-secondary;
+      }
+      .c-icon{
+        color: $k-secondary;
+      }
+    }
+    &.is-active{
+      .c-nav_underline{
+        display: block;
+      }
+    }
+  }
+  &_btn{
+    padding: 1.75rem;
+    border-radius: 1rem;
+    --bs-btn-bg: transparent;
+    --bs-btn-border-width: 0;
+    box-shadow: 0.375rem 0.375rem 0.75rem 0 transparentize($black, .85);
+    &:hover,
+    &:focus{
+      box-shadow: 0 0 0.75rem -.125rem transparentize($black, .85);
+    }
+    .c-icon{
+      font-size: 2.625rem !important;
+    }
+  }
+  &_underline{
+    position: absolute;
+    inset: auto 0 0;
+    height: 5px;
+    border-radius: 5px;
+    margin-bottom: -3px;
+    background-color: $black;
+    display: none;
+  }
+  &_link{
+    display: inline-flex;
+    align-items: center;
+    gap: .5rem;
+    text-decoration: none;
+    --bs-link-color: var(--k-body-color);
+    --bs-link-hover-color: var(--k-body-color);
+  }
+  &_content{
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    font-size: 1rem;
+    .c-icon{
+      font-size: 1.125rem;
+    }
+    p{
+      margin: 0;
+    }
+    & + &{
+      margin-top: 1.75rem;
+    }
+  }
+  &_footer{
+    text-align: center;
+    padding-top: 1rem;
+    font-size: .875rem;
+
+    margin-top: 2rem;
+  }
+}

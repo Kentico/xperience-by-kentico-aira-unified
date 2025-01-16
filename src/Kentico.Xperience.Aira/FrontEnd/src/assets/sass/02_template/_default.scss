@@ -1,0 +1,6 @@
+.t-default{
+  background: $k-body-bg;
+  color: $k-body-color;
+
+  --bs-body-font-family: #{$k-body-font}, Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif;
+}
