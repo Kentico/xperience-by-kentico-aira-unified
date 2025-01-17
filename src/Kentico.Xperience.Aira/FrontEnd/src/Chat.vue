@@ -9,16 +9,15 @@
         </div>
 
         <div class="c-app_body">
-            <div class="container">
-                <deep-chat
-                    :avatars="{
-                        ai : { 
+          <deep-chat
+              :avatars="{
+                        ai : {
                             src: `${this.baseUrl}${this.aiIconUrl}`,
                             styles: {
                                 avatar:
                                 {
-                                    height: '3rem',
-                                    width: '3rem'
+                                    height: '2.5rem',
+                                    width: '2.5rem'
                                 }
                             }
                         },
@@ -26,13 +25,13 @@
                             styles: {
                                 avatar:
                                 {
-                                    height: '3rem',
-                                    width: '3rem'
+                                    height: '2.5rem',
+                                    width: '2.5rem'
                                 }
                             }
                         }
                     }"
-                    :dropupStyles="{
+              :dropupStyles="{
                         button: {
                             styles: {
                                 container: {
@@ -62,23 +61,63 @@
                             }
                         }
                     }"
-                    :connect="{
+              :connect="{
                         url: `${this.baseUrl}${this.airaBaseUrl}/${this.navBarModel.chatItem.url}/message`,
                         method: 'POST'
                     }"
-                    :chatStyle="{ height: '100%', width: '100%' }"
-                    :history="[]"
-                    :textInput="{
-                        placeholder: { text: 'Message AIRA' }
+              :chatStyle="{ height: '100%', width: '100%' }"
+              :history="[]"
+              :textInput="{
+                    styles: {
+                        container: {
+                          borderRadius: '1.5rem',
+                          border: '1px solid #8C8C8C',
+                          backgroundColor: '#ffffff',
+                          boxShadow: 'none',
+                          width: '90%',
+                        },
+                        text: {
+                          padding: '.625rem .875rem',
+                          fontSize: '.875rem',
+                          color: '#231F20',
+                          lineHeight: '1.333',
+                        },
+                      },
+                      placeholder: {
+                        text: 'Message AIRA' ,
+                        style: {
+                          color: '#999'
+                        }
+                      }
                     }"
-                    id="chatElement"
-                    ref="chatElementRef"
-                    :requestBodyLimits="{ maxMessages: 1 }"
-                    style="border-radius: 8px;"
-                    :introMessage="{ text: '' }"
-                    :messageStyles="{
+              :submitButtonStyles="{
+                submit: {
+                  container: {
+                    default: {
+                      width: '1.375rem',
+                      height: '1.375rem',
+                      marginBottom: '0',
+                      padding: '.5rem',
+                    }
+                  },
+                  svg: {
+                    styles: {
+                      default: {
+                        width: '1.375rem',
+                        height: '1.375rem',
+                      }
+                    }
+                  }
+                }
+              }"
+              id="chatElement"
+              ref="chatElementRef"
+              :requestBodyLimits="{ maxMessages: 1 }"
+              style="border-radius: 8px;"
+              :introMessage="{ text: '' }"
+              :messageStyles="{
                         default: {
-                            shared: { bubble: { fontSize: '0.75rem', lineHeight: '1.375rem', padding: '0.5rem 0.75rem' } },
+                            shared: { bubble: { fontSize: '0.75rem', lineHeight: '1.375rem', padding: '0.5rem 0.75rem', borderRadius: '1rem' } },
                             ai: { bubble: { background: '#F7F1FF' } },
                             user: { bubble: { color: '#fff' } }
                         },
@@ -86,8 +125,56 @@
                             user: { bubble: { borderRadius: '1rem', overflow: 'clip', textAlign: 'left', display: 'inline-block' } }
                         }
                     }">
-                </deep-chat>
+          </deep-chat>
+          
+          <div>
+            <!-- Suggestion Buttons -->
+            <div class="c-prompt-suggestions">
+              <div class="c-prompt-suggestions_inner">
+                <button class="btn btn-outline-primary" @click="handleSuggestionClick('Tell me a fun fact')">Tell me a fun
+                  fact
+                </button>
+                <button class="btn btn-outline-primary" @click="handleSuggestionClick('What\'s the weather like today?')">What’s
+                  the weather like today?
+                </button>
+                <button class="btn btn-outline-primary" @click="handleSuggestionClick('Suggest a good movie')">Suggest a good
+                  movie
+                </button>
+                <button class="btn btn-outline-primary" @click="showAllSuggestions = true">More</button>
+              </div>
             </div>
+
+            <!-- Full-Screen Overlay with Suggestions -->
+            <div v-if="showAllSuggestions" class="suggestions-overlay">
+              <div class="overlay-header">
+                <h3>Suggestions</h3>
+                <button class="close-button" @click="showAllSuggestions = false">X</button>
+              </div>
+              <div class="suggestions-categories">
+                <div class="suggestion-category">
+                  <h4>General</h4>
+                  <ul>
+                    <li @click="handleSuggestionClick('What is today\'s news?')">What is today's news?</li>
+                    <li @click="handleSuggestionClick('Tell me a joke!')">Tell me a joke!</li>
+                  </ul>
+                </div>
+                <div class="suggestion-category">
+                  <h4>Entertainment</h4>
+                  <ul>
+                    <li @click="handleSuggestionClick('Recommend a music playlist')">Recommend a music playlist</li>
+                    <li @click="handleSuggestionClick('What series should I watch?')">What series should I watch?</li>
+                  </ul>
+                </div>
+                <div class="suggestion-category">
+                  <h4>Productivity</h4>
+                  <ul>
+                    <li @click="handleSuggestionClick('Tips for time management')">Tips for time management</li>
+                    <li @click="handleSuggestionClick('How to stay motivated?')">How to stay motivated?</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
     </div>
 </template>
@@ -160,7 +247,7 @@ export default {
         setRequestInterceptor() {
             this.$refs.chatElementRef.requestInterceptor = async (requestDetails) => {
                 const formData = new FormData();
-                
+
                 if (Object.hasOwn(requestDetails.body, 'messages'))
                 {
                     formData.append('message', requestDetails.body.messages[0].text);
@@ -196,7 +283,7 @@ export default {
                         }
                     }
                 }
-                
+
                 const modifiedRequestDetails = {
                     ...requestDetails,
                     body: formData,

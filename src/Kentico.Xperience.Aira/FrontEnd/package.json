@@ -1,6 +1,7 @@
 {
   "name": "razor-class-library",
   "version": "1.0.0",
+  "type": "module",
   "description": "A project for Razor Class Library with Vue.js",
   "main": "webpack.config.js",
   "scripts": {

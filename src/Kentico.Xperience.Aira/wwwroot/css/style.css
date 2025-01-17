@@ -17717,7 +17717,7 @@ button.c-link {
   position: fixed;
   inset: 0 0 auto;
   padding: 0.75rem 0;
-  z-index: 1;
+  z-index: 100;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -18204,6 +18204,66 @@ button.c-link {
     stroke-dashoffset: 200;
   }
 }
+.c-prompt-suggestions {
+  width: 100%;
+  overflow-x: auto;
+  overflow-y: clip;
+  padding: 0.25rem 1rem;
+}
+.c-prompt-suggestions_inner {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 0.5rem;
+  width: max-content;
+  padding-bottom: 0.5rem;
+}
+.c-prompt-suggestions .btn {
+  --bs-btn-border-radius: 1rem;
+  --bs-btn-font-size: .75rem;
+  --bs-btn-font-weight: inherit;
+  --bs-btn-padding-x: .75rem;
+  --bs-btn-padding-y: .5rem;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.c-prompt-suggestions .btn.btn-lg, .c-prompt-suggestions .btn-group-lg > .btn {
+  --bs-btn-border-radius: 1.75rem;
+  --bs-btn-font-size: 0.875rem;
+  --bs-btn-padding-x: 1.25rem;
+  --bs-btn-padding-y: 0.5rem;
+}
+.c-prompt-suggestions .btn-add {
+  display: inline-flex;
+  align-items: center;
+  gap: 1rem;
+  font-size: 1rem;
+  height: auto;
+}
+.c-prompt-suggestions .btn-add:focus {
+  border-color: rgba(240, 86, 26, 0.25);
+}
+.c-prompt-suggestions .btn-add .c-icon {
+  font-size: 1.5rem;
+  margin-top: -1px;
+}
+.c-prompt-suggestions .btn-remove-img {
+  position: absolute;
+  inset: 0 0 auto auto;
+  padding: 0.5rem;
+  color: var(--k-primary, #f0561a);
+  font-size: 1rem;
+  height: 2.25rem;
+  width: 2.25rem;
+  border: none !important;
+  transition: none !important;
+}
+.c-prompt-suggestions .btn-remove-img .c-icon {
+  font-size: 0.875rem;
+}
+.c-prompt-suggestions .btn-remove-img:active {
+  color: var(--k-primary, #f0561a);
+}
+
 .t-default {
   background: var(--k-body-bg, #fff);
   color: var(--k-body-color, #1e1a1b);
