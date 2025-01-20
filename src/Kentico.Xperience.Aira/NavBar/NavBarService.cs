@@ -24,13 +24,13 @@ internal class NavBarService : INavBarService
 
     public async Task<NavBarViewModel> GetNavBarViewModel(string activePage)
     {
-        string defaultImageUrl = "path-to-not-found/image.jpg";
+        var defaultImageUrl = "path-to-not-found/image.jpg";
 
         var airaConfiguration = await airaConfigurationService.GetAiraConfiguration();
 
-        string logoUrl = GetMediaFileUrl(airaConfiguration.AiraConfigurationItemAiraRelativeLogoId)?.RelativePath ?? defaultImageUrl;
-        string chatImageUrl = GetMediaFileUrl(airaConfiguration.AiraConfigurationItemAiraRelativeChatImgId)?.RelativePath ?? defaultImageUrl;
-        string smartUploadImageUrl = GetMediaFileUrl(airaConfiguration.AiraConfigurationItemAiraSmartUploadImgId)?.RelativePath ?? defaultImageUrl;
+        var logoUrl = GetMediaFileUrl(airaConfiguration.AiraConfigurationItemAiraRelativeLogoId)?.RelativePath ?? defaultImageUrl;
+        var chatImageUrl = GetMediaFileUrl(airaConfiguration.AiraConfigurationItemAiraRelativeChatImgId)?.RelativePath ?? defaultImageUrl;
+        var smartUploadImageUrl = GetMediaFileUrl(airaConfiguration.AiraConfigurationItemAiraSmartUploadImgId)?.RelativePath ?? defaultImageUrl;
 
         return new NavBarViewModel
         {

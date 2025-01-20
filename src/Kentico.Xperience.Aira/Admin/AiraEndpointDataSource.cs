@@ -85,11 +85,11 @@ internal class AiraEndpointDataSource : MutableEndpointDataSource
             {
                 var form = await context.Request.ReadFormAsync();
                 var requestObject = new T();
-                foreach (string key in form.Keys)
+                foreach (var key in form.Keys)
                 {
                     var property = typeof(T).GetProperty(key, BindingFlags.Public | BindingFlags.Instance | BindingFlags.IgnoreCase);
 
-                    string value = form[key].ToString();
+                    var value = form[key].ToString();
 
                     property?.SetValue(requestObject, Convert.ChangeType(value, property.PropertyType));
                 }
@@ -103,7 +103,7 @@ internal class AiraEndpointDataSource : MutableEndpointDataSource
             {
                 var requestObject = new T();
                 using var reader = new StreamReader(context.Request.Body);
-                string body = await reader.ReadToEndAsync();
+                var body = await reader.ReadToEndAsync();
                 requestObject = JsonSerializer.Deserialize<T>(body, new JsonSerializerOptions
                 {
                     PropertyNameCaseInsensitive = true
@@ -149,7 +149,7 @@ internal class AiraEndpointDataSource : MutableEndpointDataSource
         else if (string.Equals(context.Request.ContentType, "application/json"))
         {
             using var reader = new StreamReader(context.Request.Body);
-            string body = await reader.ReadToEndAsync();
+            var body = await reader.ReadToEndAsync();
 
             var formCollection = new FormCollection(new Dictionary<string, StringValues>
             {
@@ -163,7 +163,7 @@ internal class AiraEndpointDataSource : MutableEndpointDataSource
 
     private static async Task<AiraCompanionAppController> GetAiraCompanionAppControllerInContext(HttpContext context, string actionName)
     {
-        string controllerShortName = nameof(AiraCompanionAppController).Replace("Controller", string.Empty);
+        var controllerShortName = nameof(AiraCompanionAppController).Replace("Controller", string.Empty);
 
         var routeData = new RouteData();
         routeData.Values["controller"] = controllerShortName;

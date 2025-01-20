@@ -54,18 +54,18 @@ public sealed class AiraCompanionAppController : Controller
     [HttpGet]
     public async Task<IActionResult> Index()
     {
-        string airaPathBase = await GetAiraPathBase();
+        var airaPathBase = await GetAiraPathBase();
 
         var user = await adminUserManager.GetUserAsync(User);
 
-        string signinRedirectUrl = GetRedirectUrl(AiraCompanionAppConstants.SigninRelativeUrl, airaPathBase);
+        var signinRedirectUrl = GetRedirectUrl(AiraCompanionAppConstants.SigninRelativeUrl, airaPathBase);
 
         if (user is null)
         {
             return Redirect(signinRedirectUrl);
         }
 
-        bool hasAiraViewPermission = await airaAssetService.DoesUserHaveAiraCompanionAppPermission(SystemPermissions.VIEW, user.UserID);
+        var hasAiraViewPermission = await airaAssetService.DoesUserHaveAiraCompanionAppPermission(SystemPermissions.VIEW, user.UserID);
 
         if (!hasAiraViewPermission)
         {
@@ -94,18 +94,18 @@ public sealed class AiraCompanionAppController : Controller
     public async Task<IActionResult> PostChatMessage(IFormCollection request)
     {
 #pragma warning restore IDE0060 // 
-        string airaPathBase = await GetAiraPathBase();
+        var airaPathBase = await GetAiraPathBase();
 
         var user = await adminUserManager.GetUserAsync(User);
 
-        string signinRedirectUrl = GetRedirectUrl(AiraCompanionAppConstants.SigninRelativeUrl, airaPathBase);
+        var signinRedirectUrl = GetRedirectUrl(AiraCompanionAppConstants.SigninRelativeUrl, airaPathBase);
 
         if (user is null)
         {
             return Redirect(signinRedirectUrl);
         }
 
-        bool hasAiraViewPermission = await airaAssetService.DoesUserHaveAiraCompanionAppPermission(SystemPermissions.VIEW, user.UserID);
+        var hasAiraViewPermission = await airaAssetService.DoesUserHaveAiraCompanionAppPermission(SystemPermissions.VIEW, user.UserID);
 
         if (!hasAiraViewPermission)
         {
@@ -121,18 +121,18 @@ public sealed class AiraCompanionAppController : Controller
     [HttpPost]
     public async Task<IActionResult> PostImages(IFormCollection request)
     {
-        string airaPathBase = await GetAiraPathBase();
+        var airaPathBase = await GetAiraPathBase();
 
         var user = await adminUserManager.GetUserAsync(User);
 
-        string signinRedirectUrl = GetRedirectUrl(AiraCompanionAppConstants.SigninRelativeUrl, airaPathBase);
+        var signinRedirectUrl = GetRedirectUrl(AiraCompanionAppConstants.SigninRelativeUrl, airaPathBase);
 
         if (user is null)
         {
             return Redirect(signinRedirectUrl);
         }
 
-        bool hasAiraViewPermission = await airaAssetService.DoesUserHaveAiraCompanionAppPermission(SystemPermissions.CREATE, user.UserID);
+        var hasAiraViewPermission = await airaAssetService.DoesUserHaveAiraCompanionAppPermission(SystemPermissions.CREATE, user.UserID);
 
         if (!hasAiraViewPermission)
         {
@@ -149,18 +149,18 @@ public sealed class AiraCompanionAppController : Controller
     [HttpGet]
     public async Task<IActionResult> Assets()
     {
-        string airaPathBase = await GetAiraPathBase();
+        var airaPathBase = await GetAiraPathBase();
 
         var user = await adminUserManager.GetUserAsync(User);
 
-        string signinRedirectUrl = GetRedirectUrl(AiraCompanionAppConstants.SigninRelativeUrl, airaPathBase);
+        var signinRedirectUrl = GetRedirectUrl(AiraCompanionAppConstants.SigninRelativeUrl, airaPathBase);
 
         if (user is null)
         {
             return Redirect(signinRedirectUrl);
         }
 
-        bool hasAiraCreatePermission = await airaAssetService.DoesUserHaveAiraCompanionAppPermission(SystemPermissions.CREATE, user.UserID);
+        var hasAiraCreatePermission = await airaAssetService.DoesUserHaveAiraCompanionAppPermission(SystemPermissions.CREATE, user.UserID);
 
         if (!hasAiraCreatePermission)
         {
@@ -186,7 +186,7 @@ public sealed class AiraCompanionAppController : Controller
     {
         var configuration = await airaConfigurationService.GetAiraConfiguration();
 
-        string libraryBasePath = '/' + AiraCompanionAppConstants.RCLUrlPrefix;
+        var libraryBasePath = '/' + AiraCompanionAppConstants.RCLUrlPrefix;
 
         var manifest = new
         {
@@ -226,7 +226,7 @@ public sealed class AiraCompanionAppController : Controller
 
     private string GetRedirectUrl(string relativeUrl, string airaPathBase)
     {
-        string baseUrl = $"{Request.Scheme}://{Request.Host}";
+        var baseUrl = $"{Request.Scheme}://{Request.Host}";
 
         return $"{baseUrl}{airaPathBase}/{relativeUrl}";
     }
@@ -290,10 +290,10 @@ public sealed class AiraCompanionAppController : Controller
         }
 
         var configuration = await airaConfigurationService.GetAiraConfiguration();
-        string airaPathBase = configuration.AiraConfigurationItemAiraPathBase;
+        var airaPathBase = configuration.AiraConfigurationItemAiraPathBase;
 
-        string baseUrl = $"{Request.Scheme}://{Request.Host}";
-        string redirectUrl = $"{baseUrl}{airaPathBase}/{AiraCompanionAppConstants.ChatRelativeUrl}";
+        var baseUrl = $"{Request.Scheme}://{Request.Host}";
+        var redirectUrl = $"{baseUrl}{airaPathBase}/{AiraCompanionAppConstants.ChatRelativeUrl}";
 
         Response.Htmx(h => h.Redirect(redirectUrl));
 
