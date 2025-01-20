@@ -145,32 +145,76 @@
             </div>
 
             <!-- Full-Screen Overlay with Suggestions -->
-            <div v-if="showAllSuggestions" class="suggestions-overlay">
-              <div class="overlay-header">
-                <h3>Suggestions</h3>
-                <button class="close-button" @click="showAllSuggestions = false">X</button>
-              </div>
-              <div class="suggestions-categories">
-                <div class="suggestion-category">
-                  <h4>General</h4>
-                  <ul>
-                    <li @click="handleSuggestionClick('What is today\'s news?')">What is today's news?</li>
-                    <li @click="handleSuggestionClick('Tell me a joke!')">Tell me a joke!</li>
-                  </ul>
+            <div v-if="showAllSuggestions" class="c-prompt-overlay">
+              <div class="container">
+                <div class="d-flex justify-content-between align-items-center">
+                  <h3>Suggestions</h3>
+                  <button class="c-link primary-upper" @click="showAllSuggestions = false">
+                    Back
+                  </button>
                 </div>
-                <div class="suggestion-category">
-                  <h4>Entertainment</h4>
-                  <ul>
-                    <li @click="handleSuggestionClick('Recommend a music playlist')">Recommend a music playlist</li>
-                    <li @click="handleSuggestionClick('What series should I watch?')">What series should I watch?</li>
-                  </ul>
+                <h4 class="mt-4">General</h4>
+                <div class="d-flex gap-2 flex-wrap mt-3">
+                  <button class="btn btn-outline-primary"
+                          @click="showAllSuggestions = false; handleSuggestionClick('What is today\'s news?')">
+                    What is today's news?
+                  </button>
+                  <button class="btn btn-outline-primary"
+                          @click="showAllSuggestions = false; handleSuggestionClick('Tell me a joke!')">
+                    Tell me a joke!
+                  </button>
+                  <button class="btn btn-outline-primary"
+                          @click="showAllSuggestions = false; handleSuggestionClick('Suggest a good movie')">
+                    Suggest a good movie
+                  </button>
                 </div>
-                <div class="suggestion-category">
-                  <h4>Productivity</h4>
-                  <ul>
-                    <li @click="handleSuggestionClick('Tips for time management')">Tips for time management</li>
-                    <li @click="handleSuggestionClick('How to stay motivated?')">How to stay motivated?</li>
-                  </ul>
+
+                <h4 class="mt-4">Technology</h4>
+                <div class="d-flex gap-2 flex-wrap mt-3">
+                  <button class="btn btn-outline-primary"
+                          @click="showAllSuggestions = false; handleSuggestionClick('Explain the latest tech trends')">
+                    Explain the latest tech trends
+                  </button>
+                  <button class="btn btn-outline-primary"
+                          @click="showAllSuggestions = false; handleSuggestionClick('What is Artificial Intelligence?')">
+                    What is Artificial Intelligence?
+                  </button>
+                  <button class="btn btn-outline-primary"
+                          @click="showAllSuggestions = false; handleSuggestionClick('Tell me about blockchain technology')">
+                    Tell me about blockchain technology
+                  </button>
+                </div>
+
+                <h4 class="mt-4">Travel</h4>
+                <div class="d-flex gap-2 flex-wrap mt-3">
+                  <button class="btn btn-outline-primary"
+                          @click="showAllSuggestions = false; handleSuggestionClick('Top places to visit in Europe')">
+                    Top places to visit in Europe
+                  </button>
+                  <button class="btn btn-outline-primary"
+                          @click="showAllSuggestions = false; handleSuggestionClick('What are the best travel tips?')">
+                    What are the best travel tips?
+                  </button>
+                  <button class="btn btn-outline-primary"
+                          @click="showAllSuggestions = false; handleSuggestionClick('Suggest a weekend getaway')">
+                    Suggest a weekend getaway
+                  </button>
+                </div>
+
+                <h4 class="mt-4">Health</h4>
+                <div class="d-flex gap-2 flex-wrap mt-3">
+                  <button class="btn btn-outline-primary"
+                          @click="showAllSuggestions = false; handleSuggestionClick('How to stay fit at home?')">
+                    How to stay fit at home?
+                  </button>
+                  <button class="btn btn-outline-primary"
+                          @click="showAllSuggestions = false; handleSuggestionClick('What are some healthy snacks?')">
+                    What are some healthy snacks?
+                  </button>
+                  <button class="btn btn-outline-primary"
+                          @click="showAllSuggestions = false; handleSuggestionClick('Tips for better sleep')">
+                    Tips for better sleep
+                  </button>
                 </div>
               </div>
             </div>
@@ -199,7 +243,8 @@ export default {
             themeColor: "#8107c1",
             themeColorInRgb: "rgb(129, 7, 193)",
             submitButton: null,
-            started: false
+            started: false,
+            showAllSuggestions: false,
         }
     },
     mounted() {
