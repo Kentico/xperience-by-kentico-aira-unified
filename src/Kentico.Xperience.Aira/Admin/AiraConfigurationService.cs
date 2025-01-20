@@ -23,7 +23,7 @@ internal class AiraConfigurationService : IAiraConfigurationService
         {
             if (!string.IsNullOrWhiteSpace(configurationModel.RelativePathBase))
             {
-                int configurationCount = await airaConfigurationProvider.Get().GetCountAsync();
+                var configurationCount = await airaConfigurationProvider.Get().GetCountAsync();
 
                 if (configurationCount > 0)
                 {

@@ -63,11 +63,6 @@ internal class AiraModuleInstaller : IAiraModuleInstaller
         }
     }
 
-    /// <summary>
-    /// Ensure that the form is not upserted with any existing form
-    /// </summary>
-    /// <param name="info"></param>
-    /// <param name="form"></param>
     private static void SetFormDefinition(DataClassInfo info, FormInfo form)
     {
         if (info.ClassID > 0)
@@ -92,7 +87,7 @@ internal class AiraModuleInstaller : IAiraModuleInstaller
 
         foreach (var property in properties)
         {
-            if (property.Name == nameof(AiraConfigurationItemInfo.AiraConfigurationItemId))
+            if (string.Equals(property.Name, nameof(AiraConfigurationItemInfo.AiraConfigurationItemId)))
             {
                 continue; // Exclude AiraConfigurationItemId from the loop
             }

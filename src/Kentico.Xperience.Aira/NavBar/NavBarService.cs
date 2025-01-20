@@ -24,7 +24,7 @@ internal class NavBarService : INavBarService
 
     public async Task<NavBarViewModel> GetNavBarViewModel(string activePage)
     {
-        string defaultImageUrl = "path-to-not-found/image.jpg";
+        var defaultImageUrl = "path-to-not-found/image.jpg";
 
         var airaConfiguration = await airaConfigurationService.GetAiraConfiguration();
 

@@ -47,7 +47,7 @@ internal class AiraConfigurationEditPage : ModelEditPage<AiraConfigurationModel>
 
     protected override async Task<ICommandResponse> ProcessFormData(AiraConfigurationModel model, ICollection<IFormItem> formItems)
     {
-        bool result = await airaConfigurationService.TrySaveOrUpdateConfiguration(model);
+        var result = await airaConfigurationService.TrySaveOrUpdateConfiguration(model);
 
         var response = ResponseFrom(new FormSubmissionResult(
             result
@@ -55,9 +55,14 @@ internal class AiraConfigurationEditPage : ModelEditPage<AiraConfigurationModel>
             : FormSubmissionStatus.ValidationFailure
         ));
 
-        _ = result
-            ? response.AddSuccessMessage("Aira configuration updated.")
-            : response.AddErrorMessage("Could not update aira configuration.");
+        if (result)
+        {
+            response.AddSuccessMessage("Aira configuration updated.");
+        }
+        else
+        {
+            response.AddErrorMessage("Could not update aira configuration.");
+        }
 
         return await Task.FromResult<ICommandResponse>(response);
     }
