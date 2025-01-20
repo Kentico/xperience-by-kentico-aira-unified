@@ -69,7 +69,32 @@
                     :chatStyle="{ height: '100%', width: '100%' }"
                     :history="[]"
                     :textInput="{
-                        placeholder: { text: 'Message AIRA' }
+                        placeholder: { text: 'Message AIRA' },
+                        styles: {
+                           container: {
+                            borderRadius: '8px',
+                            lineHeight: '1.8em'
+                           }
+                        }
+                    }"
+                    :submitButtonStyles="{
+                        submit: {
+                            container: {
+                                default: {
+                                    height: '1.7em',
+                                    bottom: '1.1em',
+                                    right: '0.9em'
+                                }
+                            },
+                            svg: {
+                                styles: {
+                                    default: {
+                                        fontSize: '2rem',
+                                        bottom: '1rem'
+                                    }
+                                }
+                            }
+                        }
                     }"
                     id="chatElement"
                     ref="chatElementRef"
@@ -84,6 +109,14 @@
                         },
                         image: {
                             user: { bubble: { borderRadius: '1rem', overflow: 'clip', textAlign: 'left', display: 'inline-block' } }
+                        },
+                        html: {
+                           shared: {
+                                bubble: {
+                                    backgroundColor: 'unset', 
+                                    padding: '0px'
+                                }
+                           }
                         }
                     }">
                 </deep-chat>
@@ -160,10 +193,12 @@ export default {
         setRequestInterceptor() {
             this.$refs.chatElementRef.requestInterceptor = async (requestDetails) => {
                 const formData = new FormData();
-                
+                let jsonData = "";
+
                 if (Object.hasOwn(requestDetails.body, 'messages'))
-                {
-                    formData.append('message', requestDetails.body.messages[0].text);
+                { 
+                    //formData.append('message', requestDetails.body.messages[0].text);
+                    jsonData = requestDetails.body.messages[0].text;
                 }
                 else
                 {
@@ -196,12 +231,14 @@ export default {
                         }
                     }
                 }
-                
+
+                console.log(jsonData);
+
                 const modifiedRequestDetails = {
                     ...requestDetails,
-                    body: formData,
+                    body: jsonData ?? formData,
                     headers: {
-                        ...requestDetails.headers,
+                        ...requestDetails.headers
                     },
                 };
 
@@ -279,6 +316,9 @@ export default {
                 .message-bubble .btn-outline-primary {
                     margin-right: 8px;
                 }
+                .message-bubble .deep-chat-button {
+                    margin-right: 8px;
+                }
 
                 .lds-ring, .lds-ring div {
                     box-sizing: border-box;
@@ -335,8 +375,7 @@ export default {
             }
         },
         getMessageViewModel(message) {
-            if (message.url !== null)
-            {
+            if (message.url !== null) {
                 return {
                     role: "user",
                     files: [
@@ -346,6 +385,20 @@ export default {
                         }
                     ]
                 };
+            } else if (message.quickPrompts.length > 0) {
+                let prompts = '<div class="deep-chat-temporary-message">';
+
+                for (var prompt of message.quickPrompts) {
+                    prompts += `<button class="deep-chat-button deep-chat-suggestion-button">${prompt}</button>`;
+                }
+
+                prompts += '</div>';
+
+                return {
+                    role: message.rol,
+                    text: message.message,
+                    html: prompts
+                }
             }
 
             return {

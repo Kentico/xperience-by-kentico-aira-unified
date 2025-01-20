@@ -1,4 +1,6 @@
-﻿using CMS.Membership;
+﻿using System.Collections.Generic;
+
+using CMS.Membership;
 
 using HotChocolate.Authorization;
 
@@ -110,7 +112,22 @@ public sealed class AiraCompanionAppController : Controller
             return Redirect(signinRedirectUrl);
         }
 
-        return Ok(new AiraChatMessage { Role = AiraCompanionAppConstants.AiraChatRoleName, Message = "Ok" });
+#warning just a temporary functionality to better understand/test the prompt feature
+        string? message = null;
+        if (request.TryGetValue("message", out var messages))
+        {
+            message = messages.ToString().Replace("\"", "");
+        }
+
+        var response = new AiraChatMessage
+        {
+            Role = AiraCompanionAppConstants.AiraChatRoleName,
+            Message = "Ok",
+            QuickPrompts = message == "Prompts" ?
+                ["Prompts", "Just Message"] : []
+        };
+
+        return Ok(response);
     }
 
     [HttpPost]
