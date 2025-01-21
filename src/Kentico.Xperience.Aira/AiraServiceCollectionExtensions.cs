@@ -7,8 +7,16 @@ using Microsoft.AspNetCore.Routing;
 
 namespace Microsoft.Extensions.DependencyInjection;
 
+/// <summary>
+/// Application startup extension methods.
+/// </summary>
 public static class AiraServiceCollectionExtensions
 {
+    /// <summary>
+    /// Adds Aira services and custom module to application."/>
+    /// </summary>
+    /// <param name="services"><see cref="IServiceCollection"/>The application services.</param>
+    /// <returns><see cref="IServiceCollection"/>The application services.</returns>
     public static IServiceCollection AddKenticoAira(this IServiceCollection services)
         => services.AddKenticoAiraInternal();
 
@@ -28,6 +36,11 @@ public static class AiraServiceCollectionExtensions
         return services;
     }
 
+    /// <summary>
+    /// Allows using the Aira dynamic endpoint creation.
+    /// </summary>
+    /// <param name="endpoints"></param>
+    /// <exception cref="InvalidOperationException"></exception>
     public static void UseAiraEndpoints(this IEndpointRouteBuilder endpoints)
     {
         var dataSource = endpoints.ServiceProvider.GetService<AiraEndpointDataSource>()

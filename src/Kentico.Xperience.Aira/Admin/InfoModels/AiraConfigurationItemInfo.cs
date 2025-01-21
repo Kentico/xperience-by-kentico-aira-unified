@@ -22,6 +22,10 @@ public partial class AiraConfigurationItemInfo : AbstractInfo<AiraConfigurationI
     /// </summary>
     public const string OBJECT_TYPE = "kenticoaira.airaconfigurationitem";
 
+
+    /// <summary>
+    /// Type information.
+    /// </summary>
     public static readonly ObjectTypeInfo TYPEINFO = new(typeof(IInfoProvider<AiraConfigurationItemInfo>), OBJECT_TYPE, "KenticoAira.AiraConfigurationItem", nameof(AiraConfigurationItemId), null, nameof(AiraConfigurationItemGuid), null, null, null, null, null)
     {
         TouchCacheDependencies = true,
@@ -32,6 +36,9 @@ public partial class AiraConfigurationItemInfo : AbstractInfo<AiraConfigurationI
     };
 
 
+    /// <summary>
+    /// Aira configuration item id.
+    /// </summary>
     [DatabaseField]
     public virtual int AiraConfigurationItemId
     {
@@ -40,6 +47,9 @@ public partial class AiraConfigurationItemInfo : AbstractInfo<AiraConfigurationI
     }
 
 
+    /// <summary>
+    /// Aira configuration item guid.
+    /// </summary>
     [DatabaseField]
     public virtual Guid AiraConfigurationItemGuid
     {
@@ -48,6 +58,9 @@ public partial class AiraConfigurationItemInfo : AbstractInfo<AiraConfigurationI
     }
 
 
+    /// <summary>
+    /// Aira path base.
+    /// </summary>
     [DatabaseField]
     [Required]
     public virtual string AiraConfigurationItemAiraPathBase
@@ -56,6 +69,10 @@ public partial class AiraConfigurationItemInfo : AbstractInfo<AiraConfigurationI
         set => SetValue(nameof(AiraConfigurationItemAiraPathBase), value);
     }
 
+
+    /// <summary>
+    /// Logo asset id.
+    /// </summary>
     [DatabaseField]
     [Required]
     public virtual string AiraConfigurationItemAiraRelativeLogoId
@@ -66,18 +83,38 @@ public partial class AiraConfigurationItemInfo : AbstractInfo<AiraConfigurationI
 
     [DatabaseField]
     [Required]
+    public virtual string AiraConfigurationItemAiraRelativeChatImgId
+    {
+        get => ValidationHelper.GetString(GetValue(nameof(AiraConfigurationItemAiraRelativeChatImgId)), string.Empty);
+        set => SetValue(nameof(AiraConfigurationItemAiraRelativeChatImgId), value);
+    }
+
+    [DatabaseField]
+    [Required]
     public virtual string AiraConfigurationItemAiraChatTitle
     {
         get => ValidationHelper.GetString(GetValue(nameof(AiraConfigurationItemAiraChatTitle)), string.Empty);
         set => SetValue(nameof(AiraConfigurationItemAiraChatTitle), value);
     }
 
+
+    /// <summary>
+    /// Smart upload title.
+    /// </summary>
     [DatabaseField]
     [Required]
     public virtual string AiraConfigurationItemAiraSmartUploadTitle
     {
         get => ValidationHelper.GetString(GetValue(nameof(AiraConfigurationItemAiraSmartUploadTitle)), string.Empty);
         set => SetValue(nameof(AiraConfigurationItemAiraSmartUploadTitle), value);
+    }
+
+    [DatabaseField]
+    [Required]
+    public virtual string AiraConfigurationItemAiraSmartUploadImgId
+    {
+        get => ValidationHelper.GetString(GetValue(nameof(AiraConfigurationItemAiraSmartUploadImgId)), string.Empty);
+        set => SetValue(nameof(AiraConfigurationItemAiraSmartUploadImgId), value);
     }
 
     [DatabaseField]

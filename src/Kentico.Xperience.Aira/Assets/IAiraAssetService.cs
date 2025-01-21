@@ -2,6 +2,9 @@
 
 namespace Kentico.Xperience.Aira.Assets;
 
+/// <summary>
+/// Service reponsible for handling files and accessing content item asset management.
+/// </summary>
 public interface IAiraAssetService
 {
     Task HandleFileUpload(IFormFileCollection files, int userId);

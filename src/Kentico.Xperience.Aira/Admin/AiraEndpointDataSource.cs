@@ -57,7 +57,8 @@ internal class AiraEndpointDataSource : MutableEndpointDataSource
             CreateAiraIFormCollectionEndpoint(configuration,
                  $"{AiraCompanionAppConstants.SmartUploadRelativeUrl}/{AiraCompanionAppConstants.SmartUploadUploadUrl}",
                 nameof(AiraCompanionAppController.PostImages),
-                (controller, request) => controller.PostImages(request)),
+                (controller, request) => controller.PostImages(request)
+            ),
             CreateAiraEndpoint(configuration,
                 AiraCompanionAppConstants.SmartUploadRelativeUrl,
                 nameof(AiraCompanionAppController.Assets),
@@ -80,16 +81,16 @@ internal class AiraEndpointDataSource : MutableEndpointDataSource
         {
             var airaController = await GetAiraCompanionAppControllerInContext(context, actionName);
 
-            if (context.Request.ContentType != null &&
+            if (context.Request.ContentType is not null &&
                 context.Request.ContentType.Contains("application/x-www-form-urlencoded"))
             {
                 var form = await context.Request.ReadFormAsync();
                 var requestObject = new T();
-                foreach (string key in form.Keys)
+                foreach (var key in form.Keys)
                 {
                     var property = typeof(T).GetProperty(key, BindingFlags.Public | BindingFlags.Instance | BindingFlags.IgnoreCase);
 
-                    string value = form[key].ToString();
+                    var value = form[key].ToString();
 
                     property?.SetValue(requestObject, Convert.ChangeType(value, property.PropertyType));
                 }
@@ -98,11 +99,12 @@ internal class AiraEndpointDataSource : MutableEndpointDataSource
 
                 await result.ExecuteResultAsync(airaController.ControllerContext);
             }
-            else if (context.Request.ContentLength > 0 && context.Request.ContentType == "application/json")
+            else if (context.Request.ContentLength > 0
+                && string.Equals(context.Request.ContentType, "application/json"))
             {
                 var requestObject = new T();
                 using var reader = new StreamReader(context.Request.Body);
-                string body = await reader.ReadToEndAsync();
+                var body = await reader.ReadToEndAsync();
                 requestObject = JsonSerializer.Deserialize<T>(body, new JsonSerializerOptions
                 {
                     PropertyNameCaseInsensitive = true
@@ -135,7 +137,7 @@ internal class AiraEndpointDataSource : MutableEndpointDataSource
     {
         var airaController = await GetAiraCompanionAppControllerInContext(context, actionName);
 
-        if (context.Request.ContentType == null)
+        if (context.Request.ContentType is null)
         {
             return;
         }
@@ -145,10 +147,10 @@ internal class AiraEndpointDataSource : MutableEndpointDataSource
             var result = await action.Invoke(airaController, requestObject);
             await result.ExecuteResultAsync(airaController.ControllerContext);
         }
-        else if (context.Request.ContentType == "application/json")
+        else if (string.Equals(context.Request.ContentType, "application/json"))
         {
             using var reader = new StreamReader(context.Request.Body);
-            string body = await reader.ReadToEndAsync();
+            var body = await reader.ReadToEndAsync();
 
             var formCollection = new FormCollection(new Dictionary<string, StringValues>
             {
@@ -162,7 +164,7 @@ internal class AiraEndpointDataSource : MutableEndpointDataSource
 
     private static async Task<AiraCompanionAppController> GetAiraCompanionAppControllerInContext(HttpContext context, string actionName)
     {
-        string controllerShortName = nameof(AiraCompanionAppController).Replace("Controller", string.Empty);
+        var controllerShortName = nameof(AiraCompanionAppController).Replace("Controller", string.Empty);
 
         var routeData = new RouteData();
         routeData.Values["controller"] = controllerShortName;
@@ -190,13 +192,13 @@ internal class AiraEndpointDataSource : MutableEndpointDataSource
 
     private static async Task AuthenticateAiraEndpoint(HttpContext context)
     {
-        if (context.User?.Identity == null || !context.User.Identity.IsAuthenticated)
+        if (context.User?.Identity is null || !context.User.Identity.IsAuthenticated)
         {
             var authenticateResult = await context.RequestServices
                 .GetRequiredService<IAuthenticationService>()
                 .AuthenticateAsync(context, AiraCompanionAppConstants.XperienceAdminSchemeName);
 
-            if (authenticateResult.Succeeded && authenticateResult.Principal != null)
+            if (authenticateResult.Succeeded && authenticateResult.Principal is not null)
             {
                 context.User = authenticateResult.Principal;
             }

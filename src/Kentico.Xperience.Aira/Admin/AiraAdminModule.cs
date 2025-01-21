@@ -8,6 +8,9 @@ using Kentico.Xperience.Aira.Admin;
 
 namespace Kentico.Xperience.Aira.Admin;
 
+/// <summary>
+/// Manages administration features and integration.
+/// </summary>
 internal class AiraAdminModule : AdminModule
 {
     public AiraAdminModule() : base(nameof(AiraAdminModule)) { }
