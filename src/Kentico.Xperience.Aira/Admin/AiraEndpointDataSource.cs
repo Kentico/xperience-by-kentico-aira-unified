@@ -57,7 +57,8 @@ internal class AiraEndpointDataSource : MutableEndpointDataSource
             CreateAiraIFormCollectionEndpoint(configuration,
                  $"{AiraCompanionAppConstants.SmartUploadRelativeUrl}/{AiraCompanionAppConstants.SmartUploadUploadUrl}",
                 nameof(AiraCompanionAppController.PostImages),
-                (controller, request) => controller.PostImages(request)),
+                (controller, request) => controller.PostImages(request)
+            ),
             CreateAiraEndpoint(configuration,
                 AiraCompanionAppConstants.SmartUploadRelativeUrl,
                 nameof(AiraCompanionAppController.Assets),

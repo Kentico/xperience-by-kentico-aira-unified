@@ -4,6 +4,7 @@ import { createApp } from "vue";
 
 const chatElement = document.getElementById("chat-app");
 const assetsElement = document.getElementById("assets-app");
+const signinElement = document.getElementById("aira-kentico-admin-signin");
 
 if (chatElement) {
     const airaBaseUrl = chatElement.dataset.airaBaseUrl;
@@ -31,4 +32,38 @@ if (assetsElement) {
         baseUrl,
         navBarModel
     }).mount("#assets-app");
+}
+
+function verifyAuthentication() {
+    fetch('/check')
+        .then(response => {
+            if (response.ok) {
+                window.location.href = '/aira/chat';
+            }
+        })
+        .catch(error => {
+            console.error(error);
+        });
+}
+
+
+if (signinElement) {
+    document.addEventListener('DOMContentLoaded', () => {
+        const loginButton = document.getElementById('loginButton');
+        if (loginButton) {
+            loginButton.addEventListener('click', () => {
+                const adminLoginUrl = '/admin';
+                const popup = window.open(adminLoginUrl, 'Login', 'width=600,height=800');
+    
+                const pollTimer = setInterval(() => {
+                    if (popup.closed) {
+                        clearInterval(pollTimer);
+                        verifyAuthentication();
+                    }
+                }, 1000);
+            });
+        } else {
+            console.error('#loginButton not found in the DOM.');
+        }
+    });
 }

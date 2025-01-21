@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-using CMS.Membership;
+﻿using CMS.Membership;
 
 using HotChocolate.Authorization;
 
@@ -253,6 +251,17 @@ public sealed class AiraCompanionAppController : Controller
         var baseUrl = $"{Request.Scheme}://{Request.Host}";
 
         return $"{baseUrl}{airaPathBase}/{relativeUrl}";
+    }
+
+    [HttpGet("/check")]
+    public IActionResult CheckAuthentication()
+    {
+        if (Request.HttpContext.User is not null)
+        {
+            return Ok();
+        }
+
+        return Unauthorized();
     }
 
     /// <summary>
