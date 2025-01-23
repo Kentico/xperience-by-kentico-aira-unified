@@ -47,14 +47,13 @@ function mountSignin(){
     if (loginButton) {
         loginButton.addEventListener('click', () => {
             const adminLoginUrl = '/admin';
+            const popup = window.open(adminLoginUrl, 'Login');
 
             const pollTimer = setInterval(() => {
                 clearInterval(pollTimer);
                 verifyAuthentication();
             }, 1000);
         });
-    } else {
-        console.error('#loginButton not found in the DOM.');
     }
 }
 
