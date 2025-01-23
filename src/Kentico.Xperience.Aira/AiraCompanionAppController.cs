@@ -253,15 +253,12 @@ public sealed class AiraCompanionAppController : Controller
         return $"{baseUrl}{airaPathBase}/{relativeUrl}";
     }
 
-    [HttpGet("/check")]
-    public IActionResult CheckAuthentication()
+    public class CheckAuthenticationModel
     {
-        if (Request.HttpContext.User is not null)
-        {
-            return Ok();
-        }
+        public bool IsAuthenticated { get; set; }
 
-        return Unauthorized();
+        public CheckAuthenticationModel(bool isAuthenticated)
+            => IsAuthenticated = isAuthenticated;
     }
 
     /// <summary>
