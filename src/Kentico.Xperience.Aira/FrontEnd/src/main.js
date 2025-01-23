@@ -30,50 +30,66 @@ function mountAssets(assetsElement) {
     }).mount("#assets-app");
 }
 
-function mountSignin(){
+function mountSignin() {
     const loginButton = document.getElementById('loginButton');
     if (loginButton) {
         loginButton.addEventListener('click', () => {
-            const adminLoginUrl = '/admin'; // URL for the login or authentication endpoint
-            const popup = window.open(adminLoginUrl, 'Login', 'width=400,height=600');
-        
-            const closeButton = document.createElement('button');
-            closeButton.textContent = 'Close Login Window';
-            closeButton.style = `
-                position: fixed;
-                top: 20px; /* Top-right corner */
-                right: 20px;
-                z-index: 1000;
-                padding: 10px 20px;
-                background-color: #ff4d4d; /* Red color */
-                color: white;
-                border: none;
-                border-radius: 5px;
-                cursor: pointer;
-                font-size: 16px;
-                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            `;
-        
-            closeButton.onclick = () => {
-                if (popup && !popup.closed) {
-                    popup.close();
-                    closeButton.remove();
-                } else {
-                    alert('The login window is already closed.');
-                }
-            };
-        
-            document.body.appendChild(closeButton);
-
-            const pollTimer = setInterval(() => {
-                if (popup.closed) {
-                    clearInterval(pollTimer);
-                    closeButton.remove();
-                    window.location.href = '/aira/chat';
-                }
-            }, 1000);
+            openModalLogin();
         });
     }
+}
+
+function openModalLogin() {
+    const body = document.getElementsByClassName('c-app_body')[0];
+
+    const modalOverlay = document.createElement('div');
+    modalOverlay.style = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 1000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    `;
+
+    const iframe = document.createElement('iframe');
+    iframe.src = '/admin'; // URL for the admin page
+    iframe.style = `
+        width: 90%;
+        height: 90%;
+        background: white;
+        border: none;
+        border-radius: 8px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    `;
+
+    const closeButton = document.createElement('button');
+    closeButton.textContent = 'Close';
+    closeButton.style = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        z-index: 1001;
+        padding: 10px 15px;
+        background-color: #ff4d4d;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 16px;
+    `;
+    closeButton.onclick = () => {
+        modalOverlay.remove();
+        window.location.href = '/aira/chat';
+    }
+
+    modalOverlay.appendChild(iframe);
+    modalOverlay.appendChild(closeButton);
+    body.appendChild(modalOverlay);
 }
 
 document.addEventListener('DOMContentLoaded', () => {
