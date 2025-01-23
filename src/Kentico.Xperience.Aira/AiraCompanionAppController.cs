@@ -282,6 +282,17 @@ public sealed class AiraCompanionAppController : Controller
         return $"{baseUrl}{airaPathBase}/{relativeUrl}";
     }
 
+    [HttpGet("/check")]
+    public IActionResult CheckAuthentication()
+    {
+        if (Request.HttpContext.User is not null)
+        {
+            return Ok();
+        }
+
+        return Unauthorized();
+    }
+
     /// <summary>
     /// Endpoint retrieving the signin page.
     /// </summary>
