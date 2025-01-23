@@ -30,28 +30,47 @@ function mountAssets(assetsElement) {
     }).mount("#assets-app");
 }
 
-function verifyAuthentication() {
-    fetch('/check')
-        .then(response => {
-            if (response.ok) {
-                window.location.href = '/aira/chat';
-            }
-        })
-        .catch(error => {
-            console.error(error);
-        });
-}
-
 function mountSignin(){
     const loginButton = document.getElementById('loginButton');
     if (loginButton) {
         loginButton.addEventListener('click', () => {
-            const adminLoginUrl = '/admin';
-            const popup = window.open(adminLoginUrl, 'Login');
+            const adminLoginUrl = '/admin'; // URL for the login or authentication endpoint
+            const popup = window.open(adminLoginUrl, 'Login', 'width=400,height=600');
+        
+            const closeButton = document.createElement('button');
+            closeButton.textContent = 'Close Login Window';
+            closeButton.style = `
+                position: fixed;
+                top: 20px; /* Top-right corner */
+                right: 20px;
+                z-index: 1000;
+                padding: 10px 20px;
+                background-color: #ff4d4d; /* Red color */
+                color: white;
+                border: none;
+                border-radius: 5px;
+                cursor: pointer;
+                font-size: 16px;
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            `;
+        
+            closeButton.onclick = () => {
+                if (popup && !popup.closed) {
+                    popup.close();
+                    closeButton.remove();
+                } else {
+                    alert('The login window is already closed.');
+                }
+            };
+        
+            document.body.appendChild(closeButton);
 
             const pollTimer = setInterval(() => {
-                clearInterval(pollTimer);
-                verifyAuthentication();
+                if (popup.closed) {
+                    clearInterval(pollTimer);
+                    closeButton.remove();
+                    window.location.href = '/aira/chat';
+                }
             }, 1000);
         });
     }
