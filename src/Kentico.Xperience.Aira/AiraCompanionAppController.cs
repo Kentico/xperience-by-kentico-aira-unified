@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+﻿using System.Text;
 
 using CMS.Membership;
 
@@ -14,6 +14,7 @@ using Kentico.Xperience.Aira.Assets;
 using Kentico.Xperience.Aira.AssetUploader.Models;
 using Kentico.Xperience.Aira.Authentication;
 using Kentico.Xperience.Aira.Chat.Models;
+using Kentico.Xperience.Aira.Insights;
 using Kentico.Xperience.Aira.NavBar;
 
 using Microsoft.AspNetCore.Authentication;
@@ -34,18 +35,21 @@ public sealed class AiraCompanionAppController : Controller
     private readonly AdminSignInManager signInManager;
     private readonly AdminUserManager adminUserManager;
     private readonly IAiraConfigurationService airaConfigurationService;
+    private readonly IAiraInsightsService airaInsightsService;
     private readonly IAiraAssetService airaAssetService;
     private readonly INavBarService airaUIService;
 
     public AiraCompanionAppController(AdminSignInManager signInManager,
         AdminUserManager adminUserManager,
         IAiraConfigurationService airaConfigurationService,
+        IAiraInsightsService airaInsightsService,
         IAiraAssetService airaAssetService,
         INavBarService airaUIService)
     {
         this.adminUserManager = adminUserManager;
         this.airaConfigurationService = airaConfigurationService;
         this.signInManager = signInManager;
+        this.airaInsightsService = airaInsightsService;
         this.airaAssetService = airaAssetService;
         this.airaUIService = airaUIService;
     }
@@ -128,13 +132,36 @@ public sealed class AiraCompanionAppController : Controller
             message = messages.ToString().Replace("\"", "");
         }
 
-        var response = new AiraChatMessage
+        AiraChatMessage? response = null;
+
+        switch (message)
         {
-            Role = AiraCompanionAppConstants.AiraChatRoleName,
-            Message = "Ok",
-            QuickPrompts = message == "Prompts" ?
-                ["Prompts", "Just Message"] : []
-        };
+            case "Reusable Drafts":
+                var reusableDraftResult = await airaInsightsService.GetContentInsights(ContentType.Reusable, user, "Draft");
+                response = BuildMessage(reusableDraftResult);
+                break;
+            case "Website Scheduled":
+                var websiteScheduledResult = await airaInsightsService.GetContentInsights(ContentType.WebPage, user, "Scheduled");
+                response = BuildMessage(websiteScheduledResult);
+                break;
+            case "Emails":
+                var emailsResult = airaInsightsService.GetEmailInsights();
+                response = BuildMessage(emailsResult);
+                break;
+            case "Contact Groups":
+                var contactGroupsResult = airaInsightsService.GetContactGroupInsights();
+                response = BuildMessage(contactGroupsResult);
+                break;
+            default:
+                response = new AiraChatMessage
+                {
+                    Role = AiraCompanionAppConstants.AiraChatRoleName,
+                    Message = "Ok",
+                    QuickPrompts = message == "Prompts" ?
+                        ["Reusable Drafts", "Website Scheduled", "Emails", "Contact Groups"] : []
+                };
+                break;
+        }
 
         return Ok(response);
     }
@@ -336,5 +363,66 @@ public sealed class AiraCompanionAppController : Controller
 
             return await adminUserManager.FindByEmailAsync(model.UserNameOrEmail);
         }
+    }
+
+    private AiraChatMessage BuildMessage(ContentInsightsModel content)
+    {
+        var message = new StringBuilder();
+
+        foreach (var item in content.Items)
+        {
+            if (message.Length > 0)
+            {
+                message.Append(", ");
+            }
+
+            message.Append(item.DisplayName);
+        }
+
+        return new AiraChatMessage
+        {
+            Role = AiraCompanionAppConstants.AiraChatRoleName,
+            Message = message.ToString()
+        };
+    }
+
+    private AiraChatMessage BuildMessage(EmailInsightsModel emails)
+    {
+        var message = new StringBuilder();
+
+        foreach (var item in emails.Emails)
+        {
+            if (message.Length > 0)
+            {
+                message.Append(", ");
+            }
+        }
+
+        message.Append(" - ");
+        message.AppendFormat("Sent: {0}", emails.EmailsSent);
+        message.AppendFormat("Delivered: {0}", emails.EmailsDelivered);
+        message.AppendFormat("Clicked: {0}", emails.LinksClicked);
+        message.AppendFormat("Opened: {0}", emails.EmailsOpened);
+        message.AppendFormat("Unsubscribed: {0}", emails.UnsubscribeRate);
+        message.AppendFormat("Spam Reports: {0}", emails.SpamReports);
+
+        message.Insert(0, "Email: ");
+
+        return new AiraChatMessage
+        {
+            Role = AiraCompanionAppConstants.AiraChatRoleName,
+            Message = message.ToString()
+        };
+    }
+
+    private AiraChatMessage BuildMessage(ContactGroupInsightsModel contactGroups)
+    {
+        var message = new StringBuilder();
+
+        return new AiraChatMessage
+        {
+            Role = AiraCompanionAppConstants.AiraChatRoleName,
+            Message = message.ToString()
+        };
     }
 }
