@@ -6,5 +6,8 @@
         public string EmailName { get; set; } = string.Empty;
         public int ChannelId { get; set; }
         public string ChannelName { get; set; } = string.Empty;
+        public int ContentTypeId { get; set; }
+        public string ContentTypeName { get; set; } = string.Empty;
+
     }
 }

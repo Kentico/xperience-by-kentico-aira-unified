@@ -17,10 +17,12 @@ namespace Kentico.Xperience.Aira.Insights
         private readonly IInfoProvider<ChannelInfo> channelInfoProvider;
         private readonly IInfoProvider<ContentLanguageInfo> contentLanguageInfoProvider;
         private readonly IInfoProvider<ContactGroupInfo> contactGroupInfoProvider;
+        private readonly IInfoProvider<ContactGroupMemberInfo> contactGroupMemberInfoProvider;
         private readonly IInfoProvider<ContentItemLanguageMetadataInfo> contentItemLanguageMetadataInfoProvider;
         private readonly IInfoProvider<ContentWorkflowStepInfo> contentWorkflowStepInfoProvider;
         private readonly IInfoProvider<EmailStatisticsInfo> emailStatisticsInfoProvider;
         private readonly IInfoProvider<EmailConfigurationInfo> emailConfigurationInfoProvider;
+        private readonly IInfoProvider<ContactInfo> contactInfoProvider;
 
         private string[]? reusableTypes = null;
         private string[]? pageTypes = null;
@@ -32,20 +34,24 @@ namespace Kentico.Xperience.Aira.Insights
             IInfoProvider<ChannelInfo> channelInfoProvider,
             IInfoProvider<ContentLanguageInfo> contentLanguageInfoProvider,
             IInfoProvider<ContactGroupInfo> contactGroupInfoProvider,
+            IInfoProvider<ContactGroupMemberInfo> contactGroupMemberInfoProvider,
             IInfoProvider<ContentItemLanguageMetadataInfo> contentItemLanguageMetadataInfoProvider,
             IInfoProvider<ContentWorkflowStepInfo> contentWorkflowStepInfoProvider,
             IInfoProvider<EmailStatisticsInfo> emailStatisticsInfoProvider,
-            IInfoProvider<EmailConfigurationInfo> emailConfigurationInfoProvider)
+            IInfoProvider<EmailConfigurationInfo> emailConfigurationInfoProvider,
+            IInfoProvider<ContactInfo> contactInfoProvider)
         {
             this.contentItemManagerFactory = contentItemManagerFactory;
             this.contentQueryExecutor = contentQueryExecutor;
             this.channelInfoProvider = channelInfoProvider;
             this.contentLanguageInfoProvider = contentLanguageInfoProvider;
             this.contactGroupInfoProvider = contactGroupInfoProvider;
+            this.contactGroupMemberInfoProvider = contactGroupMemberInfoProvider;
             this.contentItemLanguageMetadataInfoProvider = contentItemLanguageMetadataInfoProvider;
             this.contentWorkflowStepInfoProvider = contentWorkflowStepInfoProvider;
             this.emailStatisticsInfoProvider = emailStatisticsInfoProvider;
             this.emailConfigurationInfoProvider = emailConfigurationInfoProvider;
+            this.contactInfoProvider = contactInfoProvider;
         }
 
         public async Task<ContentInsightsModel> GetContentInsights(ContentType contentType, AdminApplicationUser user, string? status = null)
@@ -58,8 +64,8 @@ namespace Kentico.Xperience.Aira.Insights
             {
                 items.Add(new ContentItemInsightsModel
                 {
-                    Id = contentItem.SystemFields.ContentItemID,
-                    DisplayName = contentItem.SystemFields.ContentItemName
+                    Id = contentItem.Id,
+                    DisplayName = contentItem.Name
                 });
             }
 
@@ -69,11 +75,13 @@ namespace Kentico.Xperience.Aira.Insights
             };
         }
 
-        public EmailInsightsModel GetEmailInsights()
+        public async Task<EmailInsightsModel> GetEmailInsights(AdminApplicationUser user)
         {
             var channels = channelInfoProvider.Get().ToList();
             var statistics = emailStatisticsInfoProvider.Get().ToList();
-            var regularEmails = emailConfigurationInfoProvider.Get().Where(c => c.WhereEquals("EmailConfigurationPurpose", "Regular"));
+            var items = await GetContent(user, "Email");
+
+            var regularEmails = emailConfigurationInfoProvider.Get().Where(c => c.WhereEquals("EmailConfigurationPurpose", "Regular")).ToList();
 
             var sent = 0;
             var delivered = 0;
@@ -87,13 +95,16 @@ namespace Kentico.Xperience.Aira.Insights
             foreach (var email in regularEmails)
             {
                 var channel = channels.FirstOrDefault(ch => ch.ChannelID == email.EmailConfigurationEmailChannelID);
+                var item = items.FirstOrDefault(i => i.Id == email.EmailConfigurationContentItemID);
 
                 emails.Add(new EmailConfigurationInsightsModel
                 {
                     EmailId = email.EmailConfigurationID,
                     EmailName = email.EmailConfigurationName,
                     ChannelId = email.EmailConfigurationEmailChannelID,
-                    ChannelName = channel?.ChannelName ?? ""
+                    ChannelName = channel?.ChannelName ?? "",
+                    ContentTypeId = item?.ContentTypeId ?? 0,
+                    ContentTypeName = item?.ContentTypeName ?? ""
                 });
 
                 var stats = statistics.FirstOrDefault(s => s.EmailStatisticsEmailConfigurationID == email.EmailConfigurationID);
@@ -122,12 +133,31 @@ namespace Kentico.Xperience.Aira.Insights
             };
         }
 
-        public ContactGroupInsightsModel GetContactGroupInsights()
+        public ContactGroupsInsightsModel GetContactGroupInsights(string[] names)
         {
-            throw new NotImplementedException();
+            var allCount = contactInfoProvider.Get().ToList().Count;
+            var contactGroups = GetContactGroups(names);
+            var groups = new List<ContactGroupInsightsModel>();
+
+            foreach (var contactGroup in contactGroups)
+            {
+                groups.Add(new ContactGroupInsightsModel
+                {
+                    Id = contactGroup.ContactGroupID,
+                    Name = contactGroup.ContactGroupDisplayName,
+                    Conditions = contactGroup.ContactGroupDynamicCondition,
+                    Count = contactGroupMemberInfoProvider.GetContactsInContactGroupCount(contactGroup.ContactGroupID)
+                });
+            }
+
+            return new ContactGroupsInsightsModel
+            {
+                AllCount = allCount,
+                Groups = groups
+            };
         }
 
-        private async Task<IEnumerable<IContentItemFieldsSource>> GetContent(AdminApplicationUser user, string classType = "Reusable", string? status = null)
+        private async Task<IEnumerable<ContentItemModel>> GetContent(AdminApplicationUser user, string classType = "Reusable", string? status = null)
         {
             var builder = classType switch
             {
@@ -136,27 +166,44 @@ namespace Kentico.Xperience.Aira.Insights
                 _ => GetContentItemBuilder(ReusableTypes),
             };
 
-            if (status == "Draft")
+            var options = new ContentQueryExecutionOptions
             {
-                builder.Parameters(q => q.Where(w => w
-                    .WhereEquals("ContentItemCommonDataVersionStatus", VersionStatus.Draft)
-                    .Or()
-                    .WhereEquals("ContentItemCommonDataVersionStatus", VersionStatus.InitialDraft)));
+                ForPreview = true,
+                IncludeSecuredItems = true
+            };
 
-                var items = await contentQueryExecutor.GetMappedResult<IContentItemFieldsSource>(builder);
-                return items;
-            }
-            else
+            if (builder != null)
             {
-                var items = await contentQueryExecutor.GetMappedResult<IContentItemFieldsSource>(builder);
-                var result = status switch
+                if (status == "Draft")
                 {
-                    "Draft" => await FilterDrafts(items),
-                    "Scheduled" => await FilterScheduled(user, items),
-                    _ => await FilterCustomWorkflowStep(items, status),
-                };
-                return result;
+                    builder.Parameters(q => q.Where(w => w
+                        .WhereEquals("ContentItemCommonDataVersionStatus", VersionStatus.Draft)
+                        .Or()
+                        .WhereEquals("ContentItemCommonDataVersionStatus", VersionStatus.InitialDraft)));
+
+                    var items = await contentQueryExecutor.GetResult(builder, ContentItemBinder, options);
+                    return items;
+                }
+                else
+                {
+                    var items = await contentQueryExecutor.GetResult(builder, ContentItemBinder, options);
+                    if (!string.IsNullOrEmpty(status))
+                    {
+                        return status switch
+                        {
+                            "Draft" => await FilterDrafts(items),
+                            "Scheduled" => await FilterScheduled(user, items),
+                            _ => await FilterCustomWorkflowStep(items, status),
+                        };
+                    }
+                    else
+                    {
+                        return items;
+                    }
+                }
             }
+
+            return [];
         }
 
         private IEnumerable<ContactGroupInfo> GetContactGroups(string[] names)
@@ -173,7 +220,7 @@ namespace Kentico.Xperience.Aira.Insights
                     }
                     else
                     {
-                        var group = contactGroupInfoProvider.Get(name);
+                        var group = contactGroupInfoProvider.Get().Where(g => g.ContactGroupDisplayName == name).FirstOrDefault();
                         if (group != null)
                         {
                             result.Add(group);
@@ -185,18 +232,27 @@ namespace Kentico.Xperience.Aira.Insights
             return result;
         }
 
-        private ContentItemQueryBuilder GetContentItemBuilder(string[] contentTypes) => new ContentItemQueryBuilder()
-                .ForContentTypes(q => q.OfContentType(contentTypes).ForWebsite());
-
-        private async Task<IEnumerable<IContentItemFieldsSource>> FilterScheduled(AdminApplicationUser user, IEnumerable<IContentItemFieldsSource> items)
+        private ContentItemQueryBuilder? GetContentItemBuilder(string[] contentTypes)
         {
-            List<IContentItemFieldsSource> result = [];
+            var builder = new ContentItemQueryBuilder();
+
+            return contentTypes.Length switch
+            {
+                0 => null,
+                1 => builder.ForContentType(contentTypes[0]),
+                _ => builder.ForContentTypes(q => q.OfContentType(contentTypes)),
+            };
+        }
+
+        private async Task<IEnumerable<ContentItemModel>> FilterScheduled(AdminApplicationUser user, IEnumerable<ContentItemModel> items)
+        {
+            List<ContentItemModel> result = [];
 
             var contentItemManager = contentItemManagerFactory.Create(user.UserID);
             foreach (var item in items)
             {
-                var language = await contentLanguageInfoProvider.GetAsync(item.SystemFields.ContentItemCommonDataContentLanguageID);
-                var isScheduled = await contentItemManager.IsPublishScheduled(item.SystemFields.ContentItemID, language.ContentLanguageName);
+                var language = await contentLanguageInfoProvider.GetAsync(item.LanguageId);
+                var isScheduled = await contentItemManager.IsPublishScheduled(item.Id, language.ContentLanguageName);
                 if (isScheduled)
                 {
                     result.Add(item);
@@ -206,13 +262,13 @@ namespace Kentico.Xperience.Aira.Insights
             return result;
         }
 
-        private async Task<IEnumerable<IContentItemFieldsSource>> FilterDrafts(IEnumerable<IContentItemFieldsSource> items)
+        private async Task<IEnumerable<ContentItemModel>> FilterDrafts(IEnumerable<ContentItemModel> items)
         {
-            List<IContentItemFieldsSource> result = [];
+            List<ContentItemModel> result = [];
 
             foreach (var item in items)
             {
-                if (item.SystemFields.ContentItemCommonDataVersionStatus == VersionStatus.Draft)
+                if (item.VersionStatus == VersionStatus.Draft)
                 {
                     result.Add(item);
                 }
@@ -221,9 +277,9 @@ namespace Kentico.Xperience.Aira.Insights
             return result;
         }
 
-        private async Task<IEnumerable<IContentItemFieldsSource>> FilterCustomWorkflowStep(IEnumerable<IContentItemFieldsSource> items, string? status)
+        private async Task<IEnumerable<ContentItemModel>> FilterCustomWorkflowStep(IEnumerable<ContentItemModel> items, string? status)
         {
-            List<IContentItemFieldsSource> result = [];
+            List<ContentItemModel> result = [];
 
             var step = contentWorkflowStepInfoProvider.Get().WhereEquals("ContentWorkflowStepDisplayName", status).FirstOrDefault();
 
@@ -234,8 +290,8 @@ namespace Kentico.Xperience.Aira.Insights
                 foreach (var item in items)
                 {
                     if (languageMetadata.Any(m =>
-                        m.ContentItemLanguageMetadataContentItemID == item.SystemFields.ContentItemID &&
-                        m.ContentItemLanguageMetadataContentLanguageID == item.SystemFields.ContentItemCommonDataContentLanguageID))
+                        m.ContentItemLanguageMetadataContentItemID == item.Id &&
+                        m.ContentItemLanguageMetadataContentLanguageID == item.LanguageId))
                     {
                         result.Add(item);
                     }
@@ -243,6 +299,18 @@ namespace Kentico.Xperience.Aira.Insights
             }
             return result;
         }
+
+        private ContentItemModel ContentItemBinder(IContentQueryDataContainer container) => new()
+        {
+            Id = container.ContentItemID,
+            Name = container.ContentItemName,
+            DisplayName = container.ContentItemName,
+            ContentTypeId = container.ContentItemContentTypeID,
+            ContentTypeName = container.ContentTypeName,
+            VersionStatus = container.ContentItemCommonDataVersionStatus,
+            LanguageId = container.ContentItemCommonDataContentLanguageID,
+
+        };
 
         private string[] ReusableTypes
         {

@@ -3,7 +3,6 @@
     public enum ContentType
     {
         Reusable,
-        WebPage,
-        Email
+        Website
     }
 }

@@ -134,33 +134,40 @@ public sealed class AiraCompanionAppController : Controller
 
         AiraChatMessage? response = null;
 
-        switch (message)
+        try
         {
-            case "Reusable Drafts":
-                var reusableDraftResult = await airaInsightsService.GetContentInsights(ContentType.Reusable, user, "Draft");
-                response = BuildMessage(reusableDraftResult);
-                break;
-            case "Website Scheduled":
-                var websiteScheduledResult = await airaInsightsService.GetContentInsights(ContentType.WebPage, user, "Scheduled");
-                response = BuildMessage(websiteScheduledResult);
-                break;
-            case "Emails":
-                var emailsResult = airaInsightsService.GetEmailInsights();
-                response = BuildMessage(emailsResult);
-                break;
-            case "Contact Groups":
-                var contactGroupsResult = airaInsightsService.GetContactGroupInsights();
-                response = BuildMessage(contactGroupsResult);
-                break;
-            default:
-                response = new AiraChatMessage
-                {
-                    Role = AiraCompanionAppConstants.AiraChatRoleName,
-                    Message = "Ok",
-                    QuickPrompts = message == "Prompts" ?
-                        ["Reusable Drafts", "Website Scheduled", "Emails", "Contact Groups"] : []
-                };
-                break;
+            switch (message)
+            {
+                case "Reusable Drafts":
+                    var reusableDraftResult = await airaInsightsService.GetContentInsights(ContentType.Reusable, user, "Draft");
+                    response = BuildMessage(reusableDraftResult);
+                    break;
+                case "Website Scheduled":
+                    var websiteScheduledResult = await airaInsightsService.GetContentInsights(ContentType.Website, user, "Scheduled");
+                    response = BuildMessage(websiteScheduledResult);
+                    break;
+                case "Emails":
+                    var emailsResult = await airaInsightsService.GetEmailInsights(user);
+                    response = BuildMessage(emailsResult);
+                    break;
+                case "Contact Groups":
+                    var contactGroupsResult = airaInsightsService.GetContactGroupInsights(["Females", "Males"]);
+                    response = BuildMessage(contactGroupsResult);
+                    break;
+                default:
+                    response = new AiraChatMessage
+                    {
+                        Role = AiraCompanionAppConstants.AiraChatRoleName,
+                        Message = "Ok",
+                        QuickPrompts = message == "Prompts" ?
+                            ["Reusable Drafts", "Website Scheduled", "Emails", "Contact Groups"] : []
+                    };
+                    break;
+            }
+        }
+        catch (Exception ex)
+        {
+            var aa = "aa";
         }
 
         return Ok(response);
@@ -407,14 +414,16 @@ public sealed class AiraCompanionAppController : Controller
             {
                 message.Append(", ");
             }
+
+            message.AppendFormat("{0} ({1}, {2})", item.EmailName, item.ContentTypeName, item.ChannelName);
         }
 
         message.Append(" - ");
-        message.AppendFormat("Sent: {0}", emails.EmailsSent);
-        message.AppendFormat("Delivered: {0}", emails.EmailsDelivered);
-        message.AppendFormat("Clicked: {0}", emails.LinksClicked);
-        message.AppendFormat("Opened: {0}", emails.EmailsOpened);
-        message.AppendFormat("Unsubscribed: {0}", emails.UnsubscribeRate);
+        message.AppendFormat("Sent: {0}, ", emails.EmailsSent);
+        message.AppendFormat("Delivered: {0}, ", emails.EmailsDelivered);
+        message.AppendFormat("Clicked: {0}, ", emails.LinksClicked);
+        message.AppendFormat("Opened: {0}, ", emails.EmailsOpened);
+        message.AppendFormat("Unsubscribed: {0}, ", emails.UnsubscribeRate);
         message.AppendFormat("Spam Reports: {0}", emails.SpamReports);
 
         message.Insert(0, "Email: ");
@@ -426,9 +435,24 @@ public sealed class AiraCompanionAppController : Controller
         };
     }
 
-    private AiraChatMessage BuildMessage(ContactGroupInsightsModel contactGroups)
+    private AiraChatMessage BuildMessage(ContactGroupsInsightsModel contactGroups)
     {
         var message = new StringBuilder();
+
+        foreach (var contactGroup in contactGroups.Groups)
+        {
+            var percentage = contactGroup.Count * (100M / contactGroups.AllCount);
+            if (message.Length > 0)
+            {
+                message.Append(", ");
+            }
+
+            message.Append(contactGroup.Name);
+            message.AppendFormat(" (Count: {0}, Percentage {1}%)", contactGroup.Count, Math.Round(percentage, 2));
+        }
+
+        message.Append(" - ");
+        message.AppendFormat("Contacts: {0}", contactGroups.AllCount);
 
         return new AiraChatMessage
         {
