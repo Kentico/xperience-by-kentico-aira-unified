@@ -64,11 +64,10 @@ internal class AiraEndpointDataSource : MutableEndpointDataSource
                 nameof(AiraCompanionAppController.Assets),
                 controller => controller.Assets()
             ),
-            CreateAiraEndpoint<SignInViewModel>(configuration,
+            CreateAiraEndpoint(configuration,
                 AiraCompanionAppConstants.SigninRelativeUrl,
-                nameof(AiraCompanionAppController.SignIn),
-                controller => controller.Signin(),
-                (controller, request) => controller.SignIn(request)
+                nameof(AiraCompanionAppController.Signin),
+                (controller) => controller.Signin()
             )
         ];
     }
