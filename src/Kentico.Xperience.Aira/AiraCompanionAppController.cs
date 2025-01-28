@@ -124,7 +124,8 @@ public sealed class AiraCompanionAppController : Controller
         var response = new AiraChatMessage
         {
             Role = AiraCompanionAppConstants.AiraChatRoleName,
-            Message = "Ok",
+            Message = "OK",
+            QuickPromptsGroupId = "RandomID",
             QuickPrompts = message == "Prompts" ?
                 ["Prompts", "Just Message"] : []
         };
