@@ -66,7 +66,7 @@ public static class AiraCompanionAppConstants
     /// <summary>
     /// Path where the hat icon is located.
     /// </summary>
-    public const string PictureHatImgPath = "img/icons/magic-hat.svg";
+    public const string PictureStarImgPath = "img/icons/stars-icon-purple.svg";
 
     /// <summary>
     /// Name of the Xperience Admin User authentication scheme.

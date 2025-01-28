@@ -70,7 +70,7 @@ public sealed class AiraCompanionAppController : Controller
         var chatModel = new ChatViewModel
         {
             PathBase = airaPathBase,
-            AIIconImagePath = $"/{AiraCompanionAppConstants.RCLUrlPrefix}/{AiraCompanionAppConstants.PictureHatImgPath}",
+            AIIconImagePath = $"/{AiraCompanionAppConstants.RCLUrlPrefix}/{AiraCompanionAppConstants.PictureStarImgPath}",
             NavBarViewModel = await airaUIService.GetNavBarViewModel(AiraCompanionAppConstants.ChatRelativeUrl)
         };
 
