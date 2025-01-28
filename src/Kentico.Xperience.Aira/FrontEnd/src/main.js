@@ -8,11 +8,13 @@ function mountChat(chatElement) {
     const navBarModel = JSON.parse(chatElement.dataset.navBarModel || "{}");
     const history = JSON.parse(chatElement.dataset.history || {});
     const aiIconUrl = chatElement.dataset.aiIconUrl || "";
+    const usePromptUrl = chatElement.dataset.usePromptUrl || "";
 
     createApp(ChatComponent, {
         airaBaseUrl,
         aiIconUrl,
         baseUrl,
+        usePromptUrl,
         navBarModel,
         history
     }).mount("#chat-app");

@@ -31,6 +31,11 @@ public static class AiraCompanionAppConstants
     public const string SigninRelativeUrl = "signin";
 
     /// <summary>
+    /// Relative path to the used prompt group removal endpoint.
+    /// </summary>
+    public const string RemoveUsedPromptGroupRelativeUrl = "prompt/use";
+
+    /// <summary>
     /// The name of the ai role used within chat page.
     /// </summary>
     public const string AiraChatRoleName = "ai";

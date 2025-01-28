@@ -4,11 +4,11 @@ using HotChocolate.Authorization;
 
 using Kentico.Membership;
 using Kentico.Xperience.Admin.Base;
-using Kentico.Xperience.Admin.Base.Authentication.Internal;
 using Kentico.Xperience.Aira.Admin;
 using Kentico.Xperience.Aira.Assets;
 using Kentico.Xperience.Aira.AssetUploader.Models;
 using Kentico.Xperience.Aira.Authentication;
+using Kentico.Xperience.Aira.Chat;
 using Kentico.Xperience.Aira.Chat.Models;
 using Kentico.Xperience.Aira.NavBar;
 
@@ -24,22 +24,23 @@ namespace Kentico.Xperience.Aira;
 [Route("[controller]/[action]")]
 public sealed class AiraCompanionAppController : Controller
 {
-    private readonly AdminSignInManager signInManager;
     private readonly AdminUserManager adminUserManager;
     private readonly IAiraConfigurationService airaConfigurationService;
+    private readonly IAiraChatService airaChatService;
     private readonly IAiraAssetService airaAssetService;
     private readonly INavBarService airaUIService;
 
-    public AiraCompanionAppController(AdminSignInManager signInManager,
+    public AiraCompanionAppController(
         AdminUserManager adminUserManager,
         IAiraConfigurationService airaConfigurationService,
         IAiraAssetService airaAssetService,
-        INavBarService airaUIService)
+        INavBarService airaUIService,
+        IAiraChatService airaChatService)
     {
         this.adminUserManager = adminUserManager;
         this.airaConfigurationService = airaConfigurationService;
-        this.signInManager = signInManager;
         this.airaAssetService = airaAssetService;
+        this.airaChatService = airaChatService;
         this.airaUIService = airaUIService;
     }
 
@@ -70,8 +71,10 @@ public sealed class AiraCompanionAppController : Controller
         var chatModel = new ChatViewModel
         {
             PathBase = airaPathBase,
+            History = await airaChatService.GetUserChatHistory(user.UserID),
             AIIconImagePath = $"/{AiraCompanionAppConstants.RCLUrlPrefix}/{AiraCompanionAppConstants.PictureStarImgPath}",
-            NavBarViewModel = await airaUIService.GetNavBarViewModel(AiraCompanionAppConstants.ChatRelativeUrl)
+            NavBarViewModel = await airaUIService.GetNavBarViewModel(AiraCompanionAppConstants.ChatRelativeUrl),
+            RemovePromptUrl = AiraCompanionAppConstants.RemoveUsedPromptGroupRelativeUrl
         };
 
         if (chatModel.History.Count == 0)
@@ -83,6 +86,14 @@ public sealed class AiraCompanionAppController : Controller
                     Role = AiraCompanionAppConstants.AiraChatRoleName
                 })
             );
+        }
+        else
+        {
+            chatModel.History.Add(new AiraChatMessage
+            {
+                Message = AiraCompanionAppConstants.AiraChatAIWelcomeBackMessage,
+                Role = AiraCompanionAppConstants.AiraChatRoleName
+            });
         }
 
         return View("~/Chat/Chat.cshtml", chatModel);
@@ -121,16 +132,31 @@ public sealed class AiraCompanionAppController : Controller
             message = messages.ToString().Replace("\"", "");
         }
 
-        var response = new AiraChatMessage
+        AiraChatMessage response;
+
+        if (message == "Prompts")
         {
-            Role = AiraCompanionAppConstants.AiraChatRoleName,
-            Message = "OK",
-            QuickPromptsGroupId = "RandomID",
-            QuickPrompts = message == "Prompts" ?
-                ["Prompts", "Just Message"] : []
-        };
+            response = await airaChatService.GenerateAiraPrompts(user.UserID);
+            response.Message = "OK";
+        }
+        else
+        {
+            response = new AiraChatMessage
+            {
+                Role = AiraCompanionAppConstants.AiraChatRoleName,
+                Message = "OK",
+            };
+        }
 
         return Ok(response);
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> RemoveUsedPromptGroup([FromBody] AiraUsedPromptGroupModel model)
+    {
+        airaChatService.RemoveUsedPrompts(model.GroupId);
+
+        return Ok();
     }
 
     /// <summary>

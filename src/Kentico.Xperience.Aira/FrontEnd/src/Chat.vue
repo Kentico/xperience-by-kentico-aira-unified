@@ -137,9 +137,9 @@ export default {
         airaBaseUrl: null,
         aiIconUrl: null,
         baseUrl: null,
+        usePromptUrl: null,
         navBarModel: null,
-        history: [],
-        suggestionId: 0
+        history: []
     },
     data() {
         return {
@@ -184,6 +184,7 @@ export default {
                     this.setOnMessage();
                     this.setResponseInterceptor();
                     this.setHistory();
+                    console.log(this.usePromptUrl);
                 }
 
                 const newSubmitButton = this.$refs.chatElementRef.shadowRoot.querySelector('.input-button');
@@ -197,18 +198,14 @@ export default {
         },
         bindPromptButtons() {
             this.$refs.chatElementRef.shadowRoot.querySelectorAll('button[prompt-quick-suggestion-button]').forEach(button => {
-                button.addEventListener('click', () => {
+                button.addEventListener('click', async () => {
                     const text = button.value;
                     let history = this.$refs.chatElementRef.history;
 
                     const buttonGroupId = button.parentNode.getAttribute("prompt-quick-suggestion-button-group-id");
 
-                    console.log(history);
-
                     history = this.$refs.chatElementRef.history.filter(x => (x.promptQuickSuggestionGroupId === undefined) || x.promptQuickSuggestionGroupId.toString() !== buttonGroupId);
                     this.$refs.chatElementRef.clearMessages(false);
-
-                    console.log(history);
 
                     history.forEach(x => {
                         this.$refs.chatElementRef.addMessage(x);
@@ -218,8 +215,27 @@ export default {
                     textInput.innerHTML = text;
                     const inputEvent = new Event('input', { bubbles: true });
                     textInput.dispatchEvent(inputEvent);
+
+                    const sendUsePromptUrl = `${this.baseUrl}${this.airaBaseUrl}/${this.usePromptUrl}`;
+                    await this.removeUsedPromptGroup(buttonGroupId, sendUsePromptUrl);
                 });
             });
+        },
+        async removeUsedPromptGroup(groupId, sendUsePromptUrl) {
+            try {
+                await fetch(sendUsePromptUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        groupId: groupId,
+                    }),
+                });
+            }
+            catch (error) {
+                console.error('An error occurred:', error.message);
+            }
         },
         setRequestInterceptor() {
             this.$refs.chatElementRef.requestInterceptor = async (requestDetails) => {
@@ -420,8 +436,17 @@ export default {
         },
         setHistory() {
             for (const x of this.history) {
-                const viewModel = this.getMessageViewModel(x)
-                this.$refs.chatElementRef.history.push(viewModel);
+                const messageViewModel = this.getMessageViewModel(x);
+                
+                this.$refs.chatElementRef.history.push(messageViewModel);
+                this.$refs.chatElementRef.addMessage(messageViewModel);
+
+                if (x.quickPrompts.length > 0)
+                {
+                    const promptMessage = this.getPromptsViewModel(x);
+                    this.$refs.chatElementRef.history.push(promptMessage);
+                    this.$refs.chatElementRef.addMessage(promptMessage);
+                }
             }
         },
         getPromptsViewModel(message) {

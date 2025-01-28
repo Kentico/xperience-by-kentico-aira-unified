@@ -5,6 +5,7 @@ using CMS.DataEngine;
 
 using Kentico.Xperience.Aira.Admin.InfoModels;
 using Kentico.Xperience.Aira.Authentication;
+using Kentico.Xperience.Aira.Chat.Models;
 
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
@@ -68,9 +69,63 @@ internal class AiraEndpointDataSource : MutableEndpointDataSource
                 AiraCompanionAppConstants.SigninRelativeUrl,
                 nameof(AiraCompanionAppController.Signin),
                 (controller) => controller.Signin()
+            ),
+            CreateAiraEndpointFromBody<AiraUsedPromptGroupModel>(configuration,
+                AiraCompanionAppConstants.RemoveUsedPromptGroupRelativeUrl,
+                nameof(AiraCompanionAppController.RemoveUsedPromptGroup),
+                (controller, model) => controller.RemoveUsedPromptGroup(model)
             )
         ];
     }
+    private static Endpoint CreateAiraEndpointFromBody<T>(
+        AiraConfigurationItemInfo configurationInfo,
+        string subPath,
+        string actionName,
+        Func<AiraCompanionAppController, T, Task<IActionResult>> actionWithModel
+    ) where T : class, new() =>
+        CreateEndpoint($"{configurationInfo.AiraConfigurationItemAiraPathBase}/{subPath}", async context =>
+        {
+            var airaController = await GetAiraCompanionAppControllerInContext(context, actionName);
+
+            if (context.Request.ContentType is not null &&
+                string.Equals(context.Request.ContentType, "application/json", StringComparison.OrdinalIgnoreCase))
+            {
+                using var reader = new StreamReader(context.Request.Body);
+                var body = await reader.ReadToEndAsync();
+
+                try
+                {
+                    var requestObject = JsonSerializer.Deserialize<T>(body, new JsonSerializerOptions
+                    {
+                        PropertyNameCaseInsensitive = true
+                    });
+
+                    if (requestObject is not null)
+                    {
+                        var result = await actionWithModel.Invoke(airaController, requestObject);
+                        await result.ExecuteResultAsync(airaController.ControllerContext);
+                    }
+                    else
+                    {
+                        context.Response.StatusCode = StatusCodes.Status400BadRequest;
+                        await context.Response.WriteAsync("Invalid or missing request body.");
+                    }
+                }
+                catch (JsonException ex)
+                {
+                    // Handle JSON deserialization errors
+                    context.Response.StatusCode = StatusCodes.Status400BadRequest;
+                    await context.Response.WriteAsync($"Invalid JSON format: {ex.Message}");
+                }
+            }
+            else
+            {
+                // Handle unsupported content types
+                context.Response.StatusCode = StatusCodes.Status415UnsupportedMediaType;
+                await context.Response.WriteAsync("Unsupported content type. Expected 'application/json'.");
+            }
+        });
+
     private static Endpoint CreateAiraEndpoint<T>(AiraConfigurationItemInfo configurationInfo,
         string subPath,
         string actionName,
