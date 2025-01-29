@@ -96,11 +96,9 @@ public sealed class AiraCompanionAppController : Controller
     /// <summary>
     /// Endpoint allowing chat communication via the chat interface.
     /// </summary>
-#pragma warning disable IDE0060 // Kept for development. We do not yet have AIRA AI api which we could give the messages to.
     [HttpPost]
     public async Task<IActionResult> PostChatMessage(IFormCollection request)
     {
-#pragma warning restore IDE0060 // 
         var airaPathBase = await GetAiraPathBase();
 
         var user = await adminUserManager.GetUserAsync(User);
@@ -119,7 +117,6 @@ public sealed class AiraCompanionAppController : Controller
             return Redirect(signinRedirectUrl);
         }
 
-#warning just a temporary functionality to better understand/test the prompt feature
         string? message = null;
         if (request.TryGetValue("message", out var messages))
         {
