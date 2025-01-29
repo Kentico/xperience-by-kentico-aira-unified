@@ -31,6 +31,11 @@ public static class AiraCompanionAppConstants
     public const string SigninRelativeUrl = "signin";
 
     /// <summary>
+    /// Relative path to the used prompt group removal endpoint.
+    /// </summary>
+    public const string RemoveUsedPromptGroupRelativeUrl = "prompt/use";
+
+    /// <summary>
     /// The name of the ai role used within chat page.
     /// </summary>
     public const string AiraChatRoleName = "ai";
@@ -66,7 +71,7 @@ public static class AiraCompanionAppConstants
     /// <summary>
     /// Path where the hat icon is located.
     /// </summary>
-    public const string PictureHatImgPath = "img/icons/magic-hat.svg";
+    public const string PictureStarImgPath = "img/icons/stars-icon-purple.svg";
 
     /// <summary>
     /// Name of the Xperience Admin User authentication scheme.

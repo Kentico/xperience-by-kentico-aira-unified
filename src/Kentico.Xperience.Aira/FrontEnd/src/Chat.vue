@@ -137,6 +137,7 @@ export default {
         airaBaseUrl: null,
         aiIconUrl: null,
         baseUrl: null,
+        usePromptUrl: null,
         navBarModel: null,
         history: []
     },
@@ -145,7 +146,8 @@ export default {
             themeColor: "#8107c1",
             themeColorInRgb: "rgb(129, 7, 193)",
             submitButton: null,
-            started: false
+            started: false,
+            messagesMetadata: new Map()
         }
     },
     mounted() {
@@ -179,8 +181,10 @@ export default {
                     });
 
                     this.setRequestInterceptor();
+                    this.setOnMessage();
                     this.setResponseInterceptor();
                     this.setHistory();
+                    console.log(this.usePromptUrl);
                 }
 
                 const newSubmitButton = this.$refs.chatElementRef.shadowRoot.querySelector('.input-button');
@@ -188,7 +192,50 @@ export default {
                     this.submitButton = newSubmitButton;
                     this.addClassesToShadowRoot();
                 }
+
+                this.bindPromptButtons();
             };
+        },
+        bindPromptButtons() {
+            this.$refs.chatElementRef.shadowRoot.querySelectorAll('button[prompt-quick-suggestion-button]').forEach(button => {
+                button.addEventListener('click', async () => {
+                    const text = button.value;
+                    let history = this.$refs.chatElementRef.history;
+
+                    const buttonGroupId = button.parentNode.getAttribute("prompt-quick-suggestion-button-group-id");
+
+                    history = this.$refs.chatElementRef.history.filter(x => (x.promptQuickSuggestionGroupId === undefined) || x.promptQuickSuggestionGroupId.toString() !== buttonGroupId);
+                    this.$refs.chatElementRef.clearMessages(false);
+
+                    history.forEach(x => {
+                        this.$refs.chatElementRef.addMessage(x);
+                    });
+                    
+                    const textInput = this.$refs.chatElementRef.shadowRoot.getElementById("text-input");
+                    textInput.innerHTML = text;
+                    const inputEvent = new Event('input', { bubbles: true });
+                    textInput.dispatchEvent(inputEvent);
+
+                    const sendUsePromptUrl = `${this.baseUrl}${this.airaBaseUrl}/${this.usePromptUrl}`;
+                    await this.removeUsedPromptGroup(buttonGroupId, sendUsePromptUrl);
+                });
+            });
+        },
+        async removeUsedPromptGroup(groupId, sendUsePromptUrl) {
+            try {
+                await fetch(sendUsePromptUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        groupId: groupId,
+                    }),
+                });
+            }
+            catch (error) {
+                console.error('An error occurred:', error.message);
+            }
         },
         setRequestInterceptor() {
             this.$refs.chatElementRef.requestInterceptor = async (requestDetails) => {
@@ -232,8 +279,6 @@ export default {
                     }
                 }
 
-                console.log(jsonData);
-
                 const modifiedRequestDetails = {
                     ...requestDetails,
                     body: jsonData ?? formData,
@@ -247,7 +292,28 @@ export default {
         },
         setResponseInterceptor() {
             this.$refs.chatElementRef.responseInterceptor = (response) => {
-                return this.getMessageViewModel(response);
+                const messageViewModel = this.getMessageViewModel(response);
+                this.$refs.chatElementRef.history.push(messageViewModel);
+
+                if (response.quickPrompts.length > 0)
+                {
+                    this.$refs.chatElementRef.addMessage(messageViewModel);
+                    const promptMessage = this.getPromptsViewModel(response);
+                    this.$refs.chatElementRef.history.push(promptMessage);
+
+                    return promptMessage;
+                }
+
+                return messageViewModel;
+            };
+        },
+        setOnMessage() {
+            this.$refs.chatElementRef.onMessage = (message) => {
+                this.bindPromptButtons();
+                if (message.message.role === 'user')
+                {
+                    this.$refs.chatElementRef.history.push(message.message);
+                }
             };
         },
         setBorders(){
@@ -370,8 +436,32 @@ export default {
         },
         setHistory() {
             for (const x of this.history) {
-                const viewModel = this.getMessageViewModel(x)
-                this.$refs.chatElementRef.history.push(viewModel);
+                const messageViewModel = this.getMessageViewModel(x);
+                
+                this.$refs.chatElementRef.history.push(messageViewModel);
+                this.$refs.chatElementRef.addMessage(messageViewModel);
+
+                if (x.quickPrompts.length > 0)
+                {
+                    const promptMessage = this.getPromptsViewModel(x);
+                    this.$refs.chatElementRef.history.push(promptMessage);
+                    this.$refs.chatElementRef.addMessage(promptMessage);
+                }
+            }
+        },
+        getPromptsViewModel(message) {
+            let prompts = `<div prompt-quick-suggestion-button-group-id="${message.quickPromptsGroupId}">`;
+
+            for (var prompt of message.quickPrompts) {
+                prompts += `<button class="btn-outline-primary" prompt-quick-suggestion-button value="${prompt}">${prompt}</button>`;
+            }
+
+            prompts += '</div>';
+
+            return {
+                role: 'ai',
+                html: prompts,
+                promptQuickSuggestionGroupId: `${message.quickPromptsGroupId}`
             }
         },
         getMessageViewModel(message) {
@@ -385,20 +475,6 @@ export default {
                         }
                     ]
                 };
-            } else if (message.quickPrompts.length > 0) {
-                let prompts = '<div class="deep-chat-temporary-message">';
-
-                for (var prompt of message.quickPrompts) {
-                    prompts += `<button class="deep-chat-suggestion-button btn-outline-primary">${prompt}</button>`;
-                }
-
-                prompts += '</div>';
-
-                return {
-                    role: message.rol,
-                    text: message.message,
-                    html: prompts
-                }
             }
 
             return {

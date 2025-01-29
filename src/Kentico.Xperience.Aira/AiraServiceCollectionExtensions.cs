@@ -1,6 +1,7 @@
 ﻿using Kentico.Xperience.Admin.Base.Forms;
 using Kentico.Xperience.Aira.Admin;
 using Kentico.Xperience.Aira.Assets;
+using Kentico.Xperience.Aira.Chat;
 using Kentico.Xperience.Aira.Insights;
 using Kentico.Xperience.Aira.NavBar;
 
@@ -33,6 +34,7 @@ public static class AiraServiceCollectionExtensions
             .AddScoped<IAiraConfigurationService, AiraConfigurationService>()
             .AddScoped<IAiraInsightsService, AiraInsightsService>()
             .AddScoped<IAiraAssetService, AiraAssetService>()
+            .AddScoped<IAiraChatService, AiraChatService>()
             .AddScoped<INavBarService, NavBarService>();
 
         return services;

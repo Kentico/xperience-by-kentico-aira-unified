@@ -109,21 +109,6 @@ public partial class AiraConfigurationItemInfo : AbstractInfo<AiraConfigurationI
         set => SetValue(nameof(AiraConfigurationItemAiraSmartUploadTitle), value);
     }
 
-    [DatabaseField]
-    [Required]
-    public virtual string AiraConfigurationItemAiraSmartUploadImgId
-    {
-        get => ValidationHelper.GetString(GetValue(nameof(AiraConfigurationItemAiraSmartUploadImgId)), string.Empty);
-        set => SetValue(nameof(AiraConfigurationItemAiraSmartUploadImgId), value);
-    }
-
-    [DatabaseField]
-    public string Test
-    {
-        get => ValidationHelper.GetString(GetValue(nameof(Test)), string.Empty);
-        set => SetValue(nameof(Test), value);
-    }
-
     /// <summary>
     /// Deletes the object using appropriate provider.
     /// </summary>

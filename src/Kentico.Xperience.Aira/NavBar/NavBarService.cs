@@ -28,9 +28,7 @@ internal class NavBarService : INavBarService
 
         var airaConfiguration = await airaConfigurationService.GetAiraConfiguration();
 
-        string logoUrl = GetMediaFileUrl(airaConfiguration.AiraConfigurationItemAiraRelativeLogoId)?.RelativePath ?? defaultImageUrl;
-
-
+        var logoUrl = GetMediaFileUrl(airaConfiguration.AiraConfigurationItemAiraRelativeLogoId)?.RelativePath ?? defaultImageUrl;
 
         return new NavBarViewModel
         {
