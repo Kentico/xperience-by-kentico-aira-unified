@@ -74,13 +74,23 @@ public sealed class AiraCompanionAppController : Controller
 
         if (chatModel.History.Count == 0)
         {
-            chatModel.History.AddRange(
-                AiraCompanionAppConstants.AiraChatInitialAiraMessages.Select(x => new AiraChatMessage
+            chatModel.History = [
+                new AiraChatMessage
                 {
-                    Message = x,
+                    Message = Resource.InitialAiraMessage1,
                     Role = AiraCompanionAppConstants.AiraChatRoleName
-                })
-            );
+                },
+                new AiraChatMessage
+                {
+                    Message = Resource.InitialAiraMessage1,
+                    Role = AiraCompanionAppConstants.AiraChatRoleName
+                },
+                new AiraChatMessage
+                {
+                    Message = Resource.InitialAiraMessage1,
+                    Role = AiraCompanionAppConstants.AiraChatRoleName
+                },
+            ];
         }
 
         return View("~/Chat/Chat.cshtml", chatModel);
