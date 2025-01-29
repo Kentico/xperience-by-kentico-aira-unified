@@ -147,49 +147,47 @@ public sealed class AiraCompanionAppController : Controller
         }
         else
         {
-            response = new AiraChatMessage
+            try
             {
-                Role = AiraCompanionAppConstants.AiraChatRoleName,
-                Message = "OK",
-            };
+                switch (message)
+                {
+                    case "Reusable Drafts":
+                        var reusableDraftResult = await airaInsightsService.GetContentInsights(ContentType.Reusable, user, "Draft");
+                        response = BuildMessage(reusableDraftResult);
+                        break;
+                    case "Website Scheduled":
+                        var websiteScheduledResult = await airaInsightsService.GetContentInsights(ContentType.Website, user, "Scheduled");
+                        response = BuildMessage(websiteScheduledResult);
+                        break;
+                    case "Emails":
+                        var emailsResult = await airaInsightsService.GetEmailInsights(user);
+                        response = BuildMessage(emailsResult);
+                        break;
+                    case "Contact Groups":
+                        var contactGroupsResult = airaInsightsService.GetContactGroupInsights(["Females", "Males"]);
+                        response = BuildMessage(contactGroupsResult);
+                        break;
+                    default:
+                        response = new AiraChatMessage
+                        {
+                            Role = AiraCompanionAppConstants.AiraChatRoleName,
+                            Message = "Ok",
+                            QuickPrompts = message == "Prompts" ?
+                                ["Reusable Drafts", "Website Scheduled", "Emails", "Contact Groups"] : []
+                        };
+                        break;
+                }
+            }
+            catch (Exception ex)
+            {
+                response = new AiraChatMessage
+                {
+                    Role = AiraCompanionAppConstants.AiraChatRoleName,
+                    Message = $"Error: {ex.Message}"
+                };
+            }
         }
-        //AiraChatMessage? response = null;
 
-        //try
-        //{
-        //    switch (message)
-        //    {
-        //        case "Reusable Drafts":
-        //            var reusableDraftResult = await airaInsightsService.GetContentInsights(ContentType.Reusable, user, "Draft");
-        //            response = BuildMessage(reusableDraftResult);
-        //            break;
-        //        case "Website Scheduled":
-        //            var websiteScheduledResult = await airaInsightsService.GetContentInsights(ContentType.Website, user, "Scheduled");
-        //            response = BuildMessage(websiteScheduledResult);
-        //            break;
-        //        case "Emails":
-        //            var emailsResult = await airaInsightsService.GetEmailInsights(user);
-        //            response = BuildMessage(emailsResult);
-        //            break;
-        //        case "Contact Groups":
-        //            var contactGroupsResult = airaInsightsService.GetContactGroupInsights(["Females", "Males"]);
-        //            response = BuildMessage(contactGroupsResult);
-        //            break;
-        //        default:
-        //            response = new AiraChatMessage
-        //            {
-        //                Role = AiraCompanionAppConstants.AiraChatRoleName,
-        //                Message = "Ok",
-        //                QuickPrompts = message == "Prompts" ?
-        //                    ["Reusable Drafts", "Website Scheduled", "Emails", "Contact Groups"] : []
-        //            };
-        //            break;
-        //    }
-        //}
-        //catch (Exception ex)
-        //{
-        //    var aa = "aa";
-        //}
 
         return Ok(response);
     }
@@ -341,7 +339,7 @@ public sealed class AiraCompanionAppController : Controller
             ChatRelativeUrl = AiraCompanionAppConstants.ChatRelativeUrl
         };
 
-        return await adminUserManager.FindByEmailAsync(model.UserNameOrEmail);
+        return View("~/Authentication/SignIn.cshtml", model);
     }
 
     private AiraChatMessage BuildMessage(ContentInsightsModel content)
@@ -361,7 +359,7 @@ public sealed class AiraCompanionAppController : Controller
         return new AiraChatMessage
         {
             Role = AiraCompanionAppConstants.AiraChatRoleName,
-            Message = message.ToString()
+            Message = message.Length == 0 ? "No Content" : message.ToString()
         };
     }
 
@@ -392,7 +390,7 @@ public sealed class AiraCompanionAppController : Controller
         return new AiraChatMessage
         {
             Role = AiraCompanionAppConstants.AiraChatRoleName,
-            Message = message.ToString()
+            Message = message.Length == 0 ? "No Emails" : message.ToString()
         };
     }
 
@@ -418,7 +416,7 @@ public sealed class AiraCompanionAppController : Controller
         return new AiraChatMessage
         {
             Role = AiraCompanionAppConstants.AiraChatRoleName,
-            Message = message.ToString()
+            Message = message.Length == 0 ? "No Contact Groups" : message.ToString()
         };
     }
 }

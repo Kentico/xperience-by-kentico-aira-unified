@@ -67,18 +67,47 @@ internal class AiraChatService : IAiraChatService
 
         var messages = new List<AiraChatPromptInfo>();
 
-        for (var i = 0; i < 3; i++)
+        //for (var i = 0; i < 3; i++)
+        //{
+        //    var prompt = new AiraChatPromptInfo
+        //    {
+        //        AiraChatPromptText = $"Option{i}_{chatPromptGroup.AiraChatPromptGroupId}",
+        //        AiraChatPromptChatPromptGroupId = chatPromptGroup.AiraChatPromptGroupId
+        //    };
+
+        //    messages.Add(prompt);
+
+        //    airaChatPromptProvider.Set(prompt);
+        //}
+
+        var drafts = new AiraChatPromptInfo
         {
-            var prompt = new AiraChatPromptInfo
-            {
-                AiraChatPromptText = $"Option{i}_{chatPromptGroup.AiraChatPromptGroupId}",
-                AiraChatPromptChatPromptGroupId = chatPromptGroup.AiraChatPromptGroupId
-            };
+            AiraChatPromptText = "Reusable Drafts",
+            AiraChatPromptChatPromptGroupId = chatPromptGroup.AiraChatPromptGroupId
+        };
 
-            messages.Add(prompt);
+        var scheduled = new AiraChatPromptInfo
+        {
+            AiraChatPromptText = "Website Scheduled",
+            AiraChatPromptChatPromptGroupId = chatPromptGroup.AiraChatPromptGroupId
+        };
 
-            airaChatPromptProvider.Set(prompt);
-        }
+        var emails = new AiraChatPromptInfo
+        {
+            AiraChatPromptText = "Emails",
+            AiraChatPromptChatPromptGroupId = chatPromptGroup.AiraChatPromptGroupId
+        };
+
+        var contactGroups = new AiraChatPromptInfo
+        {
+            AiraChatPromptText = "Contact Groups",
+            AiraChatPromptChatPromptGroupId = chatPromptGroup.AiraChatPromptGroupId
+        };
+
+        messages.Add(drafts);
+        messages.Add(scheduled);
+        messages.Add(emails);
+        messages.Add(contactGroups);
 
         return await Task.FromResult(new AiraChatMessage
         {
