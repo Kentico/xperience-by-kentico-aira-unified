@@ -24,13 +24,12 @@ namespace Kentico.Xperience.Aira;
 [Route("[controller]/[action]")]
 public sealed class AiraCompanionAppController : Controller
 {
-    private readonly AdminSignInManager signInManager;
     private readonly AdminUserManager adminUserManager;
     private readonly IAiraConfigurationService airaConfigurationService;
     private readonly IAiraAssetService airaAssetService;
     private readonly INavBarService airaUIService;
 
-    public AiraCompanionAppController(AdminSignInManager signInManager,
+    public AiraCompanionAppController(
         AdminUserManager adminUserManager,
         IAiraConfigurationService airaConfigurationService,
         IAiraAssetService airaAssetService,
@@ -38,7 +37,6 @@ public sealed class AiraCompanionAppController : Controller
     {
         this.adminUserManager = adminUserManager;
         this.airaConfigurationService = airaConfigurationService;
-        this.signInManager = signInManager;
         this.airaAssetService = airaAssetService;
         this.airaUIService = airaUIService;
     }

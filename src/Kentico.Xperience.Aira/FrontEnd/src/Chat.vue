@@ -232,8 +232,6 @@ export default {
                     }
                 }
 
-                console.log(jsonData);
-
                 const modifiedRequestDetails = {
                     ...requestDetails,
                     body: jsonData ?? formData,

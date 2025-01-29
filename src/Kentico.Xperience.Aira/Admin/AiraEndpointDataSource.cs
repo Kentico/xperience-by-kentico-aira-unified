@@ -1,10 +1,10 @@
 ﻿using System.Reflection;
+using System.Reflection.Metadata.Ecma335;
 using System.Text.Json;
 
 using CMS.DataEngine;
 
 using Kentico.Xperience.Aira.Admin.InfoModels;
-using Kentico.Xperience.Aira.Authentication;
 
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
@@ -78,6 +78,11 @@ internal class AiraEndpointDataSource : MutableEndpointDataSource
         Func<AiraCompanionAppController, T, Task<IActionResult>> actionWithForm) where T : class, new()
         => CreateEndpoint($"{configurationInfo.AiraConfigurationItemAiraPathBase}/{subPath}", async context =>
         {
+            if (!await CheckHttps(context))
+            {
+                return;
+            }
+
             var airaController = await GetAiraCompanionAppControllerInContext(context, actionName);
 
             if (context.Request.ContentType is not null &&
@@ -126,6 +131,11 @@ internal class AiraEndpointDataSource : MutableEndpointDataSource
         {
             var airaController = await GetAiraCompanionAppControllerInContext(context, actionName);
 
+            if (!await CheckHttps(context))
+            {
+                return;
+            }
+
             var result = await action.Invoke(airaController);
 
             await result.ExecuteResultAsync(airaController.ControllerContext);
@@ -134,6 +144,11 @@ internal class AiraEndpointDataSource : MutableEndpointDataSource
     private static Endpoint CreateAiraIFormCollectionEndpoint(AiraConfigurationItemInfo configurationItemInfo, string subPath, string actionName, Func<AiraCompanionAppController, IFormCollection, Task<IActionResult>> action)
     => CreateEndpoint($"{configurationItemInfo.AiraConfigurationItemAiraPathBase}/{subPath}", async context =>
     {
+        if (!await CheckHttps(context))
+        {
+            return;
+        }
+
         var airaController = await GetAiraCompanionAppControllerInContext(context, actionName);
 
         if (context.Request.ContentType is null)
@@ -202,6 +217,22 @@ internal class AiraEndpointDataSource : MutableEndpointDataSource
                 context.User = authenticateResult.Principal;
             }
         }
+    }
+
+    private static async Task<bool> CheckHttps(HttpContext context)
+    {
+        if (!context.Request.IsHttps)
+        {
+            context.Response.StatusCode = StatusCodes.Status403Forbidden;
+            await context.Response.WriteAsync("HTTPS is required.");
+            return false;
+        }
+
+        context.Response.Headers["X-Frame-Options"] = "SAMEORIGIN";
+        context.Response.Headers["Content-Security-Policy"] = "frame-ancestors 'self'";
+        context.Response.Headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains; preload";
+
+        return true;
     }
 
     private static Endpoint CreateEndpoint(string pattern, RequestDelegate requestDelegate) =>
