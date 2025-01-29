@@ -41,7 +41,7 @@ public static class AiraCompanionAppConstants
     public const string UserChatRoleName = "user";
 
     public static readonly List<string> AiraChatInitialAiraMessages = [
-        "Hi, Im AIRA your AI powered coworker. I can answer questions about your Kentico Xperience data and even carry out tasks for you. Let me show you how I work....",
+        "Hi, I'm AIRA your AI powered coworker. I can answer questions about your Kentico Xperience data and even carry out tasks for you. Let me show you how I work....",
         "Every time you open the chat dialog you can ask me directly or you can use some pre-made requests called prompts",
         "We can try it right now, choose one of the prompts below or you can use our prompt library below the chat."
     ];
