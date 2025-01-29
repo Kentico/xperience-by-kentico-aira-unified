@@ -19,4 +19,5 @@ public class AiraChatMessage
     /// Role of the author of the message in the chat.
     /// </summary>
     public string Role { get; set; } = string.Empty;
+    public IEnumerable<string> QuickPrompts { get; set; } = [];
 }

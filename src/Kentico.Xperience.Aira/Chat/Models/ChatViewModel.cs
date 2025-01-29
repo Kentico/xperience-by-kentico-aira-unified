@@ -26,14 +26,6 @@ public class ChatViewModel
     /// Path base for the Chat page.
     /// </summary>
     public string PathBase { get; set; } = string.Empty;
-
-    /// <summary>
-    /// Initial message displayed by AIRA.
-    /// </summary>
     public string InitialAiraMessage { get; set; } = string.Empty;
-
-    /// <summary>
-    /// AI Icon image path.
-    /// </summary>
     public string AIIconImagePath { get; set; } = string.Empty;
 }

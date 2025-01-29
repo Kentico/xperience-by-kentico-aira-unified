@@ -81,10 +81,6 @@ public partial class AiraConfigurationItemInfo : AbstractInfo<AiraConfigurationI
         set => SetValue(nameof(AiraConfigurationItemAiraRelativeLogoId), value);
     }
 
-
-    /// <summary>
-    /// Chat image asset id.
-    /// </summary>
     [DatabaseField]
     [Required]
     public virtual string AiraConfigurationItemAiraRelativeChatImgId
@@ -93,10 +89,6 @@ public partial class AiraConfigurationItemInfo : AbstractInfo<AiraConfigurationI
         set => SetValue(nameof(AiraConfigurationItemAiraRelativeChatImgId), value);
     }
 
-
-    /// <summary>
-    /// Chat title.
-    /// </summary>
     [DatabaseField]
     [Required]
     public virtual string AiraConfigurationItemAiraChatTitle
@@ -117,10 +109,6 @@ public partial class AiraConfigurationItemInfo : AbstractInfo<AiraConfigurationI
         set => SetValue(nameof(AiraConfigurationItemAiraSmartUploadTitle), value);
     }
 
-
-    /// <summary>
-    /// Smart upload image asset id.
-    /// </summary>
     [DatabaseField]
     [Required]
     public virtual string AiraConfigurationItemAiraSmartUploadImgId
@@ -129,6 +117,12 @@ public partial class AiraConfigurationItemInfo : AbstractInfo<AiraConfigurationI
         set => SetValue(nameof(AiraConfigurationItemAiraSmartUploadImgId), value);
     }
 
+    [DatabaseField]
+    public string Test
+    {
+        get => ValidationHelper.GetString(GetValue(nameof(Test)), string.Empty);
+        set => SetValue(nameof(Test), value);
+    }
 
     /// <summary>
     /// Deletes the object using appropriate provider.

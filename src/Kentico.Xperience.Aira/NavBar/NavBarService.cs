@@ -1,4 +1,5 @@
-﻿using CMS.DataEngine;
+﻿using CMS.Core;
+using CMS.DataEngine;
 using CMS.MediaLibrary;
 
 using Kentico.Content.Web.Mvc;
@@ -11,8 +12,10 @@ internal class NavBarService : INavBarService
     private readonly IMediaFileUrlRetriever mediaFileUrlRetriever;
     private readonly IInfoProvider<MediaFileInfo> mediaFileInfoProvider;
     private readonly IAiraConfigurationService airaConfigurationService;
+    private readonly IEventLogService eventLogService;
 
     public NavBarService(
+        IEventLogService eventLogService,
         IMediaFileUrlRetriever mediaFileUrlRetriever,
         IInfoProvider<MediaFileInfo> mediaFileInfoProvider,
         IAiraConfigurationService airaConfigurationService)
@@ -20,29 +23,26 @@ internal class NavBarService : INavBarService
         this.mediaFileUrlRetriever = mediaFileUrlRetriever;
         this.mediaFileInfoProvider = mediaFileInfoProvider;
         this.airaConfigurationService = airaConfigurationService;
+        this.eventLogService = eventLogService;
     }
 
     public async Task<NavBarViewModel> GetNavBarViewModel(string activePage)
     {
         var defaultImageUrl = "path-to-not-found/image.jpg";
-
         var airaConfiguration = await airaConfigurationService.GetAiraConfiguration();
-
-        var logoUrl = GetMediaFileUrl(airaConfiguration.AiraConfigurationItemAiraRelativeLogoId)?.RelativePath ?? defaultImageUrl;
-        var chatImageUrl = GetMediaFileUrl(airaConfiguration.AiraConfigurationItemAiraRelativeChatImgId)?.RelativePath ?? defaultImageUrl;
-        var smartUploadImageUrl = GetMediaFileUrl(airaConfiguration.AiraConfigurationItemAiraSmartUploadImgId)?.RelativePath ?? defaultImageUrl;
+        var logoUrl = GetMediaFileUrl(airaConfiguration.AiraConfigurationItemAiraRelativeLogoId)?.RelativePath;
+        logoUrl = GetSanitizedImageUrl(logoUrl, defaultImageUrl, "AIRA Logo");
 
         return new NavBarViewModel
         {
             LogoImgRelativePath = logoUrl,
-            TitleImagePath = string.Equals(activePage, AiraCompanionAppConstants.ChatRelativeUrl) ?
-                chatImageUrl : smartUploadImageUrl,
-            TitleText = string.Equals(activePage, AiraCompanionAppConstants.ChatRelativeUrl) ?
-                airaConfiguration.AiraConfigurationItemAiraChatTitle : airaConfiguration.AiraConfigurationItemAiraSmartUploadTitle,
+            TitleImagePath = activePage == AiraCompanionAppConstants.ChatRelativeUrl ?
+             $"/{AiraCompanionAppConstants.RCLUrlPrefix}/{AiraCompanionAppConstants.PictureNetworkGraphImgPath}"
+             : $"/{AiraCompanionAppConstants.RCLUrlPrefix}/{AiraCompanionAppConstants.PicturePlaceholderImgPath}",
+            TitleText = activePage == AiraCompanionAppConstants.ChatRelativeUrl ? airaConfiguration.AiraConfigurationItemAiraChatTitle : airaConfiguration.AiraConfigurationItemAiraSmartUploadTitle,
             ChatItem = new MenuItemModel
             {
                 Title = airaConfiguration.AiraConfigurationItemAiraChatTitle,
-                ImagePath = chatImageUrl,
                 MenuImage = $"/{AiraCompanionAppConstants.RCLUrlPrefix}/{AiraCompanionAppConstants.PictureNetworkGraphImgPath}",
                 Url = AiraCompanionAppConstants.ChatRelativeUrl
             },
@@ -50,7 +50,6 @@ internal class NavBarService : INavBarService
             {
                 Title = airaConfiguration.AiraConfigurationItemAiraSmartUploadTitle,
                 MenuImage = $"/{AiraCompanionAppConstants.RCLUrlPrefix}/{AiraCompanionAppConstants.PicturePlaceholderImgPath}",
-                ImagePath = smartUploadImageUrl,
                 Url = AiraCompanionAppConstants.SmartUploadRelativeUrl
             }
         };
@@ -58,10 +57,10 @@ internal class NavBarService : INavBarService
 
     public IMediaFileUrl? GetMediaFileUrl(string identifier)
     {
-
         if (Guid.TryParse(identifier, out var identifierGuid))
         {
-            IEnumerable<MediaFileInfo> mediaLibraryFiles = mediaFileInfoProvider.Get()
+            var mediaLibraryFiles = mediaFileInfoProvider
+                .Get()
                 .WhereEquals(nameof(MediaFileInfo.FileGUID), identifierGuid);
             if (mediaLibraryFiles.Any())
             {
@@ -71,5 +70,16 @@ internal class NavBarService : INavBarService
         }
 
         return default;
+    }
+
+    private string GetSanitizedImageUrl(string? configuredUrl, string defaultUrl, string imagePurpose)
+    {
+        if (string.IsNullOrEmpty(configuredUrl))
+        {
+            eventLogService.LogWarning(nameof(INavBarService), imagePurpose, "Configured URL is empty, using default");
+            return defaultUrl;
+        }
+
+        return configuredUrl;
     }
 }

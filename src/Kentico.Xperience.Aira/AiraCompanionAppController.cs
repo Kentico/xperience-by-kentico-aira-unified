@@ -1,4 +1,6 @@
-﻿using CMS.Membership;
+﻿using System.Collections.Generic;
+
+using CMS.Membership;
 
 using HotChocolate.Authorization;
 
@@ -79,9 +81,16 @@ public sealed class AiraCompanionAppController : Controller
             NavBarViewModel = await airaUIService.GetNavBarViewModel(AiraCompanionAppConstants.ChatRelativeUrl)
         };
 
-        chatModel.InitialAiraMessage = chatModel.History.Count == 0
-            ? AiraCompanionAppConstants.AiraChatInitialAIMessage
-            : AiraCompanionAppConstants.AiraChatAIWelcomeBackMessage;
+        if (chatModel.History.Count == 0)
+        {
+            chatModel.History.AddRange(
+                AiraCompanionAppConstants.AiraChatInitialAiraMessages.Select(x => new AiraChatMessage
+                {
+                    Message = x,
+                    Role = AiraCompanionAppConstants.AiraChatRoleName
+                })
+            );
+        }
 
         return View("~/Chat/Chat.cshtml", chatModel);
     }
@@ -112,7 +121,22 @@ public sealed class AiraCompanionAppController : Controller
             return Redirect(signinRedirectUrl);
         }
 
-        return Ok(new AiraChatMessage { Role = AiraCompanionAppConstants.AiraChatRoleName, Message = "Ok" });
+#warning just a temporary functionality to better understand/test the prompt feature
+        string? message = null;
+        if (request.TryGetValue("message", out var messages))
+        {
+            message = messages.ToString().Replace("\"", "");
+        }
+
+        var response = new AiraChatMessage
+        {
+            Role = AiraCompanionAppConstants.AiraChatRoleName,
+            Message = "Ok",
+            QuickPrompts = message == "Prompts" ?
+                ["Prompts", "Just Message"] : []
+        };
+
+        return Ok(response);
     }
 
     /// <summary>
