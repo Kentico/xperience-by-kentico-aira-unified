@@ -228,9 +228,9 @@ internal class AiraEndpointDataSource : MutableEndpointDataSource
             return false;
         }
 
-        context.Response.Headers["X-Frame-Options"] = "SAMEORIGIN";
-        context.Response.Headers["Content-Security-Policy"] = "frame-ancestors 'self'";
-        context.Response.Headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains; preload";
+        context.Response.Headers.XFrameOptions = "SAMEORIGIN";
+        context.Response.Headers.ContentSecurityPolicy = "frame-ancestors 'self'";
+        context.Response.Headers.StrictTransportSecurity = "max-age=31536000; includeSubDomains; preload";
 
         return true;
     }
