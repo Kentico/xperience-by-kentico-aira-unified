@@ -2,8 +2,6 @@
 
 using HotChocolate.Authorization;
 
-using Htmx;
-
 using Kentico.Membership;
 using Kentico.Xperience.Admin.Base;
 using Kentico.Xperience.Admin.Base.Authentication.Internal;
@@ -14,11 +12,8 @@ using Kentico.Xperience.Aira.Authentication;
 using Kentico.Xperience.Aira.Chat.Models;
 using Kentico.Xperience.Aira.NavBar;
 
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-
-using SignInResult = Microsoft.AspNetCore.Identity.SignInResult;
 
 namespace Kentico.Xperience.Aira;
 
@@ -263,81 +258,16 @@ public sealed class AiraCompanionAppController : Controller
     /// </summary>
     [HttpGet]
     [AllowAnonymous]
-    public Task<IActionResult> Signin()
-        => Task.FromResult((IActionResult)View("~/Authentication/SignIn.cshtml"));
-
-    /// <summary>
-    /// Endpoint for signin.
-    /// </summary>
-    [HttpPost]
-    [AllowAnonymous]
-    [ValidateAntiForgeryToken]
-    public async Task<IActionResult> SignIn([FromForm] SignInViewModel model)
+    public async Task<IActionResult> Signin()
     {
-        if (!ModelState.IsValid)
+        var airaPathBase = await GetAiraPathBase();
+
+        var model = new SignInViewModel
         {
-            return PartialView("~/Authentication/_SignIn.cshtml", model);
-        }
+            PathBase = airaPathBase,
+            ChatRelativeUrl = AiraCompanionAppConstants.ChatRelativeUrl
+        };
 
-        SignInResult signInResult;
-        try
-        {
-            var user = await AdminApplicationUser();
-
-            if (user is null)
-            {
-                signInResult = SignInResult.Failed;
-            }
-            else
-            {
-                signInResult = await signInManager.PasswordSignInAsync(user.UserName!, model.Password, isPersistent: true, lockoutOnFailure: false);
-                if (signInResult.Succeeded)
-                {
-                    var claimsPrincipal = await signInManager.CreateUserPrincipalAsync(user);
-
-                    await signInManager.SignInWithClaimsAsync(user, new AuthenticationProperties
-                    {
-                        IsPersistent = true
-                    }, claimsPrincipal.Claims);
-
-                    HttpContext.User = claimsPrincipal;
-                }
-            }
-        }
-        catch
-        {
-            signInResult = SignInResult.Failed;
-        }
-
-        if (!signInResult.Succeeded)
-        {
-            ModelState.AddModelError(string.Empty, "Your sign-in attempt was not successful. Please try again.");
-
-            return PartialView("~/Authentication/_SignIn.cshtml", model);
-        }
-
-        var configuration = await airaConfigurationService.GetAiraConfiguration();
-        var airaPathBase = configuration.AiraConfigurationItemAiraPathBase;
-
-        var baseUrl = $"{Request.Scheme}://{Request.Host}";
-        var redirectUrl = $"{baseUrl}{airaPathBase}/{AiraCompanionAppConstants.ChatRelativeUrl}";
-
-        Response.Htmx(h => h.Redirect(redirectUrl));
-
-        return Request.IsHtmx()
-        ? Ok()
-        : Redirect(redirectUrl);
-
-        async Task<AdminApplicationUser?> AdminApplicationUser()
-        {
-            var user = await adminUserManager.FindByNameAsync(model.UserNameOrEmail);
-
-            if (user is not null)
-            {
-                return user;
-            }
-
-            return await adminUserManager.FindByEmailAsync(model.UserNameOrEmail);
-        }
+        return View("~/Authentication/SignIn.cshtml", model);
     }
 }

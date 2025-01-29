@@ -1,5 +1,6 @@
 ﻿@using Kentico.Xperience.Aira
 @using Kentico.Xperience.Aira.Authentication
+
 @model SignInViewModel
 
 @{
@@ -11,7 +12,11 @@
     <link href="@baseUrl/_content/Kentico.Xperience.Aira/css/style.css" rel="stylesheet" type="text/css">
 }
 
-<div class="c-app_inner is-loaded" id="aira-kentico-admin-signin">
+<div class="c-app_inner is-loaded" id="aira-kentico-admin-signin"
+    data-base-url="@baseUrl"
+    data-aira-base-url="@Model.PathBase"
+    data-chat-url="@Model.ChatRelativeUrl">
+    
     <div class="c-app_header"></div>
     <div class="c-app_body login">
         <div class="container">

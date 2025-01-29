@@ -30,16 +30,20 @@ function mountAssets(assetsElement) {
     }).mount("#assets-app");
 }
 
-function mountSignin() {
+function mountSignin(signinElement) {
     const loginButton = document.getElementById('loginButton');
     if (loginButton) {
         loginButton.addEventListener('click', () => {
-            openModalLogin();
+            openModalLogin(signinElement);
         });
     }
 }
 
-function openModalLogin() {
+function openModalLogin(signinElement) {
+    const baseUrl = signinElement.dataset.baseUrl || "";
+    const airaBaseUrl = signinElement.dataset.airaBaseUrl || "";
+    const chatUrl = signinElement.dataset.chatUrl || "";
+    
     const body = document.getElementsByClassName('c-app_body')[0];
 
     const modalOverlay = document.createElement('div');
@@ -68,23 +72,34 @@ function openModalLogin() {
     `;
 
     const closeButton = document.createElement('button');
-    closeButton.textContent = 'Close';
+
+    const closeImg = document.createElement('img');
+    closeImg.classList.add('c-icon');
+    closeImg.classList.add('fs-6');
+    closeImg.src = `${baseUrl}/_content/Kentico.Xperience.Aira/img/icons/cross.svg`;
+    closeImg.innerHTML = 'X';
+
     closeButton.style = `
         position: fixed;
-        top: 20px;
-        right: 20px;
+        top: 5%;
+        right: 5%;
         z-index: 1001;
         padding: 10px 15px;
-        background-color: #ff4d4d;
+        background-color: #FF4D4F;
         color: white;
         border: none;
         border-radius: 5px;
         cursor: pointer;
-        font-size: 16px;
+        font-size: 17px;
     `;
+    closeButton.classList.add('btn');
+    closeButton.classList.add('btn-remove-img');
+    
+    closeButton.appendChild(closeImg);
+
     closeButton.onclick = () => {
         modalOverlay.remove();
-        window.location.href = '/aira/chat';
+        window.location.href = `${baseUrl}${airaBaseUrl}/${chatUrl}`;
     }
 
     modalOverlay.appendChild(iframe);
@@ -104,6 +119,6 @@ document.addEventListener('DOMContentLoaded', () => {
         mountAssets(assetsElement);
     }
     else if (signinElement){
-        mountSignin();
+        mountSignin(signinElement);
     }
 });
