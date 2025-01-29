@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-using CMS.Membership;
+﻿using CMS.Membership;
 
 using HotChocolate.Authorization;
 
