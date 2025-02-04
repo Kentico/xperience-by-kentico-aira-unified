@@ -386,7 +386,7 @@ export default {
                 let prompts = '<div class="deep-chat-temporary-message">';
 
                 for (var prompt of message.quickPrompts) {
-                    prompts += `<button class="deep-chat-button deep-chat-suggestion-button">${prompt}</button>`;
+                    prompts += `<button class="deep-chat-suggestion-button btn-outline-primary">${prompt}</button>`;
                 }
 
                 prompts += '</div>';

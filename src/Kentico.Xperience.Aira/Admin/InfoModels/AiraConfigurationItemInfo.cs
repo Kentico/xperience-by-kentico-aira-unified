@@ -82,6 +82,9 @@ public partial class AiraConfigurationItemInfo : AbstractInfo<AiraConfigurationI
     }
 
 
+    /// <summary>
+    /// AIRA chat page title.
+    /// </summary>
     [DatabaseField]
     [Required]
     public virtual string AiraConfigurationItemAiraChatTitle
@@ -92,7 +95,7 @@ public partial class AiraConfigurationItemInfo : AbstractInfo<AiraConfigurationI
 
 
     /// <summary>
-    /// Smart upload title.
+    /// Smart upload page title.
     /// </summary>
     [DatabaseField]
     [Required]
