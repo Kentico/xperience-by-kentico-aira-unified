@@ -28,7 +28,10 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <None Include="Authentication\_SignIn.cshtml" />
+	  <EmbeddedResource Include="Resource.resx">
+	    <Generator>ResXFileCodeGenerator</Generator>
+	    <LastGenOutput>Resource.Designer.cs</LastGenOutput>
+	  </EmbeddedResource>
 	</ItemGroup>
 	<ItemGroup>
 		<PackageReference Include="Htmx" />
@@ -38,5 +41,12 @@
 		<PackageReference Include="Kentico.Xperience.WebApp" />
 		<PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" />
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection" />
+	</ItemGroup>
+	<ItemGroup>
+	  <Compile Update="Resource.Designer.cs">
+	    <DesignTime>True</DesignTime>
+	    <AutoGen>True</AutoGen>
+	    <DependentUpon>Resource.resx</DependentUpon>
+	  </Compile>
 	</ItemGroup>
 </Project>
