@@ -6,15 +6,17 @@ function mountChat(chatElement) {
     const airaBaseUrl = chatElement.dataset.airaBaseUrl;
     const baseUrl = chatElement.dataset.baseUrl || "";
     const navBarModel = JSON.parse(chatElement.dataset.navBarModel || "{}");
-    const history = JSON.parse(chatElement.dataset.history || {});
+    const rawHistory = JSON.parse(chatElement.dataset.history || {});
     const aiIconUrl = chatElement.dataset.aiIconUrl || "";
+    const usePromptUrl = chatElement.dataset.usePromptUrl || "";
 
     createApp(ChatComponent, {
         airaBaseUrl,
         aiIconUrl,
         baseUrl,
+        usePromptUrl,
         navBarModel,
-        history
+        rawHistory
     }).mount("#chat-app");
 }
 

@@ -21,4 +21,5 @@ public class AiraChatMessage
     public string Role { get; set; } = string.Empty;
     public IEnumerable<string> QuickPrompts { get; set; } = [];
     public string QuickPromptsGroupId { get; set; } = string.Empty;
+    public DateTime CreatedWhen { get; set; }
 }

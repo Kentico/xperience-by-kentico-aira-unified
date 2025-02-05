@@ -31,22 +31,29 @@ public static class AiraCompanionAppConstants
     public const string SigninRelativeUrl = "signin";
 
     /// <summary>
+    /// Relative path to the used prompt group removal endpoint.
+    /// </summary>
+    public const string RemoveUsedPromptGroupRelativeUrl = "prompt/use";
+
+    /// <summary>
     /// The name of the ai role used within chat page.
     /// </summary>
     public const string AiraChatRoleName = "ai";
+
+    /// <summary>
+    /// The identifier of the ai role used to identify the role in the database.
+    /// </summary>
+    public const int AiraChatRoleIdentifier = 0;
 
     /// <summary>
     /// The name of the user role used within chat page.
     /// </summary>
     public const string UserChatRoleName = "user";
 
-    public static readonly List<string> AiraChatInitialAiraMessages = [
-        "Hi, Im AIRA your AI powered coworker. I can answer questions about your Kentico Xperience data and even carry out tasks for you. Let me show you how I work....",
-        "Every time you open the chat dialog you can ask me directly or you can use some pre-made requests called prompts",
-        "We can try it right now, choose one of the prompts below or you can use our prompt library below the chat."
-    ];
-
-    public const string AiraChatAIWelcomeBackMessage = "What can I help you with ?";
+    /// <summary>
+    /// The identifier of the user role used to identify the role in the database.
+    /// </summary>
+    public const int UserChatRoleIdentifier = 1;
 
     /// <summary>
     /// Url prefix where static assets of this package are accessible.
@@ -66,7 +73,7 @@ public static class AiraCompanionAppConstants
     /// <summary>
     /// Path where the hat icon is located.
     /// </summary>
-    public const string PictureHatImgPath = "img/icons/magic-hat.svg";
+    public const string PictureStarImgPath = "img/icons/stars-icon-purple.svg";
 
     /// <summary>
     /// Name of the Xperience Admin User authentication scheme.

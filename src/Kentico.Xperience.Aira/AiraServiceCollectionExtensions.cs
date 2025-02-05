@@ -1,6 +1,8 @@
 ﻿using Kentico.Xperience.Admin.Base.Forms;
 using Kentico.Xperience.Aira.Admin;
 using Kentico.Xperience.Aira.Assets;
+using Kentico.Xperience.Aira.Chat;
+using Kentico.Xperience.Aira.Insights;
 using Kentico.Xperience.Aira.NavBar;
 
 using Microsoft.AspNetCore.Routing;
@@ -30,7 +32,9 @@ public static class AiraServiceCollectionExtensions
             .AddScoped<ContentItemAssetUploaderComponent>()
             .AddScoped<AiraConfigurationService>()
             .AddScoped<IAiraConfigurationService, AiraConfigurationService>()
+            .AddScoped<IAiraInsightsService, AiraInsightsService>()
             .AddScoped<IAiraAssetService, AiraAssetService>()
+            .AddScoped<IAiraChatService, AiraChatService>()
             .AddScoped<INavBarService, NavBarService>();
 
         return services;

@@ -137,9 +137,9 @@ export default {
         airaBaseUrl: null,
         aiIconUrl: null,
         baseUrl: null,
+        usePromptUrl: null,
         navBarModel: null,
-        history: [],
-        suggestionId: 0
+        rawHistory: null
     },
     data() {
         return {
@@ -147,7 +147,8 @@ export default {
             themeColorInRgb: "rgb(129, 7, 193)",
             submitButton: null,
             started: false,
-            messagesMetadata: new Map()
+            messagesMetadata: new Map(),
+            history: []
         }
     },
     mounted() {
@@ -195,35 +196,65 @@ export default {
                 this.bindPromptButtons();
             };
         },
+        typeIntoInput(inputElement, text) {
+            inputElement.focus();
+            inputElement.innerHTML  = "";
+
+            for (let char of text) {
+                inputElement.innerHTML  += char;
+                inputElement.dispatchEvent(new Event("input", { bubbles: true }));
+            }
+        },
         bindPromptButtons() {
             this.$refs.chatElementRef.shadowRoot.querySelectorAll('button[prompt-quick-suggestion-button]').forEach(button => {
-                button.addEventListener('click', () => {
-                    const text = button.value;
-                    let history = this.$refs.chatElementRef.history;
+                button.addEventListener('click', async () => {
+                    const text = button.value.valueOf();
 
                     const buttonGroupId = button.parentNode.getAttribute("prompt-quick-suggestion-button-group-id");
 
-                    console.log(history);
+                    this.history = this.history.filter(x => (x.promptQuickSuggestionGroupId === undefined) || x.promptQuickSuggestionGroupId.toString() !== buttonGroupId);
+                    this.$refs.chatElementRef.clearMessages(true);
 
-                    history = this.$refs.chatElementRef.history.filter(x => (x.promptQuickSuggestionGroupId === undefined) || x.promptQuickSuggestionGroupId.toString() !== buttonGroupId);
-                    this.$refs.chatElementRef.clearMessages(false);
-
-                    console.log(history);
-
-                    history.forEach(x => {
+                    this.history.forEach(x => {
                         this.$refs.chatElementRef.addMessage(x);
                     });
-                    
-                    const textInput = this.$refs.chatElementRef.shadowRoot.getElementById("text-input");
-                    textInput.innerHTML = text;
-                    const inputEvent = new Event('input', { bubbles: true });
-                    textInput.dispatchEvent(inputEvent);
+
+                    this.bindPromptButtons();
+
+                    setTimeout(() => {
+                        const textInput = this.$refs.chatElementRef.shadowRoot.getElementById("text-input");
+                        textInput.classList.remove("text-input-placeholder");
+
+                        this.typeIntoInput(textInput, text);
+                    }, 50);
+
+                    const sendUsePromptUrl = `${this.baseUrl}${this.airaBaseUrl}/${this.usePromptUrl}`;
+                    await this.removeUsedPromptGroup(buttonGroupId, sendUsePromptUrl);
                 });
             });
+        },
+        async removeUsedPromptGroup(groupId, sendUsePromptUrl) {
+            try {
+                await fetch(sendUsePromptUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        groupId: groupId,
+                    }),
+                });
+            }
+            catch (error) {
+                console.error('An error occurred:', error.message);
+            }
         },
         setRequestInterceptor() {
             this.$refs.chatElementRef.requestInterceptor = async (requestDetails) => {
                 const formData = new FormData();
+
+                this.history.push(requestDetails.body.messages[0]);
+
                 let jsonData = "";
 
                 if (Object.hasOwn(requestDetails.body, 'messages'))
@@ -253,7 +284,6 @@ export default {
                             }
                             else if (key === 'files') {
                                 formData.append(key, value);
-                                console.log(`${key} ${value}`);
                             }
                         }
 
@@ -277,13 +307,15 @@ export default {
         setResponseInterceptor() {
             this.$refs.chatElementRef.responseInterceptor = (response) => {
                 const messageViewModel = this.getMessageViewModel(response);
-                this.$refs.chatElementRef.history.push(messageViewModel);
+                
+                this.history.push(messageViewModel);
 
                 if (response.quickPrompts.length > 0)
                 {
                     this.$refs.chatElementRef.addMessage(messageViewModel);
                     const promptMessage = this.getPromptsViewModel(response);
-                    this.$refs.chatElementRef.history.push(promptMessage);
+                    
+                    this.history.push(promptMessage);
 
                     return promptMessage;
                 }
@@ -294,10 +326,6 @@ export default {
         setOnMessage() {
             this.$refs.chatElementRef.onMessage = (message) => {
                 this.bindPromptButtons();
-                if (message.message.role === 'user')
-                {
-                    this.$refs.chatElementRef.history.push(message.message);
-                }
             };
         },
         setBorders(){
@@ -419,9 +447,20 @@ export default {
             shadowRoot.appendChild(style);
         },
         setHistory() {
-            for (const x of this.history) {
-                const viewModel = this.getMessageViewModel(x)
-                this.$refs.chatElementRef.history.push(viewModel);
+            for (const x of this.rawHistory) {
+                const messageViewModel = this.getMessageViewModel(x);
+                
+                this.history.push(messageViewModel);
+                this.$refs.chatElementRef.history.push(messageViewModel);
+                this.$refs.chatElementRef.addMessage(messageViewModel);
+
+                if (x.quickPrompts.length > 0)
+                {
+                    const promptMessage = this.getPromptsViewModel(x);
+                    this.history.push(promptMessage);
+                    this.$refs.chatElementRef.history.push(promptMessage);
+                    this.$refs.chatElementRef.addMessage(promptMessage);
+                }
             }
         },
         getPromptsViewModel(message) {
