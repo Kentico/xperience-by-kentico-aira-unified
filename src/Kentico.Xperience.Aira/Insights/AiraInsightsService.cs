@@ -177,9 +177,9 @@ namespace Kentico.Xperience.Aira.Insights
                 if (status == "Draft")
                 {
                     builder.Parameters(q => q.Where(w => w
-                        .WhereEquals("ContentItemCommonDataVersionStatus", VersionStatus.Draft)
+                        .WhereEquals(nameof(ContentItemCommonDataInfo.ContentItemCommonDataVersionStatus), VersionStatus.Draft)
                         .Or()
-                        .WhereEquals("ContentItemCommonDataVersionStatus", VersionStatus.InitialDraft)));
+                        .WhereEquals(nameof(ContentItemCommonDataInfo.ContentItemCommonDataVersionStatus), VersionStatus.InitialDraft)));
 
                     var items = await contentQueryExecutor.GetResult(builder, ContentItemBinder, options);
                     return items;
@@ -281,11 +281,11 @@ namespace Kentico.Xperience.Aira.Insights
         {
             List<ContentItemModel> result = [];
 
-            var step = contentWorkflowStepInfoProvider.Get().WhereEquals("ContentWorkflowStepDisplayName", status).FirstOrDefault();
+            var step = contentWorkflowStepInfoProvider.Get().WhereEquals(nameof(ContentWorkflowStepInfo.ContentWorkflowStepDisplayName), status).FirstOrDefault();
 
             if (step != null)
             {
-                var languageMetadata = contentItemLanguageMetadataInfoProvider.Get().WhereEquals("ContentItemLanguageMetadataContentWorkflowStepID", step.ContentWorkflowStepID).ToList();
+                var languageMetadata = contentItemLanguageMetadataInfoProvider.Get().WhereEquals(nameof(ContentItemLanguageMetadataInfo.ContentItemLanguageMetadataContentWorkflowStepID), step.ContentWorkflowStepID).ToList();
 
                 foreach (var item in items)
                 {
@@ -316,7 +316,7 @@ namespace Kentico.Xperience.Aira.Insights
         {
             get
             {
-                reusableTypes ??= DataClassInfoProvider.GetClasses().Where("ClassContentTypeType", QueryOperator.Equals, "Reusable").Select(c => c.ClassName).ToArray();
+                reusableTypes ??= DataClassInfoProvider.GetClasses().Where(nameof(DataClassInfo.ClassContentTypeType), QueryOperator.Equals, "Reusable").Select(c => c.ClassName).ToArray();
                 return reusableTypes;
             }
         }
@@ -325,7 +325,7 @@ namespace Kentico.Xperience.Aira.Insights
         {
             get
             {
-                pageTypes ??= DataClassInfoProvider.GetClasses().Where("ClassContentTypeType", QueryOperator.Equals, "Website").Select(c => c.ClassName).ToArray();
+                pageTypes ??= DataClassInfoProvider.GetClasses().Where(nameof(DataClassInfo.ClassContentTypeType), QueryOperator.Equals, "Website").Select(c => c.ClassName).ToArray();
                 return pageTypes;
             }
         }
@@ -334,7 +334,7 @@ namespace Kentico.Xperience.Aira.Insights
         {
             get
             {
-                emailTypes ??= DataClassInfoProvider.GetClasses().Where("ClassContentTypeType", QueryOperator.Equals, "Email").Select(c => c.ClassName).ToArray();
+                emailTypes ??= DataClassInfoProvider.GetClasses().Where(nameof(DataClassInfo.ClassContentTypeType), QueryOperator.Equals, "Email").Select(c => c.ClassName).ToArray();
                 return emailTypes;
             }
         }
