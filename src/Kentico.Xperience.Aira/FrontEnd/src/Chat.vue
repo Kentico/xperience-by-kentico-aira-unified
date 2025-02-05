@@ -269,7 +269,6 @@ export default {
                             }
                             else if (key === 'files') {
                                 formData.append(key, value);
-                                console.log(`${key} ${value}`);
                             }
                         }
 

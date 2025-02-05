@@ -81,14 +81,10 @@ public partial class AiraConfigurationItemInfo : AbstractInfo<AiraConfigurationI
         set => SetValue(nameof(AiraConfigurationItemAiraRelativeLogoId), value);
     }
 
-    [DatabaseField]
-    [Required]
-    public virtual string AiraConfigurationItemAiraRelativeChatImgId
-    {
-        get => ValidationHelper.GetString(GetValue(nameof(AiraConfigurationItemAiraRelativeChatImgId)), string.Empty);
-        set => SetValue(nameof(AiraConfigurationItemAiraRelativeChatImgId), value);
-    }
 
+    /// <summary>
+    /// AIRA chat page title.
+    /// </summary>
     [DatabaseField]
     [Required]
     public virtual string AiraConfigurationItemAiraChatTitle
@@ -99,7 +95,7 @@ public partial class AiraConfigurationItemInfo : AbstractInfo<AiraConfigurationI
 
 
     /// <summary>
-    /// Smart upload title.
+    /// Smart upload page title.
     /// </summary>
     [DatabaseField]
     [Required]

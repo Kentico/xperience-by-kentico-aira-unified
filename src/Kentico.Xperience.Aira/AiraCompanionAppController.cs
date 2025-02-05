@@ -85,13 +85,23 @@ public sealed class AiraCompanionAppController : Controller
 
         if (chatModel.History.Count == 0)
         {
-            chatModel.History.AddRange(
-                AiraCompanionAppConstants.AiraChatInitialAiraMessages.Select(x => new AiraChatMessage
+            chatModel.History = [
+                new AiraChatMessage
                 {
-                    Message = x,
+                    Message = Resource.InitialAiraMessage1,
                     Role = AiraCompanionAppConstants.AiraChatRoleName
-                })
-            );
+                },
+                new AiraChatMessage
+                {
+                    Message = Resource.InitialAiraMessage1,
+                    Role = AiraCompanionAppConstants.AiraChatRoleName
+                },
+                new AiraChatMessage
+                {
+                    Message = Resource.InitialAiraMessage1,
+                    Role = AiraCompanionAppConstants.AiraChatRoleName
+                },
+            ];
         }
         else
         {
@@ -108,11 +118,9 @@ public sealed class AiraCompanionAppController : Controller
     /// <summary>
     /// Endpoint allowing chat communication via the chat interface.
     /// </summary>
-#pragma warning disable IDE0060 // Kept for development. We do not yet have AIRA AI api which we could give the messages to.
     [HttpPost]
     public async Task<IActionResult> PostChatMessage(IFormCollection request)
     {
-#pragma warning restore IDE0060 // 
         var airaPathBase = await GetAiraPathBase();
 
         var user = await adminUserManager.GetUserAsync(User);
@@ -131,12 +139,16 @@ public sealed class AiraCompanionAppController : Controller
             return Redirect(signinRedirectUrl);
         }
 
-#warning just a temporary functionality to better understand/test the prompt feature
         string? message = null;
+
+#pragma warning disable IDE0079 // Kept for development. This will be restored in subsequent versions.
+#pragma warning disable S6932 // Kept for development. This will be restored in subsequent versions.
         if (request.TryGetValue("message", out var messages))
         {
             message = messages.ToString().Replace("\"", "");
         }
+#pragma warning restore S6932 //
+#pragma warning restore IDE0079 //
 
         AiraChatMessage response;
 
