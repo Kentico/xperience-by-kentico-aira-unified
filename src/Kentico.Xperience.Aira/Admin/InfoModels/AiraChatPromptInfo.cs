@@ -23,6 +23,9 @@ public partial class AiraChatPromptInfo : AbstractInfo<AiraChatPromptInfo, IInfo
     public const string OBJECT_TYPE = "kenticoaira.airachatprompt";
 
 
+    /// <summary>
+    /// Type information.
+    /// </summary>
     public static readonly ObjectTypeInfo TYPEINFO = new(typeof(IInfoProvider<AiraChatPromptInfo>), OBJECT_TYPE, "KenticoAira.AiraChatPrompt", nameof(AiraChatPromptId), null, nameof(AiraChatPromptGuid), null, null, null, null, null)
     {
         TouchCacheDependencies = true,
@@ -32,12 +35,16 @@ public partial class AiraChatPromptInfo : AbstractInfo<AiraChatPromptInfo, IInfo
         ],
         ContinuousIntegrationSettings =
         {
-            Enabled = true
+            Enabled = false
         }
     };
 
 
+    /// <summary>
+    /// Chat prompt id.
+    /// </summary>
     [DatabaseField]
+    [Required]
     public virtual int AiraChatPromptId
     {
         get => ValidationHelper.GetInteger(GetValue(nameof(AiraChatPromptId)), 0);
@@ -45,6 +52,9 @@ public partial class AiraChatPromptInfo : AbstractInfo<AiraChatPromptInfo, IInfo
     }
 
 
+    /// <summary>
+    /// Chat prompt guid.
+    /// </summary>
     [DatabaseField]
     [Required]
     public virtual Guid AiraChatPromptGuid
@@ -54,6 +64,9 @@ public partial class AiraChatPromptInfo : AbstractInfo<AiraChatPromptInfo, IInfo
     }
 
 
+    /// <summary>
+    /// Chat prompt group id.
+    /// </summary>
     [DatabaseField]
     [Required]
     public virtual int AiraChatPromptChatPromptGroupId
@@ -63,6 +76,9 @@ public partial class AiraChatPromptInfo : AbstractInfo<AiraChatPromptInfo, IInfo
     }
 
 
+    /// <summary>
+    /// Chat prompt text.
+    /// </summary>
     [DatabaseField]
     public virtual string AiraChatPromptText
     {

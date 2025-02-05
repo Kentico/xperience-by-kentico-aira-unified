@@ -1,11 +1,10 @@
 ﻿using System.Reflection;
-using System.Reflection.Metadata.Ecma335;
 using System.Text.Json;
 
 using CMS.DataEngine;
 
 using Kentico.Xperience.Aira.Admin.InfoModels;
-using Kentico.Xperience.Aira.Authentication;
+using Kentico.Xperience.Aira.Chat.Models;
 
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;

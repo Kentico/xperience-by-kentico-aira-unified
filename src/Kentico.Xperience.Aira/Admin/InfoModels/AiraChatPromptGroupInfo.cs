@@ -25,6 +25,9 @@ internal class AiraChatPromptGroupInfo : AbstractInfo<AiraChatPromptGroupInfo, I
     public const string OBJECT_TYPE = "kenticoaira.airachatpromptgroup";
 
 
+    /// <summary>
+    /// Type information.
+    /// </summary>
     public static readonly ObjectTypeInfo TYPEINFO = new(typeof(IInfoProvider<AiraChatPromptGroupInfo>), OBJECT_TYPE, "KenticoAira.AiraChatPromptGroup", nameof(AiraChatPromptGroupId), null, nameof(AiraChatPromptGroupGuid), null, null, null, null, null)
     {
         TouchCacheDependencies = true,
@@ -34,12 +37,16 @@ internal class AiraChatPromptGroupInfo : AbstractInfo<AiraChatPromptGroupInfo, I
         ],
         ContinuousIntegrationSettings =
         {
-            Enabled = true
+            Enabled = false
         }
     };
 
 
+    /// <summary>
+    /// Chat prompt group id.
+    /// </summary>
     [DatabaseField]
+    [Required]
     public virtual int AiraChatPromptGroupId
     {
         get => ValidationHelper.GetInteger(GetValue(nameof(AiraChatPromptGroupId)), 0);
@@ -47,6 +54,9 @@ internal class AiraChatPromptGroupInfo : AbstractInfo<AiraChatPromptGroupInfo, I
     }
 
 
+    /// <summary>
+    /// Chat prompt group guid.
+    /// </summary>
     [DatabaseField]
     [Required]
     public virtual Guid AiraChatPromptGroupGuid
@@ -56,6 +66,9 @@ internal class AiraChatPromptGroupInfo : AbstractInfo<AiraChatPromptGroupInfo, I
     }
 
 
+    /// <summary>
+    /// Chat prompt group creation time.
+    /// </summary>
     [DatabaseField]
     [Required]
     public virtual DateTime AiraChatPromptGroupCreatedWhen
@@ -65,6 +78,9 @@ internal class AiraChatPromptGroupInfo : AbstractInfo<AiraChatPromptGroupInfo, I
     }
 
 
+    /// <summary>
+    /// Chat prompt id.
+    /// </summary>
     [DatabaseField]
     [Required]
     public virtual int AiraChatPromptUserId

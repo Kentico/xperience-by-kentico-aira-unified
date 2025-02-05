@@ -41,9 +41,19 @@ public static class AiraCompanionAppConstants
     public const string AiraChatRoleName = "ai";
 
     /// <summary>
+    /// The identifier of the ai role used to identify the role in the database.
+    /// </summary>
+    public const int AiraChatRoleIdentifier = 0;
+
+    /// <summary>
     /// The name of the user role used within chat page.
     /// </summary>
     public const string UserChatRoleName = "user";
+
+    /// <summary>
+    /// The identifier of the user role used to identify the role in the database.
+    /// </summary>
+    public const int UserChatRoleIdentifier = 1;
 
     /// <summary>
     /// Url prefix where static assets of this package are accessible.

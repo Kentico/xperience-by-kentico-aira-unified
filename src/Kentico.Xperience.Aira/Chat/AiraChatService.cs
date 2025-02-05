@@ -10,15 +10,18 @@ internal class AiraChatService : IAiraChatService
 {
     private readonly IInfoProvider<AiraChatPromptGroupInfo> airaChatPromptGroupProvider;
     private readonly IInfoProvider<AiraChatPromptInfo> airaChatPromptProvider;
+    private readonly IInfoProvider<AiraChatMessageInfo> airaChatMessageProvider;
 
     public AiraChatService(IInfoProvider<AiraChatPromptGroupInfo> airaChatPromptGroupProvider,
-        IInfoProvider<AiraChatPromptInfo> airaChatPromptProvider)
+        IInfoProvider<AiraChatPromptInfo> airaChatPromptProvider,
+        IInfoProvider<AiraChatMessageInfo> airaChatMessageProvider)
     {
         this.airaChatPromptGroupProvider = airaChatPromptGroupProvider;
         this.airaChatPromptProvider = airaChatPromptProvider;
+        this.airaChatMessageProvider = airaChatMessageProvider;
     }
 
-    public async Task<List<AiraChatMessage>> GetUserChatHistory(int userID)
+    public async Task<List<AiraChatMessage>> GetUserChatHistory(int userId)
     {
         var chatPrompts = (await airaChatPromptProvider
             .Get()
@@ -26,7 +29,7 @@ internal class AiraChatService : IAiraChatService
                 nameof(AiraChatPromptInfo.AiraChatPromptChatPromptGroupId),
                 nameof(AiraChatPromptGroupInfo.AiraChatPromptGroupId)
             ))
-            .WhereEquals(nameof(AiraChatPromptGroupInfo.AiraChatPromptUserId), userID)
+            .WhereEquals(nameof(AiraChatPromptGroupInfo.AiraChatPromptUserId), userId)
             .Columns(nameof(AiraChatPromptGroupInfo.AiraChatPromptGroupCreatedWhen),
                 nameof(AiraChatPromptGroupInfo.AiraChatPromptGroupId),
                 nameof(AiraChatPromptInfo.AiraChatPromptText))
@@ -38,6 +41,18 @@ internal class AiraChatService : IAiraChatService
                     PromptGroupId = x[nameof(AiraChatPromptGroupInfo.AiraChatPromptGroupId)] as int?
                 }
             );
+
+        var textMessages = (await airaChatMessageProvider.Get()
+            .WhereEquals(nameof(AiraChatMessageInfo.AiraChatMessageUserId), userId)
+            .GetEnumerableTypedResultAsync())
+            .Select(x => new AiraChatMessage
+            {
+                Role = x.AiraChatMessageRole == AiraCompanionAppConstants.AiraChatRoleIdentifier ?
+                    AiraCompanionAppConstants.AiraChatRoleName :
+                    AiraCompanionAppConstants.UserChatRoleName,
+                CreatedWhen = x.AiraChatMessageCreatedWhen,
+                Message = x.AiraChatMessageText
+            });
 
         return chatPrompts.Select(x =>
         {
@@ -51,34 +66,37 @@ internal class AiraChatService : IAiraChatService
                 CreatedWhen = (DateTime)prompts.First()[nameof(AiraChatPromptGroupInfo.AiraChatPromptGroupCreatedWhen)]
             };
         })
+        .Union(textMessages)
         .OrderBy(x => x.CreatedWhen)
         .ToList();
     }
 
-    public async Task<AiraChatMessage> GenerateAiraPrompts(int userID)
+    public void SaveMessage(string text, int userId, string role)
+    {
+        var message = new AiraChatMessageInfo
+        {
+            AiraChatMessageCreatedWhen = DateTime.Now,
+            AiraChatMessageText = text,
+            AiraChatMessageUserId = userId,
+            AiraChatMessageRole = role == AiraCompanionAppConstants.AiraChatRoleName ?
+                AiraCompanionAppConstants.AiraChatRoleIdentifier :
+                AiraCompanionAppConstants.UserChatRoleIdentifier
+        };
+
+        airaChatMessageProvider.Set(message);
+    }
+
+    public async Task<AiraChatMessage> GenerateAiraPrompts(int userId)
     {
         var chatPromptGroup = new AiraChatPromptGroupInfo
         {
             AiraChatPromptGroupCreatedWhen = DateTime.Now,
-            AiraChatPromptUserId = userID,
+            AiraChatPromptUserId = userId,
         };
 
         airaChatPromptGroupProvider.Set(chatPromptGroup);
 
         var messages = new List<AiraChatPromptInfo>();
-
-        //for (var i = 0; i < 3; i++)
-        //{
-        //    var prompt = new AiraChatPromptInfo
-        //    {
-        //        AiraChatPromptText = $"Option{i}_{chatPromptGroup.AiraChatPromptGroupId}",
-        //        AiraChatPromptChatPromptGroupId = chatPromptGroup.AiraChatPromptGroupId
-        //    };
-
-        //    messages.Add(prompt);
-
-        //    airaChatPromptProvider.Set(prompt);
-        //}
 
         var drafts = new AiraChatPromptInfo
         {
@@ -103,6 +121,11 @@ internal class AiraChatService : IAiraChatService
             AiraChatPromptText = "Contact Groups",
             AiraChatPromptChatPromptGroupId = chatPromptGroup.AiraChatPromptGroupId
         };
+
+        airaChatPromptProvider.Set(drafts);
+        airaChatPromptProvider.Set(scheduled);
+        airaChatPromptProvider.Set(emails);
+        airaChatPromptProvider.Set(contactGroups);
 
         messages.Add(drafts);
         messages.Add(scheduled);

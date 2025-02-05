@@ -107,7 +107,7 @@ public sealed class AiraCompanionAppController : Controller
         {
             chatModel.History.Add(new AiraChatMessage
             {
-                Message = AiraCompanionAppConstants.AiraChatAIWelcomeBackMessage,
+                Message = Resource.WelcomeBackAiraMessage,
                 Role = AiraCompanionAppConstants.AiraChatRoleName
             });
         }
@@ -151,6 +151,8 @@ public sealed class AiraCompanionAppController : Controller
 #pragma warning restore IDE0079 //
 
         AiraChatMessage response;
+
+        airaChatService.SaveMessage(message ?? "", user.UserID, AiraCompanionAppConstants.UserChatRoleName);
 
         if (message == "Prompts")
         {
@@ -200,6 +202,7 @@ public sealed class AiraCompanionAppController : Controller
             }
         }
 
+        airaChatService.SaveMessage(response.Message ?? "", user.UserID, AiraCompanionAppConstants.AiraChatRoleName);
 
         return Ok(response);
     }
