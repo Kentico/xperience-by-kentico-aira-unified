@@ -1,4 +1,6 @@
-﻿using CMS.Membership;
+﻿using System.Text;
+
+using CMS.Membership;
 
 using HotChocolate.Authorization;
 
@@ -10,6 +12,7 @@ using Kentico.Xperience.Aira.AssetUploader.Models;
 using Kentico.Xperience.Aira.Authentication;
 using Kentico.Xperience.Aira.Chat;
 using Kentico.Xperience.Aira.Chat.Models;
+using Kentico.Xperience.Aira.Insights;
 using Kentico.Xperience.Aira.NavBar;
 
 using Microsoft.AspNetCore.Http;
@@ -26,6 +29,7 @@ public sealed class AiraCompanionAppController : Controller
 {
     private readonly AdminUserManager adminUserManager;
     private readonly IAiraConfigurationService airaConfigurationService;
+    private readonly IAiraInsightsService airaInsightsService;
     private readonly IAiraChatService airaChatService;
     private readonly IAiraAssetService airaAssetService;
     private readonly INavBarService airaUIService;
@@ -33,12 +37,14 @@ public sealed class AiraCompanionAppController : Controller
     public AiraCompanionAppController(
         AdminUserManager adminUserManager,
         IAiraConfigurationService airaConfigurationService,
+        IAiraInsightsService airaInsightsService,
         IAiraAssetService airaAssetService,
         INavBarService airaUIService,
         IAiraChatService airaChatService)
     {
         this.adminUserManager = adminUserManager;
         this.airaConfigurationService = airaConfigurationService;
+        this.airaInsightsService = airaInsightsService;
         this.airaAssetService = airaAssetService;
         this.airaChatService = airaChatService;
         this.airaUIService = airaUIService;
@@ -141,12 +147,47 @@ public sealed class AiraCompanionAppController : Controller
         }
         else
         {
-            response = new AiraChatMessage
+            try
             {
-                Role = AiraCompanionAppConstants.AiraChatRoleName,
-                Message = "OK",
-            };
+                switch (message)
+                {
+                    case "Reusable Drafts":
+                        var reusableDraftResult = await airaInsightsService.GetContentInsights(ContentType.Reusable, user, "Draft");
+                        response = BuildMessage(reusableDraftResult);
+                        break;
+                    case "Website Scheduled":
+                        var websiteScheduledResult = await airaInsightsService.GetContentInsights(ContentType.Website, user, "Scheduled");
+                        response = BuildMessage(websiteScheduledResult);
+                        break;
+                    case "Emails":
+                        var emailsResult = await airaInsightsService.GetEmailInsights(user);
+                        response = BuildMessage(emailsResult);
+                        break;
+                    case "Contact Groups":
+                        var contactGroupsResult = airaInsightsService.GetContactGroupInsights(["Females", "Males"]);
+                        response = BuildMessage(contactGroupsResult);
+                        break;
+                    default:
+                        response = new AiraChatMessage
+                        {
+                            Role = AiraCompanionAppConstants.AiraChatRoleName,
+                            Message = "Ok",
+                            QuickPrompts = message == "Prompts" ?
+                                ["Reusable Drafts", "Website Scheduled", "Emails", "Contact Groups"] : []
+                        };
+                        break;
+                }
+            }
+            catch (Exception ex)
+            {
+                response = new AiraChatMessage
+                {
+                    Role = AiraCompanionAppConstants.AiraChatRoleName,
+                    Message = $"Error: {ex.Message}"
+                };
+            }
         }
+
 
         return Ok(response);
     }
@@ -299,5 +340,83 @@ public sealed class AiraCompanionAppController : Controller
         };
 
         return View("~/Authentication/SignIn.cshtml", model);
+    }
+
+    private AiraChatMessage BuildMessage(ContentInsightsModel content)
+    {
+        var message = new StringBuilder();
+
+        foreach (var item in content.Items)
+        {
+            if (message.Length > 0)
+            {
+                message.Append(", ");
+            }
+
+            message.Append(item.DisplayName);
+        }
+
+        return new AiraChatMessage
+        {
+            Role = AiraCompanionAppConstants.AiraChatRoleName,
+            Message = message.Length == 0 ? "No Content" : message.ToString()
+        };
+    }
+
+    private AiraChatMessage BuildMessage(EmailInsightsModel emails)
+    {
+        var message = new StringBuilder();
+
+        foreach (var item in emails.Emails)
+        {
+            if (message.Length > 0)
+            {
+                message.Append(", ");
+            }
+
+            message.AppendFormat("{0} ({1}, {2})", item.EmailName, item.ContentTypeName, item.ChannelName);
+        }
+
+        message.Append(" - ");
+        message.AppendFormat("Sent: {0}, ", emails.EmailsSent);
+        message.AppendFormat("Delivered: {0}, ", emails.EmailsDelivered);
+        message.AppendFormat("Clicked: {0}, ", emails.LinksClicked);
+        message.AppendFormat("Opened: {0}, ", emails.EmailsOpened);
+        message.AppendFormat("Unsubscribed: {0}, ", emails.UnsubscribeRate);
+        message.AppendFormat("Spam Reports: {0}", emails.SpamReports);
+
+        message.Insert(0, "Email: ");
+
+        return new AiraChatMessage
+        {
+            Role = AiraCompanionAppConstants.AiraChatRoleName,
+            Message = message.Length == 0 ? "No Emails" : message.ToString()
+        };
+    }
+
+    private AiraChatMessage BuildMessage(ContactGroupsInsightsModel contactGroups)
+    {
+        var message = new StringBuilder();
+
+        foreach (var contactGroup in contactGroups.Groups)
+        {
+            var percentage = contactGroup.Count * (100M / contactGroups.AllCount);
+            if (message.Length > 0)
+            {
+                message.Append(", ");
+            }
+
+            message.Append(contactGroup.Name);
+            message.AppendFormat(" (Count: {0}, Percentage {1}%)", contactGroup.Count, Math.Round(percentage, 2));
+        }
+
+        message.Append(" - ");
+        message.AppendFormat("Contacts: {0}", contactGroups.AllCount);
+
+        return new AiraChatMessage
+        {
+            Role = AiraCompanionAppConstants.AiraChatRoleName,
+            Message = message.Length == 0 ? "No Contact Groups" : message.ToString()
+        };
     }
 }
