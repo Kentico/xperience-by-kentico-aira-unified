@@ -232,7 +232,7 @@ internal class AiraInsightsService : IAiraInsightsService
         return result;
     }
 
-    private ContentItemQueryBuilder? GetContentItemBuilder(string[] contentTypes)
+    private static ContentItemQueryBuilder? GetContentItemBuilder(string[] contentTypes)
     {
         var builder = new ContentItemQueryBuilder();
 
@@ -262,7 +262,7 @@ internal class AiraInsightsService : IAiraInsightsService
         return result;
     }
 
-    private async Task<IEnumerable<ContentItemModel>> FilterDrafts(IEnumerable<ContentItemModel> items)
+    private static async Task<IEnumerable<ContentItemModel>> FilterDrafts(IEnumerable<ContentItemModel> items)
     {
         List<ContentItemModel> result = [];
 
@@ -285,17 +285,19 @@ internal class AiraInsightsService : IAiraInsightsService
 
         if (step != null)
         {
-            var languageMetadata = contentItemLanguageMetadataInfoProvider.Get().WhereEquals(nameof(ContentItemLanguageMetadataInfo.ContentItemLanguageMetadataContentWorkflowStepID), step.ContentWorkflowStepID).ToList();
+            var languageMetadata = await contentItemLanguageMetadataInfoProvider
+                .Get()
+                .WhereEquals(nameof(ContentItemLanguageMetadataInfo.ContentItemLanguageMetadataContentWorkflowStepID), step.ContentWorkflowStepID)
+                .GetEnumerableTypedResultAsync();
 
-            foreach (var item in items)
-            {
-                if (languageMetadata.Any(m =>
-                    m.ContentItemLanguageMetadataContentItemID == item.Id &&
-                    m.ContentItemLanguageMetadataContentLanguageID == item.LanguageId))
-                {
-                    result.Add(item);
-                }
-            }
+            result.AddRange(
+                items.Where(item => languageMetadata
+                    .Any(m =>
+                        m.ContentItemLanguageMetadataContentItemID == item.Id &&
+                        m.ContentItemLanguageMetadataContentLanguageID == item.LanguageId
+                    )
+                )
+            );
         }
         return result;
     }
