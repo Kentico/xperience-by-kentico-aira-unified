@@ -39,7 +39,9 @@ internal class NavBarService : INavBarService
             TitleImagePath = activePage == AiraCompanionAppConstants.ChatRelativeUrl ?
              $"/{AiraCompanionAppConstants.RCLUrlPrefix}/{AiraCompanionAppConstants.PictureNetworkGraphImgPath}"
              : $"/{AiraCompanionAppConstants.RCLUrlPrefix}/{AiraCompanionAppConstants.PicturePlaceholderImgPath}",
+
             TitleText = activePage == AiraCompanionAppConstants.ChatRelativeUrl ? airaConfiguration.AiraConfigurationItemAiraChatTitle : airaConfiguration.AiraConfigurationItemAiraSmartUploadTitle,
+
             ChatItem = new MenuItemModel
             {
                 Title = airaConfiguration.AiraConfigurationItemAiraChatTitle,
