@@ -207,8 +207,13 @@ public sealed class AiraCompanionAppController : Controller
         return Ok(response);
     }
 
+    /// <summary>
+    /// Endpoint allowing removal of a used suggested prompt group.
+    /// </summary>
+    /// <param name="model">The <see cref="AiraUsedPromptGroupModel"/> with the information about the prompt group.</param>
+    /// <returns></returns>
     [HttpPost]
-    public async Task<IActionResult> RemoveUsedPromptGroup([FromBody] AiraUsedPromptGroupModel model)
+    public IActionResult RemoveUsedPromptGroup([FromBody] AiraUsedPromptGroupModel model)
     {
         airaChatService.RemoveUsedPrompts(model.GroupId);
 
@@ -317,6 +322,24 @@ public sealed class AiraCompanionAppController : Controller
         return Json(manifest);
     }
 
+    /// <summary>
+    /// Endpoint retrieving the SignIn page.
+    /// </summary>
+    [HttpGet]
+    [AllowAnonymous]
+    public async Task<IActionResult> SignIn()
+    {
+        var airaPathBase = await GetAiraPathBase();
+
+        var model = new SignInViewModel
+        {
+            PathBase = airaPathBase,
+            ChatRelativeUrl = AiraCompanionAppConstants.ChatRelativeUrl
+        };
+
+        return View("~/Authentication/SignIn.cshtml", model);
+    }
+
     private async Task<string> GetAiraPathBase()
     {
         var configuration = await airaConfigurationService.GetAiraConfiguration();
@@ -329,32 +352,6 @@ public sealed class AiraCompanionAppController : Controller
         var baseUrl = $"{Request.Scheme}://{Request.Host}";
 
         return $"{baseUrl}{airaPathBase}/{relativeUrl}";
-    }
-
-    public class CheckAuthenticationModel
-    {
-        public bool IsAuthenticated { get; set; }
-
-        public CheckAuthenticationModel(bool isAuthenticated)
-            => IsAuthenticated = isAuthenticated;
-    }
-
-    /// <summary>
-    /// Endpoint retrieving the signin page.
-    /// </summary>
-    [HttpGet]
-    [AllowAnonymous]
-    public async Task<IActionResult> Signin()
-    {
-        var airaPathBase = await GetAiraPathBase();
-
-        var model = new SignInViewModel
-        {
-            PathBase = airaPathBase,
-            ChatRelativeUrl = AiraCompanionAppConstants.ChatRelativeUrl
-        };
-
-        return View("~/Authentication/SignIn.cshtml", model);
     }
 
     private AiraChatMessage BuildMessage(ContentInsightsModel content)

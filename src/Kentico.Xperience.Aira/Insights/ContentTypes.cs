@@ -1,8 +1,10 @@
-﻿namespace Kentico.Xperience.Aira.Insights
+﻿namespace Kentico.Xperience.Aira.Insights;
+
+/// <summary>
+/// Content type type.
+/// </summary>
+public enum ContentType
 {
-    public enum ContentType
-    {
-        Reusable,
-        Website
-    }
+    Reusable,
+    Website
 }

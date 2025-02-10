@@ -26,6 +26,14 @@ public class ChatViewModel
     /// Path base for the Chat page.
     /// </summary>
     public string PathBase { get; set; } = string.Empty;
+
+    /// <summary>
+    /// Relative path to the AI icon displayed in the chat as the avatar of the AI.
+    /// </summary>
     public string AIIconImagePath { get; set; } = string.Empty;
+
+    /// <summary>
+    /// Relative path of the endpoint responsible for removing used suggested prompt group.
+    /// </summary>
     public string RemovePromptUrl { get; set; } = string.Empty;
 }

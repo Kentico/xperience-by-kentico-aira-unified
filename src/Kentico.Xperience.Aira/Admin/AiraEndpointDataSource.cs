@@ -66,8 +66,8 @@ internal class AiraEndpointDataSource : MutableEndpointDataSource
             ),
             CreateAiraEndpoint(configuration,
                 AiraCompanionAppConstants.SigninRelativeUrl,
-                nameof(AiraCompanionAppController.Signin),
-                (controller) => controller.Signin()
+                nameof(AiraCompanionAppController.SignIn),
+                (controller) => controller.SignIn()
             ),
             CreateAiraEndpointFromBody<AiraUsedPromptGroupModel>(configuration,
                 AiraCompanionAppConstants.RemoveUsedPromptGroupRelativeUrl,
@@ -80,7 +80,7 @@ internal class AiraEndpointDataSource : MutableEndpointDataSource
         AiraConfigurationItemInfo configurationInfo,
         string subPath,
         string actionName,
-        Func<AiraCompanionAppController, T, Task<IActionResult>> actionWithModel
+        Func<AiraCompanionAppController, T, IActionResult> actionWithModel
     ) where T : class, new() =>
         CreateEndpoint($"{configurationInfo.AiraConfigurationItemAiraPathBase}/{subPath}", async context =>
         {
@@ -101,7 +101,7 @@ internal class AiraEndpointDataSource : MutableEndpointDataSource
 
                     if (requestObject is not null)
                     {
-                        var result = await actionWithModel.Invoke(airaController, requestObject);
+                        var result = actionWithModel.Invoke(airaController, requestObject);
                         await result.ExecuteResultAsync(airaController.ControllerContext);
                     }
                     else
