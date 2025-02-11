@@ -39,7 +39,12 @@ internal class AiraModuleInstaller : IAiraModuleInstaller
     }
 
     private static void InstallModuleClasses(ResourceInfo resourceInfo)
-        => InstallAiraConfigurationClass(resourceInfo);
+    {
+        InstallAiraConfigurationClass(resourceInfo);
+        InstallAiraChatPromptClass(resourceInfo);
+        InstallAiraChatPromptGroupClass(resourceInfo);
+        InstallAiraChatMessageClass(resourceInfo);
+    }
 
     private static void InstallAiraConfigurationClass(ResourceInfo resourceInfo)
     {
@@ -53,7 +58,7 @@ internal class AiraModuleInstaller : IAiraModuleInstaller
         info.ClassType = ClassType.OTHER;
         var formInfo = FormHelper.GetBasicFormDefinition(nameof(AiraConfigurationItemInfo.AiraConfigurationItemId));
 
-        formInfo = AddFormItems(formInfo);
+        formInfo = AddFormItems(formInfo, typeof(AiraConfigurationItemInfo), nameof(AiraConfigurationItemInfo.AiraConfigurationItemId));
 
         SetFormDefinition(info, formInfo);
 
@@ -63,11 +68,72 @@ internal class AiraModuleInstaller : IAiraModuleInstaller
         }
     }
 
-    /// <summary>
-    /// Ensure that the form is not upserted with any existing form
-    /// </summary>
-    /// <param name="info"></param>
-    /// <param name="form"></param>
+    private static void InstallAiraChatPromptGroupClass(ResourceInfo resourceInfo)
+    {
+        var info = DataClassInfoProvider.GetDataClassInfo(AiraChatPromptGroupInfo.OBJECT_TYPE) ??
+            DataClassInfo.New(AiraChatPromptGroupInfo.OBJECT_TYPE);
+
+        info.ClassName = AiraChatPromptGroupInfo.TYPEINFO.ObjectClassName;
+        info.ClassTableName = AiraChatPromptGroupInfo.TYPEINFO.ObjectClassName.Replace(".", "_");
+        info.ClassDisplayName = "Aira Chat Prompt Group";
+        info.ClassResourceID = resourceInfo.ResourceID;
+        info.ClassType = ClassType.OTHER;
+        var formInfo = FormHelper.GetBasicFormDefinition(nameof(AiraChatPromptGroupInfo.AiraChatPromptGroupId));
+
+        formInfo = AddFormItems(formInfo, typeof(AiraChatPromptGroupInfo), nameof(AiraChatPromptGroupInfo.AiraChatPromptGroupId));
+
+        SetFormDefinition(info, formInfo);
+
+        if (info.HasChanged)
+        {
+            DataClassInfoProvider.SetDataClassInfo(info);
+        }
+    }
+
+    private static void InstallAiraChatPromptClass(ResourceInfo resourceInfo)
+    {
+        var info = DataClassInfoProvider.GetDataClassInfo(AiraChatPromptInfo.OBJECT_TYPE) ??
+            DataClassInfo.New(AiraChatPromptInfo.OBJECT_TYPE);
+
+        info.ClassName = AiraChatPromptInfo.TYPEINFO.ObjectClassName;
+        info.ClassTableName = AiraChatPromptInfo.TYPEINFO.ObjectClassName.Replace(".", "_");
+        info.ClassDisplayName = "Aira Chat Prompt";
+        info.ClassResourceID = resourceInfo.ResourceID;
+        info.ClassType = ClassType.OTHER;
+        var formInfo = FormHelper.GetBasicFormDefinition(nameof(AiraChatPromptInfo.AiraChatPromptId));
+
+        formInfo = AddFormItems(formInfo, typeof(AiraChatPromptInfo), nameof(AiraChatPromptInfo.AiraChatPromptId));
+
+        SetFormDefinition(info, formInfo);
+
+        if (info.HasChanged)
+        {
+            DataClassInfoProvider.SetDataClassInfo(info);
+        }
+    }
+
+    private static void InstallAiraChatMessageClass(ResourceInfo resourceInfo)
+    {
+        var info = DataClassInfoProvider.GetDataClassInfo(AiraChatMessageInfo.OBJECT_TYPE) ??
+            DataClassInfo.New(AiraChatMessageInfo.OBJECT_TYPE);
+
+        info.ClassName = AiraChatMessageInfo.TYPEINFO.ObjectClassName;
+        info.ClassTableName = AiraChatMessageInfo.TYPEINFO.ObjectClassName.Replace(".", "_");
+        info.ClassDisplayName = "Aira Chat Message";
+        info.ClassResourceID = resourceInfo.ResourceID;
+        info.ClassType = ClassType.OTHER;
+        var formInfo = FormHelper.GetBasicFormDefinition(nameof(AiraChatMessageInfo.AiraChatMessageId));
+
+        formInfo = AddFormItems(formInfo, typeof(AiraChatMessageInfo), nameof(AiraChatMessageInfo.AiraChatMessageId));
+
+        SetFormDefinition(info, formInfo);
+
+        if (info.HasChanged)
+        {
+            DataClassInfoProvider.SetDataClassInfo(info);
+        }
+    }
+
     private static void SetFormDefinition(DataClassInfo info, FormInfo form)
     {
         if (info.ClassID > 0)
@@ -85,16 +151,15 @@ internal class AiraModuleInstaller : IAiraModuleInstaller
     /// <summary>
     /// Loop through all AiraConfigurationItemInfo properties and add them as Form Items
     /// </summary>
-    private static FormInfo AddFormItems(FormInfo formInfo)
+    private static FormInfo AddFormItems(FormInfo formInfo, Type infoType, string idPropertyName)
     {
-        var airaConfigurationItemInfoType = typeof(AiraConfigurationItemInfo);
-        var properties = airaConfigurationItemInfoType.GetProperties();
+        var properties = infoType.GetProperties();
 
         foreach (var property in properties)
         {
-            if (property.Name == nameof(AiraConfigurationItemInfo.AiraConfigurationItemId))
+            if (string.Equals(property.Name, idPropertyName))
             {
-                continue; // Exclude AiraConfigurationItemId from the loop
+                continue; // Exclude Id from the loop
             }
 
             if (property.GetCustomAttributes(typeof(DatabaseFieldAttribute), true).FirstOrDefault() is DatabaseFieldAttribute)

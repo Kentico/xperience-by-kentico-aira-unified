@@ -115,7 +115,6 @@
         },
         data() {
             return {
-                // NG STATE
                 files: [],
                 phase: 'empty', // 'uploading', 'selection', 'empty'
                 formIsValid: true,
@@ -123,7 +122,6 @@
                 filesPromiseResolve: null,
                 filesPromise: null,
 
-                // old state
                 isLoaded: true
             }
         },

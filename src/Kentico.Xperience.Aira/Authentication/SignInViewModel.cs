@@ -1,17 +1,14 @@
-﻿using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
-
-namespace Kentico.Xperience.Aira.Authentication;
+﻿namespace Kentico.Xperience.Aira.Authentication;
 
 public class SignInViewModel
 {
-    [Required(ErrorMessage = "Please enter your user name or email address")]
-    [DisplayName("User name or email")]
-    [MaxLength(100, ErrorMessage = "Maximum allowed length of the input text is {1}")]
-    public string UserNameOrEmail { get; set; } = "";
+    /// <summary>
+    /// Url of the chat page relative to the ACA base url.
+    /// </summary>
+    public string ChatRelativeUrl { get; set; } = string.Empty;
 
-    [DataType(DataType.Password)]
-    [DisplayName("Password")]
-    [MaxLength(100, ErrorMessage = "Maximum allowed length of the input text is {1}")]
-    public string Password { get; set; } = "";
+    /// <summary>
+    /// ACA base url.
+    /// </summary>
+    public string PathBase { get; set; } = string.Empty;
 }

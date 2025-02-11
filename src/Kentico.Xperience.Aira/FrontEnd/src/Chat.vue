@@ -123,6 +123,14 @@
                         },
                         image: {
                             user: { bubble: { borderRadius: '1rem', overflow: 'clip', textAlign: 'left', display: 'inline-block' } }
+                        },
+                        html: {
+                           shared: {
+                                bubble: {
+                                    backgroundColor: 'unset', 
+                                    padding: '0px'
+                                }
+                           }
                         }
                     }">
           </deep-chat>
@@ -134,7 +142,7 @@
                 <button class="btn btn-outline-primary" @click="handleSuggestionClick('Tell me a fun fact')">Tell me a fun
                   fact
                 </button>
-                <button class="btn btn-outline-primary" @click="handleSuggestionClick('What\'s the weather like today?')">What’s
+                <button class="btn btn-outline-primary" @click="handleSuggestionClick('What\'s the weather like today?')">What�s
                   the weather like today?
                 </button>
                 <button class="btn btn-outline-primary" @click="handleSuggestionClick('Suggest a good movie')">Suggest a good
@@ -235,8 +243,9 @@ export default {
         airaBaseUrl: null,
         aiIconUrl: null,
         baseUrl: null,
+        usePromptUrl: null,
         navBarModel: null,
-        history: []
+        rawHistory: null
     },
     data() {
         return {
@@ -244,7 +253,9 @@ export default {
             themeColorInRgb: "rgb(129, 7, 193)",
             submitButton: null,
             started: false,
-            showAllSuggestions: false,
+            messagesMetadata: new Map(),
+            history: [],
+            showAllSuggestions: false
         }
     },
     mounted() {
@@ -278,6 +289,7 @@ export default {
                     });
 
                     this.setRequestInterceptor();
+                    this.setOnMessage();
                     this.setResponseInterceptor();
                     this.setHistory();
                 }
@@ -287,15 +299,75 @@ export default {
                     this.submitButton = newSubmitButton;
                     this.addClassesToShadowRoot();
                 }
+
+                this.bindPromptButtons();
             };
+        },
+        typeIntoInput(inputElement, text) {
+            inputElement.focus();
+            inputElement.innerHTML  = "";
+
+            for (let char of text) {
+                inputElement.innerHTML  += char;
+                inputElement.dispatchEvent(new Event("input", { bubbles: true }));
+            }
+        },
+        bindPromptButtons() {
+            this.$refs.chatElementRef.shadowRoot.querySelectorAll('button[prompt-quick-suggestion-button]').forEach(button => {
+                button.addEventListener('click', async () => {
+                    const text = button.value.valueOf();
+
+                    const buttonGroupId = button.parentNode.getAttribute("prompt-quick-suggestion-button-group-id");
+
+                    this.history = this.history.filter(x => (x.promptQuickSuggestionGroupId === undefined) || x.promptQuickSuggestionGroupId.toString() !== buttonGroupId);
+                    this.$refs.chatElementRef.clearMessages(true);
+
+                    this.history.forEach(x => {
+                        this.$refs.chatElementRef.addMessage(x);
+                    });
+
+                    this.bindPromptButtons();
+
+                    setTimeout(() => {
+                        const textInput = this.$refs.chatElementRef.shadowRoot.getElementById("text-input");
+                        textInput.classList.remove("text-input-placeholder");
+
+                        this.typeIntoInput(textInput, text);
+                    }, 50);
+
+                    const sendUsePromptUrl = `${this.baseUrl}${this.airaBaseUrl}/${this.usePromptUrl}`;
+                    await this.removeUsedPromptGroup(buttonGroupId, sendUsePromptUrl);
+                });
+            });
+        },
+        async removeUsedPromptGroup(groupId, sendUsePromptUrl) {
+            try {
+                await fetch(sendUsePromptUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        groupId: groupId,
+                    }),
+                });
+            }
+            catch (error) {
+                console.error('An error occurred:', error.message);
+            }
         },
         setRequestInterceptor() {
             this.$refs.chatElementRef.requestInterceptor = async (requestDetails) => {
                 const formData = new FormData();
 
+                this.history.push(requestDetails.body.messages[0]);
+
+                let jsonData = "";
+
                 if (Object.hasOwn(requestDetails.body, 'messages'))
-                {
-                    formData.append('message', requestDetails.body.messages[0].text);
+                { 
+                    //formData.append('message', requestDetails.body.messages[0].text);
+                    jsonData = requestDetails.body.messages[0].text;
                 }
                 else
                 {
@@ -319,7 +391,6 @@ export default {
                             }
                             else if (key === 'files') {
                                 formData.append(key, value);
-                                console.log(`${key} ${value}`);
                             }
                         }
 
@@ -331,9 +402,9 @@ export default {
 
                 const modifiedRequestDetails = {
                     ...requestDetails,
-                    body: formData,
+                    body: jsonData ?? formData,
                     headers: {
-                        ...requestDetails.headers,
+                        ...requestDetails.headers
                     },
                 };
 
@@ -342,7 +413,26 @@ export default {
         },
         setResponseInterceptor() {
             this.$refs.chatElementRef.responseInterceptor = (response) => {
-                return this.getMessageViewModel(response);
+                const messageViewModel = this.getMessageViewModel(response);
+                
+                this.history.push(messageViewModel);
+
+                if (response.quickPrompts.length > 0)
+                {
+                    this.$refs.chatElementRef.addMessage(messageViewModel);
+                    const promptMessage = this.getPromptsViewModel(response);
+                    
+                    this.history.push(promptMessage);
+
+                    return promptMessage;
+                }
+
+                return messageViewModel;
+            };
+        },
+        setOnMessage() {
+            this.$refs.chatElementRef.onMessage = (message) => {
+                this.bindPromptButtons();
             };
         },
         setBorders(){
@@ -411,6 +501,9 @@ export default {
                 .message-bubble .btn-outline-primary {
                     margin-right: 8px;
                 }
+                .message-bubble .deep-chat-button {
+                    margin-right: 8px;
+                }
 
                 .lds-ring, .lds-ring div {
                     box-sizing: border-box;
@@ -461,14 +554,39 @@ export default {
             shadowRoot.appendChild(style);
         },
         setHistory() {
-            for (const x of this.history) {
-                const viewModel = this.getMessageViewModel(x)
-                this.$refs.chatElementRef.history.push(viewModel);
+            for (const x of this.rawHistory) {
+                const messageViewModel = this.getMessageViewModel(x);
+                
+                this.history.push(messageViewModel);
+                this.$refs.chatElementRef.history.push(messageViewModel);
+                this.$refs.chatElementRef.addMessage(messageViewModel);
+
+                if (x.quickPrompts.length > 0)
+                {
+                    const promptMessage = this.getPromptsViewModel(x);
+                    this.history.push(promptMessage);
+                    this.$refs.chatElementRef.history.push(promptMessage);
+                    this.$refs.chatElementRef.addMessage(promptMessage);
+                }
+            }
+        },
+        getPromptsViewModel(message) {
+            let prompts = `<div prompt-quick-suggestion-button-group-id="${message.quickPromptsGroupId}">`;
+
+            for (var prompt of message.quickPrompts) {
+                prompts += `<button class="btn-outline-primary" prompt-quick-suggestion-button value="${prompt}">${prompt}</button>`;
+            }
+
+            prompts += '</div>';
+
+            return {
+                role: 'ai',
+                html: prompts,
+                promptQuickSuggestionGroupId: `${message.quickPromptsGroupId}`
             }
         },
         getMessageViewModel(message) {
-            if (message.url !== null)
-            {
+            if (message.url !== null) {
                 return {
                     role: "user",
                     files: [

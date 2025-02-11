@@ -9,7 +9,7 @@ using Kentico.Xperience.Aira.Admin.UIPages;
     identifier: AiraApplicationPage.IDENTIFIER,
     type: typeof(AiraApplicationPage),
     slug: "aira-companion-app",
-    name: "Aira Companion App",
+    name: "AIRA Unified",
     category: BaseApplicationCategories.CONFIGURATION,
     icon: Icons.RectangleAInverted,
     templateName: TemplateNames.SECTION_LAYOUT

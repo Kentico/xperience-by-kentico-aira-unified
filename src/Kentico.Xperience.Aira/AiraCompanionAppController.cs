@@ -1,65 +1,73 @@
-﻿using CMS.Membership;
+﻿using System.Text;
+
+using CMS.Membership;
 
 using HotChocolate.Authorization;
 
-using Htmx;
-
 using Kentico.Membership;
 using Kentico.Xperience.Admin.Base;
-using Kentico.Xperience.Admin.Base.Authentication.Internal;
 using Kentico.Xperience.Aira.Admin;
 using Kentico.Xperience.Aira.Assets;
 using Kentico.Xperience.Aira.AssetUploader.Models;
 using Kentico.Xperience.Aira.Authentication;
+using Kentico.Xperience.Aira.Chat;
 using Kentico.Xperience.Aira.Chat.Models;
+using Kentico.Xperience.Aira.Insights;
 using Kentico.Xperience.Aira.NavBar;
 
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
-using SignInResult = Microsoft.AspNetCore.Identity.SignInResult;
-
 namespace Kentico.Xperience.Aira;
 
+/// <summary>
+/// The main controller exposing the PWA.
+/// </summary>
 [ApiController]
 [Route("[controller]/[action]")]
 public sealed class AiraCompanionAppController : Controller
 {
-    private readonly AdminSignInManager signInManager;
     private readonly AdminUserManager adminUserManager;
     private readonly IAiraConfigurationService airaConfigurationService;
+    private readonly IAiraInsightsService airaInsightsService;
+    private readonly IAiraChatService airaChatService;
     private readonly IAiraAssetService airaAssetService;
     private readonly INavBarService airaUIService;
 
-    public AiraCompanionAppController(AdminSignInManager signInManager,
+    public AiraCompanionAppController(
         AdminUserManager adminUserManager,
         IAiraConfigurationService airaConfigurationService,
+        IAiraInsightsService airaInsightsService,
         IAiraAssetService airaAssetService,
-        INavBarService airaUIService)
+        INavBarService airaUIService,
+        IAiraChatService airaChatService)
     {
         this.adminUserManager = adminUserManager;
         this.airaConfigurationService = airaConfigurationService;
-        this.signInManager = signInManager;
+        this.airaInsightsService = airaInsightsService;
         this.airaAssetService = airaAssetService;
+        this.airaChatService = airaChatService;
         this.airaUIService = airaUIService;
     }
 
+    /// <summary>
+    /// Endpoint exposing access to the Chat page.
+    /// </summary>
     [HttpGet]
     public async Task<IActionResult> Index()
     {
-        string airaPathBase = await GetAiraPathBase();
+        var airaPathBase = await GetAiraPathBase();
 
         var user = await adminUserManager.GetUserAsync(User);
 
-        string signinRedirectUrl = GetRedirectUrl(AiraCompanionAppConstants.SigninRelativeUrl, airaPathBase);
+        var signinRedirectUrl = GetRedirectUrl(AiraCompanionAppConstants.SigninRelativeUrl, airaPathBase);
 
         if (user is null)
         {
             return Redirect(signinRedirectUrl);
         }
 
-        bool hasAiraViewPermission = await airaAssetService.DoesUserHaveAiraCompanionAppPermission(SystemPermissions.VIEW, user.UserID);
+        var hasAiraViewPermission = await airaAssetService.DoesUserHaveAiraCompanionAppPermission(SystemPermissions.VIEW, user.UserID);
 
         if (!hasAiraViewPermission)
         {
@@ -69,65 +77,167 @@ public sealed class AiraCompanionAppController : Controller
         var chatModel = new ChatViewModel
         {
             PathBase = airaPathBase,
-            AIIconImagePath = $"/{AiraCompanionAppConstants.RCLUrlPrefix}/{AiraCompanionAppConstants.PictureHatImgPath}",
-            NavBarViewModel = await airaUIService.GetNavBarViewModel(AiraCompanionAppConstants.ChatRelativeUrl)
+            History = await airaChatService.GetUserChatHistory(user.UserID),
+            AIIconImagePath = $"/{AiraCompanionAppConstants.RCLUrlPrefix}/{AiraCompanionAppConstants.PictureStarImgPath}",
+            NavBarViewModel = await airaUIService.GetNavBarViewModel(AiraCompanionAppConstants.ChatRelativeUrl),
+            RemovePromptUrl = AiraCompanionAppConstants.RemoveUsedPromptGroupRelativeUrl
         };
 
         if (chatModel.History.Count == 0)
         {
-            chatModel.History.AddRange(
-                AiraCompanionAppConstants.AiraChatInitialAiraMessages.Select(x => new AiraChatMessage
+            chatModel.History = [
+                new AiraChatMessage
                 {
-                    Message = x,
+                    Message = Resource.InitialAiraMessage1,
                     Role = AiraCompanionAppConstants.AiraChatRoleName
-                })
-            );
+                },
+                new AiraChatMessage
+                {
+                    Message = Resource.InitialAiraMessage1,
+                    Role = AiraCompanionAppConstants.AiraChatRoleName
+                },
+                new AiraChatMessage
+                {
+                    Message = Resource.InitialAiraMessage1,
+                    Role = AiraCompanionAppConstants.AiraChatRoleName
+                },
+            ];
+        }
+        else
+        {
+            chatModel.History.Add(new AiraChatMessage
+            {
+                Message = Resource.WelcomeBackAiraMessage,
+                Role = AiraCompanionAppConstants.AiraChatRoleName
+            });
         }
 
         return View("~/Chat/Chat.cshtml", chatModel);
     }
 
-#pragma warning disable IDE0060 // Kept for development. We do not yet have AIRA AI api which we could give the messages to.
+    /// <summary>
+    /// Endpoint allowing chat communication via the chat interface.
+    /// </summary>
     [HttpPost]
     public async Task<IActionResult> PostChatMessage(IFormCollection request)
     {
-#pragma warning restore IDE0060 // 
-        string airaPathBase = await GetAiraPathBase();
+        var airaPathBase = await GetAiraPathBase();
 
         var user = await adminUserManager.GetUserAsync(User);
 
-        string signinRedirectUrl = GetRedirectUrl(AiraCompanionAppConstants.SigninRelativeUrl, airaPathBase);
+        var signinRedirectUrl = GetRedirectUrl(AiraCompanionAppConstants.SigninRelativeUrl, airaPathBase);
 
         if (user is null)
         {
             return Redirect(signinRedirectUrl);
         }
 
-        bool hasAiraViewPermission = await airaAssetService.DoesUserHaveAiraCompanionAppPermission(SystemPermissions.VIEW, user.UserID);
+        var hasAiraViewPermission = await airaAssetService.DoesUserHaveAiraCompanionAppPermission(SystemPermissions.VIEW, user.UserID);
 
         if (!hasAiraViewPermission)
         {
             return Redirect(signinRedirectUrl);
         }
 
-        return Ok(new AiraChatMessage { Role = AiraCompanionAppConstants.AiraChatRoleName, Message = "Ok" });
+        string? message = null;
+
+#pragma warning disable IDE0079 // Kept for development. This will be restored in subsequent versions.
+#pragma warning disable S6932 // Kept for development. This will be restored in subsequent versions.
+        if (request.TryGetValue("message", out var messages))
+        {
+            message = messages.ToString().Replace("\"", "");
+        }
+#pragma warning restore S6932 //
+#pragma warning restore IDE0079 //
+
+        AiraChatMessage response;
+
+        airaChatService.SaveMessage(message ?? "", user.UserID, AiraCompanionAppConstants.UserChatRoleName);
+
+        if (message == "Prompts")
+        {
+            response = await airaChatService.GenerateAiraPrompts(user.UserID);
+            response.Message = "OK";
+        }
+        else
+        {
+            try
+            {
+                switch (message)
+                {
+                    case "Reusable Drafts":
+                        var reusableDraftResult = await airaInsightsService.GetContentInsights(ContentType.Reusable, user, "Draft");
+                        response = BuildMessage(reusableDraftResult);
+                        break;
+                    case "Website Scheduled":
+                        var websiteScheduledResult = await airaInsightsService.GetContentInsights(ContentType.Website, user, "Scheduled");
+                        response = BuildMessage(websiteScheduledResult);
+                        break;
+                    case "Emails":
+                        var emailsResult = await airaInsightsService.GetEmailInsights(user);
+                        response = BuildMessage(emailsResult);
+                        break;
+                    case "Contact Groups":
+                        var contactGroupsResult = airaInsightsService.GetContactGroupInsights(["Females", "Males"]);
+                        response = BuildMessage(contactGroupsResult);
+                        break;
+                    default:
+                        response = new AiraChatMessage
+                        {
+                            Role = AiraCompanionAppConstants.AiraChatRoleName,
+                            Message = "Ok",
+                            QuickPrompts = message == "Prompts" ?
+                                ["Reusable Drafts", "Website Scheduled", "Emails", "Contact Groups"] : []
+                        };
+                        break;
+                }
+            }
+            catch (Exception ex)
+            {
+                response = new AiraChatMessage
+                {
+                    Role = AiraCompanionAppConstants.AiraChatRoleName,
+                    Message = $"Error: {ex.Message}"
+                };
+            }
+        }
+
+        airaChatService.SaveMessage(response.Message ?? "", user.UserID, AiraCompanionAppConstants.AiraChatRoleName);
+
+        return Ok(response);
     }
 
+    /// <summary>
+    /// Endpoint allowing removal of a used suggested prompt group.
+    /// </summary>
+    /// <param name="model">The <see cref="AiraUsedPromptGroupModel"/> with the information about the prompt group.</param>
+    /// <returns></returns>
+    [HttpPost]
+    public IActionResult RemoveUsedPromptGroup([FromBody] AiraUsedPromptGroupModel model)
+    {
+        airaChatService.RemoveUsedPrompts(model.GroupId);
+
+        return Ok();
+    }
+
+    /// <summary>
+    /// Endpoint allowing upload of the files via smart upload.
+    /// </summary>
     [HttpPost]
     public async Task<IActionResult> PostImages(IFormCollection request)
     {
-        string airaPathBase = await GetAiraPathBase();
+        var airaPathBase = await GetAiraPathBase();
 
         var user = await adminUserManager.GetUserAsync(User);
 
-        string signinRedirectUrl = GetRedirectUrl(AiraCompanionAppConstants.SigninRelativeUrl, airaPathBase);
+        var signinRedirectUrl = GetRedirectUrl(AiraCompanionAppConstants.SigninRelativeUrl, airaPathBase);
 
         if (user is null)
         {
             return Redirect(signinRedirectUrl);
         }
 
-        bool hasAiraViewPermission = await airaAssetService.DoesUserHaveAiraCompanionAppPermission(SystemPermissions.CREATE, user.UserID);
+        var hasAiraViewPermission = await airaAssetService.DoesUserHaveAiraCompanionAppPermission(SystemPermissions.CREATE, user.UserID);
 
         if (!hasAiraViewPermission)
         {
@@ -138,21 +248,24 @@ public sealed class AiraCompanionAppController : Controller
         return Ok();
     }
 
+    /// <summary>
+    /// Endpoint allowing accessing the smart upload page.
+    /// </summary>
     [HttpGet]
     public async Task<IActionResult> Assets()
     {
-        string airaPathBase = await GetAiraPathBase();
+        var airaPathBase = await GetAiraPathBase();
 
         var user = await adminUserManager.GetUserAsync(User);
 
-        string signinRedirectUrl = GetRedirectUrl(AiraCompanionAppConstants.SigninRelativeUrl, airaPathBase);
+        var signinRedirectUrl = GetRedirectUrl(AiraCompanionAppConstants.SigninRelativeUrl, airaPathBase);
 
         if (user is null)
         {
             return Redirect(signinRedirectUrl);
         }
 
-        bool hasAiraCreatePermission = await airaAssetService.DoesUserHaveAiraCompanionAppPermission(SystemPermissions.CREATE, user.UserID);
+        var hasAiraCreatePermission = await airaAssetService.DoesUserHaveAiraCompanionAppPermission(SystemPermissions.CREATE, user.UserID);
 
         if (!hasAiraCreatePermission)
         {
@@ -168,13 +281,17 @@ public sealed class AiraCompanionAppController : Controller
         return View("~/AssetUploader/Assets.cshtml", model);
     }
 
+    /// <summary>
+    /// Endpoint exposing the manifest file for the PWA.
+    /// </summary>
+    /// <returns></returns>
     [HttpGet($"/{AiraCompanionAppConstants.RCLUrlPrefix}/manifest.json")]
     [Produces("application/json")]
     public async Task<IActionResult> GetPwaManifest()
     {
         var configuration = await airaConfigurationService.GetAiraConfiguration();
 
-        string libraryBasePath = '/' + AiraCompanionAppConstants.RCLUrlPrefix;
+        var libraryBasePath = '/' + AiraCompanionAppConstants.RCLUrlPrefix;
 
         var manifest = new
         {
@@ -205,6 +322,24 @@ public sealed class AiraCompanionAppController : Controller
         return Json(manifest);
     }
 
+    /// <summary>
+    /// Endpoint retrieving the SignIn page.
+    /// </summary>
+    [HttpGet]
+    [AllowAnonymous]
+    public async Task<IActionResult> SignIn()
+    {
+        var airaPathBase = await GetAiraPathBase();
+
+        var model = new SignInViewModel
+        {
+            PathBase = airaPathBase,
+            ChatRelativeUrl = AiraCompanionAppConstants.ChatRelativeUrl
+        };
+
+        return View("~/Authentication/SignIn.cshtml", model);
+    }
+
     private async Task<string> GetAiraPathBase()
     {
         var configuration = await airaConfigurationService.GetAiraConfiguration();
@@ -214,85 +349,86 @@ public sealed class AiraCompanionAppController : Controller
 
     private string GetRedirectUrl(string relativeUrl, string airaPathBase)
     {
-        string baseUrl = $"{Request.Scheme}://{Request.Host}";
+        var baseUrl = $"{Request.Scheme}://{Request.Host}";
 
         return $"{baseUrl}{airaPathBase}/{relativeUrl}";
     }
 
-    [HttpGet]
-    [AllowAnonymous]
-    public Task<IActionResult> Signin()
-        => Task.FromResult((IActionResult)View("~/Authentication/SignIn.cshtml"));
-
-    [HttpPost]
-    [AllowAnonymous]
-    [ValidateAntiForgeryToken]
-    public async Task<IActionResult> SignIn([FromForm] SignInViewModel model)
+    private AiraChatMessage BuildMessage(ContentInsightsModel content)
     {
-        if (!ModelState.IsValid)
-        {
-            return PartialView("~/Authentication/_SignIn.cshtml", model);
-        }
+        var message = new StringBuilder();
 
-        SignInResult signInResult;
-        try
+        foreach (var item in content.Items)
         {
-            var user = await AdminApplicationUser();
-
-            if (user is null)
+            if (message.Length > 0)
             {
-                signInResult = SignInResult.Failed;
-            }
-            else
-            {
-                signInResult = await signInManager.PasswordSignInAsync(user.UserName!, model.Password, isPersistent: true, lockoutOnFailure: false);
-                if (signInResult.Succeeded)
-                {
-                    var claimsPrincipal = await signInManager.CreateUserPrincipalAsync(user);
-
-                    await signInManager.SignInWithClaimsAsync(user, new AuthenticationProperties
-                    {
-                        IsPersistent = true
-                    }, claimsPrincipal.Claims);
-
-                    HttpContext.User = claimsPrincipal;
-                }
-            }
-        }
-        catch
-        {
-            signInResult = SignInResult.Failed;
-        }
-
-        if (!signInResult.Succeeded)
-        {
-            ModelState.AddModelError(string.Empty, "Your sign-in attempt was not successful. Please try again.");
-
-            return PartialView("~/Authentication/_SignIn.cshtml", model);
-        }
-
-        var configuration = await airaConfigurationService.GetAiraConfiguration();
-        string airaPathBase = configuration.AiraConfigurationItemAiraPathBase;
-
-        string baseUrl = $"{Request.Scheme}://{Request.Host}";
-        string redirectUrl = $"{baseUrl}{airaPathBase}/{AiraCompanionAppConstants.ChatRelativeUrl}";
-
-        Response.Htmx(h => h.Redirect(redirectUrl));
-
-        return Request.IsHtmx()
-        ? Ok()
-        : Redirect(redirectUrl);
-
-        async Task<AdminApplicationUser?> AdminApplicationUser()
-        {
-            var user = await adminUserManager.FindByNameAsync(model.UserNameOrEmail);
-
-            if (user is not null)
-            {
-                return user;
+                message.Append(", ");
             }
 
-            return await adminUserManager.FindByEmailAsync(model.UserNameOrEmail);
+            message.Append(item.DisplayName);
         }
+
+        return new AiraChatMessage
+        {
+            Role = AiraCompanionAppConstants.AiraChatRoleName,
+            Message = message.Length == 0 ? "No Content" : message.ToString()
+        };
+    }
+
+    private AiraChatMessage BuildMessage(EmailInsightsModel emails)
+    {
+        var message = new StringBuilder();
+
+        foreach (var item in emails.Emails)
+        {
+            if (message.Length > 0)
+            {
+                message.Append(", ");
+            }
+
+            message.AppendFormat("{0} ({1}, {2})", item.EmailName, item.ContentTypeName, item.ChannelName);
+        }
+
+        message.Append(" - ");
+        message.AppendFormat("Sent: {0}, ", emails.EmailsSent);
+        message.AppendFormat("Delivered: {0}, ", emails.EmailsDelivered);
+        message.AppendFormat("Clicked: {0}, ", emails.LinksClicked);
+        message.AppendFormat("Opened: {0}, ", emails.EmailsOpened);
+        message.AppendFormat("Unsubscribed: {0}, ", emails.UnsubscribeRate);
+        message.AppendFormat("Spam Reports: {0}", emails.SpamReports);
+
+        message.Insert(0, "Email: ");
+
+        return new AiraChatMessage
+        {
+            Role = AiraCompanionAppConstants.AiraChatRoleName,
+            Message = message.Length == 0 ? "No Emails" : message.ToString()
+        };
+    }
+
+    private AiraChatMessage BuildMessage(ContactGroupsInsightsModel contactGroups)
+    {
+        var message = new StringBuilder();
+
+        foreach (var contactGroup in contactGroups.Groups)
+        {
+            var percentage = contactGroup.Count * (100M / contactGroups.AllCount);
+            if (message.Length > 0)
+            {
+                message.Append(", ");
+            }
+
+            message.Append(contactGroup.Name);
+            message.AppendFormat(" (Count: {0}, Percentage {1}%)", contactGroup.Count, Math.Round(percentage, 2));
+        }
+
+        message.Append(" - ");
+        message.AppendFormat("Contacts: {0}", contactGroups.AllCount);
+
+        return new AiraChatMessage
+        {
+            Role = AiraCompanionAppConstants.AiraChatRoleName,
+            Message = message.Length == 0 ? "No Contact Groups" : message.ToString()
+        };
     }
 }

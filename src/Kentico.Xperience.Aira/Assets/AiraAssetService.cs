@@ -34,7 +34,7 @@ internal class AiraAssetService : IAiraAssetService
 
     public async Task<bool> DoesUserHaveAiraCompanionAppPermission(string permission, int userId)
     {
-        int countOfRolesWithTheRightWhereUserIsContained = await roleProvider
+        var countOfRolesWithTheRightWhereUserIsContained = await roleProvider
             .Get()
             .Source(x =>
             {
@@ -75,9 +75,9 @@ internal class AiraAssetService : IAiraAssetService
             .GetEnumerableTypedResultAsync())
             .Single();
 
-        string contentItemAssetColumnCodeName = contentTypeInfo["AssetFieldName"];
+        var contentItemAssetColumnCodeName = contentTypeInfo["AssetFieldName"];
 
-        string languageName = (await contentLanguageProvider
+        var languageName = (await contentLanguageProvider
             .Get()
             .WhereEquals(nameof(ContentLanguageInfo.ContentLanguageIsDefault), true)
             .GetEnumerableTypedResultAsync())
@@ -106,7 +106,7 @@ internal class AiraAssetService : IAiraAssetService
 
         var tempDirectory = Directory.CreateTempSubdirectory();
 
-        string tempFilePath = Path.Combine(tempDirectory.FullName, file.FileName);
+        var tempFilePath = Path.Combine(tempDirectory.FullName, file.FileName);
         using var fileStream = File.Create(tempFilePath);
         await file.CopyToAsync(fileStream);
 
@@ -128,7 +128,7 @@ internal class AiraAssetService : IAiraAssetService
             { contentItemAssetColumnCodeName, assetMetadataWithSource }
         });
 
-        int contentItemId = await contentItemManager.Create(createContentItemParameters, itemData);
+        var contentItemId = await contentItemManager.Create(createContentItemParameters, itemData);
 
         File.Delete(tempFilePath);
         tempDirectory.Delete(true);
