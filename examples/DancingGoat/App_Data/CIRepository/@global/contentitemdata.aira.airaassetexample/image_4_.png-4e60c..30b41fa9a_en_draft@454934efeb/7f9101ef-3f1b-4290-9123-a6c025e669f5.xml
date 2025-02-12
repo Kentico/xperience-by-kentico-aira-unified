@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<contentitemdata.aira.airaassetexample>
+  <Cont>
+    <![CDATA[{"Original":{"Identifier":"1e661b1f-73e1-4160-88e5-c40d4ad6eba2","Name":"image (4).png","Extension":".png","Size":100586,"Width":1326,"Height":559,"LastModified":"2025-02-12T23:34:01.23602Z"},"OptimizationParameters":{"OutputExtension":"jpeg","Quality":100},"Identifier":"22a94adb-fc64-4f96-861c-11c99f0c8c35","Name":"image (4).jpeg","Extension":".jpeg","Size":141054,"Width":1326,"Height":559,"LastModified":"2025-02-12T23:34:01.468411Z"}]]>
+  </Cont>
+  <ContentItemDataCommonDataID>
+    <GUID>febe6cce-84d2-40ed-baa5-4e130b41fa9a</GUID>
+    <ObjectType>cms.contentitemcommondata</ObjectType>
+    <Parent>
+      <CodeName>Image_4_.png-4e60cnsg</CodeName>
+      <GUID>f8b3c29d-ee98-44db-a951-3d5f3e004de4</GUID>
+      <ObjectType>cms.contentitem</ObjectType>
+    </Parent>
+  </ContentItemDataCommonDataID>
+  <ContentItemDataGUID>7f9101ef-3f1b-4290-9123-a6c025e669f5</ContentItemDataGUID>
+</contentitemdata.aira.airaassetexample>
