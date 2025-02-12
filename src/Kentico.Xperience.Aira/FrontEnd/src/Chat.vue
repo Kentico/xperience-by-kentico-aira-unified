@@ -117,7 +117,7 @@
               :introMessage="{ text: '' }"
               :messageStyles="{
                         default: {
-                            shared: { bubble: { fontSize: '0.75rem', lineHeight: '1.375rem', padding: '0.5rem 0.75rem', marginTop: '.25rem' } },
+                            shared: { bubble: { fontSize: '0.75rem', lineHeight: '1.375rem', padding: '0.5rem 0.75rem', marginTop: '.375rem' } },
                             ai: { bubble: { background: '#edeeff', borderRadius: '0 1.125rem 1.125rem 1.125rem' } },
                             user: { bubble: { color: '#fff', borderRadius: '1.125rem 1.125rem 0 1.125rem' } }
                         },

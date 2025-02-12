@@ -17754,6 +17754,8 @@ button.c-link {
   flex-grow: 1;
   display: flex;
   flex-direction: column;
+  height: 100%;
+  overflow: hidden;
 }
 .c-app_body h1, .c-app_body .h1, .c-app_body h2, .c-app_body .h2, .c-app_body h3, .c-app_body .h3, .c-app_body h4, .c-app_body .h4, .c-app_body h5, .c-app_body .h5, .c-app_body h6, .c-app_body .h6, .c-app_body p {
   margin-bottom: 0;
@@ -18208,7 +18210,7 @@ button.c-link {
   width: 100%;
   overflow-x: auto;
   overflow-y: clip;
-  padding: 0.25rem 1rem;
+  padding: 0.25rem 1rem 0.125rem;
 }
 .c-prompt-suggestions_inner {
   display: flex;
