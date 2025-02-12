@@ -68,22 +68,21 @@
             </template>
 
             <template v-if="phase == 'selection'">
-                <div class="c-message_wrapper u-secondary-accent" id="messages">
-                    <div class="c-message">
-                        <div class="c-message_bubble white w-100">
-                            <div class="row g-2.5">
-                                <div class="col-6" v-for="(file, index) in files" :key="index">
-                                    <div class="c-message_img ratio ratio-1x1 position-relative">
-                                        <img class="object-fit-cover" v-bind:src="createObjectURL(file)" alt="uploaded image">
-                                        <button class="btn btn-remove-img" aria-label="Remove" @click="removeFile2(file, index);">
-                                            <img :src="`${this.baseUrl}/_content/Kentico.Xperience.Aira/img/icons/cross.svg`" class="c-icon fs-6" />
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+              <div class="row g-2.5">
+                <div class="col-6" v-for="(file, index) in files" :key="index">
+                  <div class="c-uploaded-image position-relative">
+                    <div class="c-uploaded-image_header">
+                      <div class="c-uploaded-image_check">
+                        <img :src="`${this.baseUrl}/_content/Kentico.Xperience.Aira/img/icons/check-white.svg`" alt="check" class="c-icon" />
+                      </div>
+                      <button class="btn btn-remove-img" aria-label="Remove" @click="removeFile2(file, index);">
+                        <img :src="`${this.baseUrl}/_content/Kentico.Xperience.Aira/img/icons/cross.svg`" alt="" class="c-icon" />
+                      </button>
                     </div>
+                    <img class="c-uploaded-image_img" v-bind:src="createObjectURL(file)" alt="uploaded image">
+                  </div>
                 </div>
+              </div>
             </template>
             <div class="mt-5" v-if="phase == 'selection'">
                 <div class="c-empty-page-layout">
