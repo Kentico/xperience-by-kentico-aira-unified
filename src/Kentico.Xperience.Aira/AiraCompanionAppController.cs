@@ -54,13 +54,13 @@ public sealed class AiraCompanionAppController : Controller
     /// Endpoint exposing access to the Chat page.
     /// </summary>
     [HttpGet]
-    public async Task<IActionResult> Index()
+    public async Task<IActionResult> Index(int? chatThreadId = null)
     {
         var airaPathBase = await GetAiraPathBase();
 
         var user = await adminUserManager.GetUserAsync(User);
 
-        var signinRedirectUrl = GetRedirectUrl(AiraCompanionAppConstants.SigninRelativeUrl, airaPathBase);
+        var signinRedirectUrl = GetRedirectUrl(airaPathBase, AiraCompanionAppConstants.SigninRelativeUrl);
 
         if (user is null)
         {
@@ -74,12 +74,15 @@ public sealed class AiraCompanionAppController : Controller
             return Redirect(signinRedirectUrl);
         }
 
+        var chatThread = await airaChatService.GetAiraChatThreadModel(user.UserID, chatThreadId);
+
         var chatModel = new ChatViewModel
         {
             PathBase = airaPathBase,
-            History = await airaChatService.GetUserChatHistory(user.UserID),
+            History = await airaChatService.GetUserChatHistory(user.UserID, chatThread.ThreadId),
             AIIconImagePath = $"/{AiraCompanionAppConstants.RCLUrlPrefix}/{AiraCompanionAppConstants.PictureStarImgPath}",
             NavBarViewModel = await airaUIService.GetNavBarViewModel(AiraCompanionAppConstants.ChatRelativeUrl),
+            AiraChatThreadModel = chatThread,
             RemovePromptUrl = AiraCompanionAppConstants.RemoveUsedPromptGroupRelativeUrl
         };
 
@@ -93,12 +96,12 @@ public sealed class AiraCompanionAppController : Controller
                 },
                 new AiraChatMessage
                 {
-                    Message = Resource.InitialAiraMessage1,
+                    Message = Resource.InitialAiraMessage2,
                     Role = AiraCompanionAppConstants.AiraChatRoleName
                 },
                 new AiraChatMessage
                 {
-                    Message = Resource.InitialAiraMessage1,
+                    Message = Resource.InitialAiraMessage3,
                     Role = AiraCompanionAppConstants.AiraChatRoleName
                 },
             ];
@@ -115,17 +118,45 @@ public sealed class AiraCompanionAppController : Controller
         return View("~/Chat/Chat.cshtml", chatModel);
     }
 
-    /// <summary>
-    /// Endpoint allowing chat communication via the chat interface.
-    /// </summary>
     [HttpPost]
-    public async Task<IActionResult> PostChatMessage(IFormCollection request)
+    public async Task<IActionResult> NewChatThread()
     {
         var airaPathBase = await GetAiraPathBase();
 
         var user = await adminUserManager.GetUserAsync(User);
 
-        var signinRedirectUrl = GetRedirectUrl(AiraCompanionAppConstants.SigninRelativeUrl, airaPathBase);
+        var signinRedirectUrl = GetRedirectUrl(airaPathBase, AiraCompanionAppConstants.SigninRelativeUrl);
+
+        if (user is null)
+        {
+            return Redirect(signinRedirectUrl);
+        }
+
+        var hasAiraViewPermission = await airaAssetService.DoesUserHaveAiraCompanionAppPermission(SystemPermissions.VIEW, user.UserID);
+
+        if (!hasAiraViewPermission)
+        {
+            return Redirect(signinRedirectUrl);
+        }
+
+        var chatThread = await airaChatService.CreateNewChatThread(user.UserID);
+
+        var chatRedirectUrl = GetRedirectUrl(airaPathBase, AiraCompanionAppConstants.ChatRelativeUrl, chatThread.ThreadId.ToString());
+
+        return Redirect(chatRedirectUrl);
+    }
+
+    /// <summary>
+    /// Endpoint allowing chat communication via the chat interface.
+    /// </summary>
+    [HttpPost]
+    public async Task<IActionResult> PostChatMessage(IFormCollection request, int threadId)
+    {
+        var airaPathBase = await GetAiraPathBase();
+
+        var user = await adminUserManager.GetUserAsync(User);
+
+        var signinRedirectUrl = GetRedirectUrl(airaPathBase, AiraCompanionAppConstants.SigninRelativeUrl);
 
         if (user is null)
         {
@@ -152,11 +183,11 @@ public sealed class AiraCompanionAppController : Controller
 
         AiraChatMessage response;
 
-        airaChatService.SaveMessage(message ?? "", user.UserID, AiraCompanionAppConstants.UserChatRoleName);
+        airaChatService.SaveMessage(message ?? "", user.UserID, AiraCompanionAppConstants.UserChatRoleName, threadId);
 
         if (message == "Prompts")
         {
-            response = await airaChatService.GenerateAiraPrompts(user.UserID);
+            response = await airaChatService.GenerateAiraPrompts(user.UserID, threadId);
             response.Message = "OK";
         }
         else
@@ -202,7 +233,7 @@ public sealed class AiraCompanionAppController : Controller
             }
         }
 
-        airaChatService.SaveMessage(response.Message ?? "", user.UserID, AiraCompanionAppConstants.AiraChatRoleName);
+        airaChatService.SaveMessage(response.Message ?? "", user.UserID, AiraCompanionAppConstants.AiraChatRoleName, threadId);
 
         return Ok(response);
     }
@@ -230,7 +261,7 @@ public sealed class AiraCompanionAppController : Controller
 
         var user = await adminUserManager.GetUserAsync(User);
 
-        var signinRedirectUrl = GetRedirectUrl(AiraCompanionAppConstants.SigninRelativeUrl, airaPathBase);
+        var signinRedirectUrl = GetRedirectUrl(airaPathBase, AiraCompanionAppConstants.SigninRelativeUrl);
 
         if (user is null)
         {
@@ -258,7 +289,7 @@ public sealed class AiraCompanionAppController : Controller
 
         var user = await adminUserManager.GetUserAsync(User);
 
-        var signinRedirectUrl = GetRedirectUrl(AiraCompanionAppConstants.SigninRelativeUrl, airaPathBase);
+        var signinRedirectUrl = GetRedirectUrl(airaPathBase, AiraCompanionAppConstants.SigninRelativeUrl);
 
         if (user is null)
         {
@@ -347,11 +378,11 @@ public sealed class AiraCompanionAppController : Controller
         return configuration.AiraConfigurationItemAiraPathBase;
     }
 
-    private string GetRedirectUrl(string relativeUrl, string airaPathBase)
+    private string GetRedirectUrl(params string[] pathParts)
     {
         var baseUrl = $"{Request.Scheme}://{Request.Host}";
 
-        return $"{baseUrl}{airaPathBase}/{relativeUrl}";
+        return $"{baseUrl}{string.Join('/', pathParts)}";
     }
 
     private AiraChatMessage BuildMessage(ContentInsightsModel content)

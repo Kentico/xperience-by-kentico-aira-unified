@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<cms.class>
+  <ClassDisplayName>Aira Chat Prompt Group</ClassDisplayName>
+  <ClassFormDefinition>
+    <form>
+      <field column="AiraChatPromptGroupId" columntype="integer" enabled="true" guid="ffc65741-fbbb-4a55-bb2a-a55cd6819032" isPK="true" />
+      <field column="AiraChatPromptGroupGuid" columntype="text" enabled="true" guid="27446a4b-3413-4131-8253-3dbb5b7197fb" visible="true" />
+      <field column="AiraChatPromptGroupCreatedWhen" columntype="datetime" enabled="true" guid="6c57b95c-e381-49c6-a686-87116885fdb1" visible="true" />
+      <field column="AiraChatPromptUserId" columntype="integer" enabled="true" guid="97f5de09-2c8f-4976-96a5-4fd371ed2c61" visible="true" />
+      <field column="AiraChatPromptGroupUserId" columntype="integer" enabled="true" guid="e5ce2ebf-1a00-4e11-9874-592a7e790524" visible="true" />
+      <field column="AiraChatPromptGroupThreadId" columntype="integer" enabled="true" guid="7b9e4eda-4f95-4f15-b70d-8c12bf096ee0" visible="true" />
+    </form>
+  </ClassFormDefinition>
+  <ClassGUID>ec7ce445-dc3a-41b4-9a99-eb959e54a51b</ClassGUID>
+  <ClassHasUnmanagedDbSchema>False</ClassHasUnmanagedDbSchema>
+  <ClassName>KenticoAira.AiraChatPromptGroup</ClassName>
+  <ClassResourceID>
+    <CodeName>CMS.Integration.Aira</CodeName>
+    <GUID>25532780-f502-46a6-8313-c1495ded7e73</GUID>
+    <ObjectType>cms.resource</ObjectType>
+  </ClassResourceID>
+  <ClassTableName>KenticoAira_AiraChatPromptGroup</ClassTableName>
+  <ClassType>Other</ClassType>
+</cms.class>

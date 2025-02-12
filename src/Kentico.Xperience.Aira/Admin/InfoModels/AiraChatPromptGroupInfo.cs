@@ -9,12 +9,14 @@ using CMS.Membership;
 
 using Kentico.Xperience.Aira.Admin.InfoModels;
 
+using Newtonsoft.Json;
+
 [assembly: RegisterObjectType(typeof(AiraChatPromptGroupInfo), AiraChatPromptGroupInfo.OBJECT_TYPE)]
 
 namespace Kentico.Xperience.Aira.Admin.InfoModels;
 
 /// <summary>
-/// Data conainer class for <see cref="AiraChatPromptGroupInfo"/>.
+/// Data container class for <see cref="AiraChatPromptGroupInfo"/>.
 /// </summary>
 [Serializable]
 internal class AiraChatPromptGroupInfo : AbstractInfo<AiraChatPromptGroupInfo, IInfoProvider<AiraChatPromptGroupInfo>>
@@ -33,7 +35,8 @@ internal class AiraChatPromptGroupInfo : AbstractInfo<AiraChatPromptGroupInfo, I
         TouchCacheDependencies = true,
         DependsOn =
         [
-            new(nameof(AiraChatPromptUserId), UserInfo.OBJECT_TYPE, ObjectDependencyEnum.Required)
+            new(nameof(AiraChatPromptGroupUserId), UserInfo.OBJECT_TYPE, ObjectDependencyEnum.Required),
+            new(nameof(AiraChatPromptGroupThreadId), UserInfo.OBJECT_TYPE, ObjectDependencyEnum.Required)
         ],
         ContinuousIntegrationSettings =
         {
@@ -79,14 +82,26 @@ internal class AiraChatPromptGroupInfo : AbstractInfo<AiraChatPromptGroupInfo, I
 
 
     /// <summary>
-    /// Chat prompt id.
+    /// Chat prompt user id.
     /// </summary>
     [DatabaseField]
     [Required]
-    public virtual int AiraChatPromptUserId
+    public virtual int AiraChatPromptGroupUserId
     {
-        get => ValidationHelper.GetInteger(GetValue(nameof(AiraChatPromptUserId)), 0);
-        set => SetValue(nameof(AiraChatPromptUserId), value);
+        get => ValidationHelper.GetInteger(GetValue(nameof(AiraChatPromptGroupUserId)), 0);
+        set => SetValue(nameof(AiraChatPromptGroupUserId), value);
+    }
+
+
+    /// <summary>
+    /// The chat thread id.
+    /// </summary>
+    [DatabaseField]
+    [Required]
+    public virtual int AiraChatPromptGroupThreadId
+    {
+        get => ValidationHelper.GetInteger(GetValue(nameof(AiraChatPromptGroupThreadId)), 0);
+        set => SetValue(nameof(AiraChatPromptGroupThreadId), value);
     }
 
 

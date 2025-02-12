@@ -44,6 +44,7 @@ internal class AiraModuleInstaller : IAiraModuleInstaller
         InstallAiraChatPromptClass(resourceInfo);
         InstallAiraChatPromptGroupClass(resourceInfo);
         InstallAiraChatMessageClass(resourceInfo);
+        InstallAiraChatThreadClass(resourceInfo);
     }
 
     private static void InstallAiraConfigurationClass(ResourceInfo resourceInfo)
@@ -58,7 +59,7 @@ internal class AiraModuleInstaller : IAiraModuleInstaller
         info.ClassType = ClassType.OTHER;
         var formInfo = FormHelper.GetBasicFormDefinition(nameof(AiraConfigurationItemInfo.AiraConfigurationItemId));
 
-        formInfo = AddFormItems(formInfo, typeof(AiraConfigurationItemInfo), nameof(AiraConfigurationItemInfo.AiraConfigurationItemId));
+        formInfo = AddFormItems(formInfo, typeof(AiraConfigurationItemInfo), nameof(AiraConfigurationItemInfo.AiraConfigurationItemId), AiraConfigurationItemInfo.TYPEINFO);
 
         SetFormDefinition(info, formInfo);
 
@@ -80,7 +81,29 @@ internal class AiraModuleInstaller : IAiraModuleInstaller
         info.ClassType = ClassType.OTHER;
         var formInfo = FormHelper.GetBasicFormDefinition(nameof(AiraChatPromptGroupInfo.AiraChatPromptGroupId));
 
-        formInfo = AddFormItems(formInfo, typeof(AiraChatPromptGroupInfo), nameof(AiraChatPromptGroupInfo.AiraChatPromptGroupId));
+        formInfo = AddFormItems(formInfo, typeof(AiraChatPromptGroupInfo), nameof(AiraChatPromptGroupInfo.AiraChatPromptGroupId), AiraChatPromptGroupInfo.TYPEINFO);
+
+        SetFormDefinition(info, formInfo);
+
+        if (info.HasChanged)
+        {
+            DataClassInfoProvider.SetDataClassInfo(info);
+        }
+    }
+
+    private static void InstallAiraChatThreadClass(ResourceInfo resourceInfo)
+    {
+        var info = DataClassInfoProvider.GetDataClassInfo(AiraChatThreadInfo.OBJECT_TYPE) ??
+            DataClassInfo.New(AiraChatThreadInfo.OBJECT_TYPE);
+
+        info.ClassName = AiraChatThreadInfo.TYPEINFO.ObjectClassName;
+        info.ClassTableName = AiraChatThreadInfo.TYPEINFO.ObjectClassName.Replace(".", "_");
+        info.ClassDisplayName = "Aira Chat Thread";
+        info.ClassResourceID = resourceInfo.ResourceID;
+        info.ClassType = ClassType.OTHER;
+        var formInfo = FormHelper.GetBasicFormDefinition(nameof(AiraChatThreadInfo.AiraChatThreadId));
+
+        formInfo = AddFormItems(formInfo, typeof(AiraChatThreadInfo), nameof(AiraChatThreadInfo.AiraChatThreadId), AiraChatThreadInfo.TYPEINFO);
 
         SetFormDefinition(info, formInfo);
 
@@ -102,7 +125,7 @@ internal class AiraModuleInstaller : IAiraModuleInstaller
         info.ClassType = ClassType.OTHER;
         var formInfo = FormHelper.GetBasicFormDefinition(nameof(AiraChatPromptInfo.AiraChatPromptId));
 
-        formInfo = AddFormItems(formInfo, typeof(AiraChatPromptInfo), nameof(AiraChatPromptInfo.AiraChatPromptId));
+        formInfo = AddFormItems(formInfo, typeof(AiraChatPromptInfo), nameof(AiraChatPromptInfo.AiraChatPromptId), AiraChatPromptInfo.TYPEINFO);
 
         SetFormDefinition(info, formInfo);
 
@@ -124,7 +147,7 @@ internal class AiraModuleInstaller : IAiraModuleInstaller
         info.ClassType = ClassType.OTHER;
         var formInfo = FormHelper.GetBasicFormDefinition(nameof(AiraChatMessageInfo.AiraChatMessageId));
 
-        formInfo = AddFormItems(formInfo, typeof(AiraChatMessageInfo), nameof(AiraChatMessageInfo.AiraChatMessageId));
+        formInfo = AddFormItems(formInfo, typeof(AiraChatMessageInfo), nameof(AiraChatMessageInfo.AiraChatMessageId), AiraChatMessageInfo.TYPEINFO);
 
         SetFormDefinition(info, formInfo);
 
@@ -151,7 +174,7 @@ internal class AiraModuleInstaller : IAiraModuleInstaller
     /// <summary>
     /// Loop through all AiraConfigurationItemInfo properties and add them as Form Items
     /// </summary>
-    private static FormInfo AddFormItems(FormInfo formInfo, Type infoType, string idPropertyName)
+    private static FormInfo AddFormItems(FormInfo formInfo, Type infoType, string idPropertyName, ObjectTypeInfo typeInfo)
     {
         var properties = infoType.GetProperties();
 
@@ -173,12 +196,21 @@ internal class AiraModuleInstaller : IAiraModuleInstaller
                     AllowEmpty = !property.IsDefined(typeof(RequiredAttribute), true) // Set AllowEmpty to true if the property has the Required attribute
                 };
 
+                var dependancyObject = typeInfo.DependsOn?.FirstOrDefault(x => x.DependencyColumn == property.Name);
+
+                if (dependancyObject is not null)
+                {
+                    formItem.ReferenceToObjectType = dependancyObject.DependencyObjectType;
+                    formItem.ReferenceType = dependancyObject.DependencyType;
+                }
+
                 // Map the property type to the appropriate FieldDataType
                 formItem.DataType = property.PropertyType switch
                 {
                     Type t when t == typeof(string) => FieldDataType.Text,
                     Type t when t == typeof(int) => FieldDataType.Integer,
                     Type t when t == typeof(DateTime) => FieldDataType.DateTime,
+                    Type t when t == typeof(bool) => FieldDataType.Boolean,
                     _ => formItem.DataType // Default case if no match is found
                 };
 

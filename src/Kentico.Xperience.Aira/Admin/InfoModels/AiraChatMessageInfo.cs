@@ -4,6 +4,7 @@ using System.Data;
 using CMS;
 using CMS.DataEngine;
 using CMS.Helpers;
+using CMS.Membership;
 
 using Kentico.Xperience.Aira.Admin.InfoModels;
 
@@ -11,6 +12,10 @@ using Kentico.Xperience.Aira.Admin.InfoModels;
 
 namespace Kentico.Xperience.Aira.Admin.InfoModels;
 
+/// <summary>
+/// Data container for <see cref="AiraChatMessageInfo"/>.
+/// </summary>
+[Serializable]
 public class AiraChatMessageInfo : AbstractInfo<AiraChatMessageInfo, IInfoProvider<AiraChatMessageInfo>>
 {
     /// <summary>
@@ -25,6 +30,11 @@ public class AiraChatMessageInfo : AbstractInfo<AiraChatMessageInfo, IInfoProvid
     public static readonly ObjectTypeInfo TYPEINFO = new(typeof(IInfoProvider<AiraChatMessageInfo>), OBJECT_TYPE, "KenticoAira.AiraChatMessage", nameof(AiraChatMessageId), null, nameof(AiraChatMessageGuid), null, null, null, null, null)
     {
         TouchCacheDependencies = true,
+        DependsOn =
+        [
+            new(nameof(AiraChatMessageThreadId), AiraChatThreadInfo.OBJECT_TYPE, ObjectDependencyEnum.Required),
+            new(nameof(AiraChatMessageUserId), UserInfo.OBJECT_TYPE, ObjectDependencyEnum.Required)
+        ],
         ContinuousIntegrationSettings =
         {
             Enabled = false,
@@ -44,6 +54,18 @@ public class AiraChatMessageInfo : AbstractInfo<AiraChatMessageInfo, IInfoProvid
 
 
     /// <summary>
+    /// The chat thread id.
+    /// </summary>
+    [DatabaseField]
+    [Required]
+    public virtual int AiraChatMessageThreadId
+    {
+        get => ValidationHelper.GetInteger(GetValue(nameof(AiraChatMessageThreadId)), 0);
+        set => SetValue(nameof(AiraChatMessageThreadId), value);
+    }
+
+
+    /// <summary>
     /// Chat message guid.
     /// </summary>
     [DatabaseField]
@@ -56,7 +78,7 @@ public class AiraChatMessageInfo : AbstractInfo<AiraChatMessageInfo, IInfoProvid
 
 
     /// <summary>
-    /// Chat message cration time.
+    /// Chat message creation time.
     /// </summary>
     [DatabaseField]
     [Required]

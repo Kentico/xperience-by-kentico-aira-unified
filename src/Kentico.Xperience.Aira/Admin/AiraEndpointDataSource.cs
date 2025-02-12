@@ -42,17 +42,26 @@ internal class AiraEndpointDataSource : MutableEndpointDataSource
             return [];
         }
 
+        var threadIdParameterName = "threadId";
+
         return
         [
-            CreateAiraEndpoint(configuration,
+            CreateAiraEndpointWithQueryParam(configuration,
                 AiraCompanionAppConstants.ChatRelativeUrl,
                 nameof(AiraCompanionAppController.Index),
-                controller => controller.Index()
+                threadIdParameterName,
+                (controller, threadId) => controller.Index(threadId)
             ),
-            CreateAiraIFormCollectionEndpoint(configuration,
-                $"{AiraCompanionAppConstants.ChatRelativeUrl}/{AiraCompanionAppConstants.ChatMessageUrl}",
+            CreateAiraEndpoint(configuration,
+                AiraCompanionAppConstants.NewChatThreadRelativeUrl,
+                nameof(AiraCompanionAppController.NewChatThread),
+                controller => controller.NewChatThread()
+            ),
+            CreatePostChatMessageEndpoint(configuration,
+                $"{AiraCompanionAppConstants.ChatRelativeUrl}/{AiraCompanionAppConstants.ChatMessageUrl}/{{{threadIdParameterName}:int}}",
                 nameof(AiraCompanionAppController.PostChatMessage),
-                (controller, request) => controller.PostChatMessage(request)
+                threadIdParameterName,
+                (controller, request, threadId) => controller.PostChatMessage(request, threadId)
             ),
             CreateAiraIFormCollectionEndpoint(configuration,
                  $"{AiraCompanionAppConstants.SmartUploadRelativeUrl}/{AiraCompanionAppConstants.SmartUploadUploadUrl}",
@@ -139,6 +148,80 @@ internal class AiraEndpointDataSource : MutableEndpointDataSource
 
             await result.ExecuteResultAsync(airaController.ControllerContext);
         });
+
+    private static Endpoint CreateAiraEndpointWithQueryParam(AiraConfigurationItemInfo configurationInfo, string subPath, string actionName, string actionParameterName, Func<AiraCompanionAppController, int?, Task<IActionResult>> action) =>
+        CreateEndpoint($"{configurationInfo.AiraConfigurationItemAiraPathBase}/{subPath}", async context =>
+        {
+            var airaController = await GetAiraCompanionAppControllerInContext(context, actionName);
+
+            if (!await CheckHttps(context))
+            {
+                return;
+            }
+
+            IActionResult? result;
+
+            if (!context.Request.Query.ContainsKey(actionParameterName) || !int.TryParse(context.Request.Query["id"], out var threadId))
+            {
+                result = await action.Invoke(airaController, null);
+                await result.ExecuteResultAsync(airaController.ControllerContext);
+
+                return;
+            }
+
+            result = await action.Invoke(airaController, threadId);
+
+            await result.ExecuteResultAsync(airaController.ControllerContext);
+        });
+
+    private static Endpoint CreatePostChatMessageEndpoint(
+        AiraConfigurationItemInfo configurationItemInfo,
+        string subPath,
+        string actionName,
+        string actionParameterName,
+        Func<AiraCompanionAppController, IFormCollection, int, Task<IActionResult>> action
+    ) => CreateEndpoint($"{configurationItemInfo.AiraConfigurationItemAiraPathBase}/{subPath}", async context =>
+    {
+        if (!await CheckHttps(context))
+        {
+            return;
+        }
+
+        var airaController = await GetAiraCompanionAppControllerInContext(context, actionName);
+
+        if (!context.Request.RouteValues.TryGetValue(actionParameterName, out var actionParameterStringValue) ||
+            !int.TryParse(actionParameterStringValue?.ToString(), out var actionParameterIntValue))
+        {
+            context.Response.StatusCode = StatusCodes.Status400BadRequest;
+            await context.Response.WriteAsync("Missing thread id.");
+            return;
+        }
+
+        if (context.Request.ContentType is null)
+        {
+            return;
+        }
+
+        if (context.Request.ContentType.Contains("multipart/form-data"))
+        {
+            var requestObject = await context.Request.ReadFormAsync();
+            var result = await action.Invoke(airaController, requestObject, actionParameterIntValue);
+            await result.ExecuteResultAsync(airaController.ControllerContext);
+        }
+        else if (string.Equals(context.Request.ContentType, "application/json", StringComparison.OrdinalIgnoreCase))
+        {
+            using var reader = new StreamReader(context.Request.Body);
+            var body = await reader.ReadToEndAsync();
+
+            var formCollection = new FormCollection(new Dictionary<string, StringValues>
+            {
+                { "message", body }
+            });
+
+            var result = await action.Invoke(airaController, formCollection, actionParameterIntValue);
+            await result.ExecuteResultAsync(airaController.ControllerContext);
+        }
+    });
 
     private static Endpoint CreateAiraIFormCollectionEndpoint(AiraConfigurationItemInfo configurationItemInfo, string subPath, string actionName, Func<AiraCompanionAppController, IFormCollection, Task<IActionResult>> action)
     => CreateEndpoint($"{configurationItemInfo.AiraConfigurationItemAiraPathBase}/{subPath}", async context =>

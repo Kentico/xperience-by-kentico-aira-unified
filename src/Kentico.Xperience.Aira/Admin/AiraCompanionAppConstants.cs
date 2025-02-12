@@ -11,6 +11,12 @@ public static class AiraCompanionAppConstants
     public const string ChatRelativeUrl = "chat";
 
     /// <summary>
+    /// Relative path to create a new AIRA chat thread.
+    /// </summary>
+
+    public const string NewChatThreadRelativeUrl = "new/thread";
+
+    /// <summary>
     /// Relative path for sending chat messages to AIRA.
     /// </summary>
     public const string ChatMessageUrl = "message";

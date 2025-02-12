@@ -13,6 +13,11 @@ public class ChatViewModel
     public NavBarViewModel NavBarViewModel { get; set; } = new NavBarViewModel();
 
     /// <summary>
+    /// Chat thread view model.
+    /// </summary>
+    public AiraChatThreadModel AiraChatThreadModel { get; set; } = new AiraChatThreadModel();
+
+    /// <summary>
     /// Count of messages in User's chat history.
     /// </summary>
     public int HistoryMessageCount { get; set; }

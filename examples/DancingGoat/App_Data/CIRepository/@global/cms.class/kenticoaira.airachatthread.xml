@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<cms.class>
+  <ClassDisplayName>Aira Chat Thread</ClassDisplayName>
+  <ClassFormDefinition>
+    <form>
+      <field column="AiraChatThreadId" columntype="integer" enabled="true" guid="a7f7db5c-baa6-418e-8d37-344eab41fbaa" isPK="true" />
+      <field column="AiraChatThreadGuid" columntype="text" enabled="true" guid="dfdc2ee4-ae37-4f32-b499-352fd436ea1a" visible="true" />
+      <field column="AiraChatThreadName" columntype="text" enabled="true" guid="7af8d830-bc1e-4053-9a98-d3da0b21198c" visible="true" />
+      <field allowempty="true" column="AiraChatThreadIsLatest" columntype="boolean" enabled="true" guid="acf5371f-c027-4810-a8fc-380f937508ac" visible="true" />
+    </form>
+  </ClassFormDefinition>
+  <ClassGUID>42513531-4809-496d-ac1c-094a5e3f3398</ClassGUID>
+  <ClassHasUnmanagedDbSchema>False</ClassHasUnmanagedDbSchema>
+  <ClassName>KenticoAira.AiraChatThread</ClassName>
+  <ClassResourceID>
+    <CodeName>CMS.Integration.Aira</CodeName>
+    <GUID>25532780-f502-46a6-8313-c1495ded7e73</GUID>
+    <ObjectType>cms.resource</ObjectType>
+  </ClassResourceID>
+  <ClassTableName>KenticoAira_AiraChatThread</ClassTableName>
+  <ClassType>Other</ClassType>
+</cms.class>
