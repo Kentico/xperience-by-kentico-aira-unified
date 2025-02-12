@@ -16,8 +16,8 @@
                             styles: {
                                 avatar:
                                 {
-                                    height: '2.5rem',
-                                    width: '2.5rem'
+                                    height: '1.75rem',
+                                    width: '1.75rem'
                                 }
                             }
                         },
@@ -25,8 +25,8 @@
                             styles: {
                                 avatar:
                                 {
-                                    height: '2.5rem',
-                                    width: '2.5rem'
+                                    height: '1.75rem',
+                                    width: '1.75rem'
                                 }
                             }
                         }
@@ -117,9 +117,9 @@
               :introMessage="{ text: '' }"
               :messageStyles="{
                         default: {
-                            shared: { bubble: { fontSize: '0.75rem', lineHeight: '1.375rem', padding: '0.5rem 0.75rem', borderRadius: '1rem' } },
-                            ai: { bubble: { background: '#F7F1FF' } },
-                            user: { bubble: { color: '#fff' } }
+                            shared: { bubble: { fontSize: '0.75rem', lineHeight: '1.375rem', padding: '0.5rem 0.75rem', marginTop: '.25rem' } },
+                            ai: { bubble: { background: '#edeeff', borderRadius: '0 1.125rem 1.125rem 1.125rem' } },
+                            user: { bubble: { color: '#fff', borderRadius: '1.125rem 1.125rem 0 1.125rem' } }
                         },
                         image: {
                             user: { bubble: { borderRadius: '1rem', overflow: 'clip', textAlign: 'left', display: 'inline-block' } }

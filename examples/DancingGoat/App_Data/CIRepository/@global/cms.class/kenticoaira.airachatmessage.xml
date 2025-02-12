@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<cms.class>
+  <ClassDisplayName>Aira Chat Message</ClassDisplayName>
+  <ClassFormDefinition>
+    <form>
+      <field column="AiraChatMessageId" columntype="integer" enabled="true" guid="e143b0b7-6bc2-4362-bf75-77284be42d75" isPK="true" />
+      <field column="AiraChatMessageGuid" columntype="text" enabled="true" guid="4f8d4a44-ae2e-4930-b969-834336266334" visible="true" />
+      <field column="AiraChatMessageCreatedWhen" columntype="datetime" enabled="true" guid="7aa27ad4-1ea1-4487-ad14-f7caeb9e24ff" visible="true" />
+      <field column="AiraChatMessageUserId" columntype="integer" enabled="true" guid="65d6ecc1-880e-4652-af2d-baeee1d2be25" visible="true" />
+      <field allowempty="true" column="AiraChatMessageText" columntype="text" enabled="true" guid="7d327b89-3685-406a-80ee-716537b0dda9" visible="true" />
+      <field column="AiraChatMessageRole" columntype="integer" enabled="true" guid="503bf5da-08f2-402f-8720-34d4a2fc111d" visible="true" />
+    </form>
+  </ClassFormDefinition>
+  <ClassGUID>4ae7c290-aca5-47c7-842d-b1249ac2ae8b</ClassGUID>
+  <ClassHasUnmanagedDbSchema>False</ClassHasUnmanagedDbSchema>
+  <ClassName>KenticoAira.AiraChatMessage</ClassName>
+  <ClassResourceID>
+    <CodeName>CMS.Integration.Aira</CodeName>
+    <GUID>25532780-f502-46a6-8313-c1495ded7e73</GUID>
+    <ObjectType>cms.resource</ObjectType>
+  </ClassResourceID>
+  <ClassTableName>KenticoAira_AiraChatMessage</ClassTableName>
+  <ClassType>Other</ClassType>
+</cms.class>
