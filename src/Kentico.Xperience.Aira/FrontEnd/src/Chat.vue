@@ -452,6 +452,12 @@ export default {
 
             style.textContent =
                 `
+                #messages {
+                    scrollbar-width: none;
+                }
+                #messages::-webkit-scrollbar {
+                    display: none;
+                }
                 .c-prompt-btn{
                   appearance: none;
                   background: #fff;
