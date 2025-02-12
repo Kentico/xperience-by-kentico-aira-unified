@@ -451,7 +451,35 @@ export default {
             const style = document.createElement('style');
 
             style.textContent =
-                `.btn-outline-primary {
+                `
+                .c-prompt-btn{
+                  appearance: none;
+                  background: #fff;
+                  cursor: pointer;
+                  font-size: .625rem;
+                  padding: .5rem .5rem;
+                  text-align: center;
+                  color: inherit;
+                  border: 2px solid #48517b;
+                  border-radius: .375rem;
+                  transition: background-color 0.2s ease;
+                }
+                .c-prompt-btn:hover{
+                  background: #ebe7e5;
+                }
+                .c-prompt-btn:active{
+                  background: #ddd9d7;
+                }
+
+                .c-prompt-btn-wrapper{
+                  display: flex;
+                  flex-wrap: wrap;
+                  align-items: center;
+                  gap: .25rem;
+                  padding-top: .25rem;
+                }
+
+                .btn-outline-primary {
                     color: ${this.themeColorInRgb};
                     background-color: transparent;
                     border: 1px solid ${this.themeColorInRgb};
@@ -571,10 +599,10 @@ export default {
             }
         },
         getPromptsViewModel(message) {
-            let prompts = `<div prompt-quick-suggestion-button-group-id="${message.quickPromptsGroupId}">`;
+            let prompts = `<div class="c-prompt-btn-wrapper" prompt-quick-suggestion-button-group-id="${message.quickPromptsGroupId}">`;
 
             for (var prompt of message.quickPrompts) {
-                prompts += `<button class="btn-outline-primary" prompt-quick-suggestion-button value="${prompt}">${prompt}</button>`;
+                prompts += `<button class="c-prompt-btn" prompt-quick-suggestion-button value="${prompt}">${prompt}</button>`;
             }
 
             prompts += '</div>';
