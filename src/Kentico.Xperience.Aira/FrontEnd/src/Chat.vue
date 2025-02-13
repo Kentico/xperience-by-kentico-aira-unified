@@ -462,11 +462,12 @@ export default {
                   appearance: none;
                   background: #fff;
                   cursor: pointer;
-                  font-size: .625rem;
-                  padding: .5rem .5rem;
+                  font-size: .875rem;
+                  line-height: 1rem;
+                  padding: .75rem;
                   text-align: center;
-                  color: inherit;
-                  border: 2px solid #48517b;
+                  color: #000D48;
+                  border: 2px solid #000D48;
                   border-radius: .375rem;
                   transition: background-color 0.2s ease;
                 }
