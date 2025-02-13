@@ -1,27 +1,27 @@
 .c-alert{
   display: flex;
   width: 100%;
-  gap: .75rem;
-  padding: .5rem;
+  gap: 1rem;
+  padding: .625rem .5rem;
   background: $white;
   border-radius: .5rem;
-  box-shadow: 0 0.375rem 1rem 0  transparentize($black, .9);
+  box-shadow: 0 0 8px 0 #26262608, 0 8px 16px 0 #26262629;
   &_header{
     display: flex;
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
     flex-grow: 0;
-    padding-left: .5rem;
+    padding-left: 1rem;
     .c-icon{
-      font-size: 1.5rem;
+      font-size: 1.75rem;
     }
   }
   &_body{
     flex-grow: 1;
     flex-shrink: 1;
-    font-size: .75rem;
-    line-height: 1.25;
+    font-size: .875rem;
+    line-height: 1rem;
     p{
       margin: 0;
       font-size: inherit;
@@ -35,7 +35,7 @@
     align-items: center;
     justify-content: flex-end;
     border-left: 1px solid $gray-200;
-    padding-left: .25rem;
+    padding-left: .5rem;
   }
 
 
@@ -50,7 +50,7 @@
     border: none !important;
     transition: none !important;
     .c-icon{
-      font-size: .75rem;
+      font-size: .875rem;
       margin-top: 0;
     }
     &:active{

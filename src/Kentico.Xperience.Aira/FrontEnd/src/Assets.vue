@@ -120,7 +120,7 @@
                                 alt="" class="c-icon"/>
                         </div>
                         <div class="c-alert_body">
-                            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nihil optio lorem.</p>
+                            <p>Images cerated as content items (in draft), added to your content hub</p>
                         </div>
                         <div class="c-alert_footer">
                             <button aria-label="Remove" class="btn btn-remove-img"
@@ -134,8 +134,10 @@
                     <div class="c-empty-page-layout px-0">
                         <div class="d-flex flex-wrap justify-content-center gap-2 mt-3">
                             <button class="btn btn-secondary" @click="pickImage();">
-                                <img :src="`${this.baseUrl}/_content/Kentico.Xperience.Aira/img/icons/plus-circle.svg`"
-                                     class="c-icon fs-6"/>
+                                <svg class="c-icon" width="16" height="20" viewBox="0 0 16 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path fill="currentColor" d="M2.98413 13.1232C2.98413 12.778 3.26395 12.4982 3.60913 12.4982H5.49817V10.6604C5.49817 10.3152 5.77799 10.0354 6.12317 10.0354C6.46835 10.0354 6.74817 10.3152 6.74817 10.6604V12.4982H8.60913C8.95431 12.4982 9.23413 12.778 9.23413 13.1232C9.23413 13.4683 8.95431 13.7482 8.60913 13.7482H6.74817V15.6604C6.74817 16.0056 6.46835 16.2854 6.12317 16.2854C5.77799 16.2854 5.49817 16.0056 5.49817 15.6604V13.7482H3.60913C3.26395 13.7482 2.98413 13.4683 2.98413 13.1232Z"/>
+                                    <path fill="currentColor" fill-rule="evenodd" clip-rule="evenodd" d="M1.75 0H9.49848L15.4975 5.71426V18.7499C15.4975 19.4403 14.9378 19.9999 14.2475 19.9999H1.75C1.05964 19.9999 0.5 19.4403 0.5 18.7499V1.25C0.5 0.559643 1.05964 0 1.75 0ZM14.2475 18.7499H1.75L1.75 1.25L8 1.25V5.61951C8 6.65504 8.83947 7.49451 9.875 7.49451H14.2475V18.7499ZM14.2418 6.24451L9.25 1.48964V5.61951C9.25 5.96468 9.52982 6.24451 9.875 6.24451H14.2418Z"/>
+                                </svg>
                                 UPLOAD ASSETS
                             </button>
                         </div>

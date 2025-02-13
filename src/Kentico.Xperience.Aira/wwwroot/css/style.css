@@ -18318,11 +18318,11 @@ button.c-link {
 .c-alert {
   display: flex;
   width: 100%;
-  gap: 0.75rem;
-  padding: 0.5rem;
+  gap: 1rem;
+  padding: 0.625rem 0.5rem;
   background: #fff;
   border-radius: 0.5rem;
-  box-shadow: 0 0.375rem 1rem 0 rgba(0, 0, 0, 0.1);
+  box-shadow: 0 0 8px 0 rgba(38, 38, 38, 0.031372549), 0 8px 16px 0 rgba(38, 38, 38, 0.1607843137);
 }
 .c-alert_header {
   display: flex;
@@ -18330,16 +18330,16 @@ button.c-link {
   justify-content: center;
   flex-shrink: 0;
   flex-grow: 0;
-  padding-left: 0.5rem;
+  padding-left: 1rem;
 }
 .c-alert_header .c-icon {
-  font-size: 1.5rem;
+  font-size: 1.75rem;
 }
 .c-alert_body {
   flex-grow: 1;
   flex-shrink: 1;
-  font-size: 0.75rem;
-  line-height: 1.25;
+  font-size: 0.875rem;
+  line-height: 1rem;
 }
 .c-alert_body p {
   margin: 0;
@@ -18353,7 +18353,7 @@ button.c-link {
   align-items: center;
   justify-content: flex-end;
   border-left: 1px solid #e7e4e5;
-  padding-left: 0.25rem;
+  padding-left: 0.5rem;
 }
 .c-alert .btn-remove-img {
   position: relative;
@@ -18367,7 +18367,7 @@ button.c-link {
   transition: none !important;
 }
 .c-alert .btn-remove-img .c-icon {
-  font-size: 0.75rem;
+  font-size: 0.875rem;
   margin-top: 0;
 }
 .c-alert .btn-remove-img:active {
