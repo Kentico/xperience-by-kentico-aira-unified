@@ -116,27 +116,26 @@
               style="border-radius: 8px;"
               :introMessage="{ text: '' }"
               :messageStyles="{
-                        default: {
-                            shared: { bubble: { fontSize: '0.75rem', lineHeight: '1.375rem', padding: '0.5rem 0.75rem', marginTop: '.375rem' } },
-                            ai: { bubble: { background: '#edeeff', borderRadius: '0 1.125rem 1.125rem 1.125rem' } },
-                            user: { bubble: { color: '#fff', borderRadius: '1.125rem 1.125rem 0 1.125rem' } }
-                        },
-                        image: {
-                            user: { bubble: { borderRadius: '1rem', overflow: 'clip', textAlign: 'left', display: 'inline-block' } }
-                        },
-                        html: {
-                           shared: {
-                                bubble: {
-                                    backgroundColor: 'unset', 
-                                    padding: '0px'
-                                }
-                           }
+                    default: {
+                        shared: { bubble: { fontSize: '0.75rem', lineHeight: '1.375rem', padding: '0.5rem 0.75rem', marginTop: '.375rem' } },
+                        ai: { bubble: { background: '#edeeff', borderRadius: '0 1.125rem 1.125rem 1.125rem' } },
+                        user: { bubble: { color: '#fff', borderRadius: '1.125rem 1.125rem 0 1.125rem' } }
+                    },
+                    image: {
+                        user: { bubble: { borderRadius: '1rem', overflow: 'clip', textAlign: 'left', display: 'inline-block' } }
+                    },
+                    html: {
+                        shared: {
+                            bubble: {
+                                backgroundColor: 'unset', 
+                                padding: '0px'
+                            }
                         }
-                    }">
+                    }
+                }">
           </deep-chat>
-          
-          <div>
-            <!-- Suggestion Buttons -->
+         
+           <!-- <div>
             <div class="c-prompt-suggestions">
               <div class="c-prompt-suggestions_inner">
                 <button class="btn btn-outline-primary" @click="handleSuggestionClick('Tell me a fun fact')">Tell me a fun
@@ -152,7 +151,6 @@
               </div>
             </div>
 
-            <!-- Full-Screen Overlay with Suggestions -->
             <div v-if="showAllSuggestions" class="c-prompt-overlay">
               <div class="container">
                 <div class="d-flex justify-content-between align-items-center">
@@ -226,7 +224,7 @@
                 </div>
               </div>
             </div>
-          </div>
+          </div>-->
         </div>
     </div>
 </template>

@@ -238,12 +238,13 @@ export default {
 
                     setTimeout(() => {
                         var modal = document.querySelector('#loading');
-
                         if (modal) {
                             modal.classList.remove('is-hidden');
                         }
                         setTimeout(function () {
-                            modal.parentNode.removeChild(modal);
+                            if (modal) {
+                                modal.parentNode.removeChild(modal);
+                            }
                             setTimeout(() => {
                                 if (document.querySelector(".c-checkmark")) {
                                     document.querySelector(".c-checkmark").classList.add("do-animation");
