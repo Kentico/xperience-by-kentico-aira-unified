@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<contentitemdata.aira.airaassetexample>
+  <Cont>
+    <![CDATA[{"Original":{"Identifier":"b554c55d-9cac-4908-9b0a-0bc15203ce48","Name":"2025_regiony_SC_1920_1005_FB_01_8.jpg","Extension":".jpg","Size":889113,"Width":1920,"Height":1005,"LastModified":"2025-02-13T09:37:34.036674Z"},"OptimizationParameters":{"OutputExtension":"jpeg","Quality":100},"Identifier":"6fc51328-0d1a-4819-8ade-5e5f65bbe4a6","Name":"2025_regiony_SC_1920_1005_FB_01_8.jpeg","Extension":".jpeg","Size":1005278,"Width":1920,"Height":1005,"LastModified":"2025-02-13T09:37:34.186382Z"}]]>
+  </Cont>
+  <ContentItemDataCommonDataID>
+    <GUID>80aad778-0d1d-4f9b-9f1f-b46c89e06539</GUID>
+    <ObjectType>cms.contentitemcommondata</ObjectType>
+    <Parent>
+      <CodeName>2025_regiony_SC_1920_1005_FB_01_8.jpg-qz32pro9</CodeName>
+      <GUID>b518fc79-b08f-445e-b70d-8339aec6e4e4</GUID>
+      <ObjectType>cms.contentitem</ObjectType>
+    </Parent>
+  </ContentItemDataCommonDataID>
+  <ContentItemDataGUID>a6dbd467-e282-4c79-a7a3-a17347dabda8</ContentItemDataGUID>
+</contentitemdata.aira.airaassetexample>

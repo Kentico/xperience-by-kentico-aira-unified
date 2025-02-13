@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<cms.contentitem>
+  <ContentItemContentFolderID>
+    <CodeName>Root</CodeName>
+    <GUID>9d6509a4-a231-4837-8f1c-81a90705f988</GUID>
+    <ObjectType>cms.contentfolder</ObjectType>
+  </ContentItemContentFolderID>
+  <ContentItemContentTypeID>
+    <CodeName>Aira.AiraAssetExample</CodeName>
+    <GUID>7fce42a7-539a-4783-9f3e-40f2832e7e07</GUID>
+    <ObjectType>cms.contenttype</ObjectType>
+  </ContentItemContentTypeID>
+  <ContentItemGUID>b518fc79-b08f-445e-b70d-8339aec6e4e4</ContentItemGUID>
+  <ContentItemIsReusable>True</ContentItemIsReusable>
+  <ContentItemIsSecured>False</ContentItemIsSecured>
+  <ContentItemName>2025_regiony_SC_1920_1005_FB_01_8.jpg-qz32pro9</ContentItemName>
+  <ContentItemWorkspaceID>
+    <CodeName>KenticoDefault</CodeName>
+    <GUID>43f674d6-540d-4f91-8c19-608b5bddb2f2</GUID>
+    <ObjectType>cms.workspace</ObjectType>
+  </ContentItemWorkspaceID>
+</cms.contentitem>
