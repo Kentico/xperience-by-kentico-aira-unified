@@ -39,14 +39,14 @@
     }
   }
   &_title{
-    font-size: 1rem;
-    font-weight: normal;
+    font-size: .875rem;
+    font-weight: $font-weight-bold;
     margin: 0;
     display: flex;
     align-items: center;
     padding-top: .125rem;
     .c-icon{
-      font-size: 1.125rem;
+      font-size: 1.5rem;
       margin-right: .5rem;
     }
   }
