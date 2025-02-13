@@ -1,13 +1,38 @@
-﻿namespace Kentico.Xperience.Aira.Insights
-{
-    public class EmailConfigurationInsightsModel
-    {
-        public int EmailId { get; set; }
-        public string EmailName { get; set; } = string.Empty;
-        public int ChannelId { get; set; }
-        public string ChannelName { get; set; } = string.Empty;
-        public int ContentTypeId { get; set; }
-        public string ContentTypeName { get; set; } = string.Empty;
+﻿namespace Kentico.Xperience.Aira.Insights;
 
-    }
+/// <summary>
+/// Email configuration insights model.
+/// </summary>
+public class EmailConfigurationInsightsModel
+{
+    /// <summary>
+    /// Email id.
+    /// </summary>
+    public int EmailId { get; set; }
+
+    /// <summary>
+    /// Email name.
+    /// </summary>
+    public string EmailName { get; set; } = string.Empty;
+
+    /// <summary>
+    /// Channel id.
+    /// </summary>
+    public int ChannelId { get; set; }
+
+    /// <summary>
+    /// Channel name.
+    /// </summary>
+    public string ChannelName { get; set; } = string.Empty;
+
+    /// <summary>
+    /// Content type id.
+    /// </summary>
+    public int ContentTypeId { get; set; }
+
+    /// <summary>
+    /// Content type name.
+    /// </summary>
+    public string ContentTypeName { get; set; } = string.Empty;
+
 }

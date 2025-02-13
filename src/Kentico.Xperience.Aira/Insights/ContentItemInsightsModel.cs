@@ -1,8 +1,17 @@
-﻿namespace Kentico.Xperience.Aira.Insights
+﻿namespace Kentico.Xperience.Aira.Insights;
+
+/// <summary>
+/// Content item insights model.
+/// </summary>
+public class ContentItemInsightsModel
 {
-    public class ContentItemInsightsModel
-    {
-        public int Id { get; set; }
-        public string DisplayName { get; set; } = string.Empty;
-    }
+    /// <summary>
+    /// Content item id.
+    /// </summary>
+    public int Id { get; set; }
+
+    /// <summary>
+    /// Content item display name.
+    /// </summary>
+    public string DisplayName { get; set; } = string.Empty;
 }

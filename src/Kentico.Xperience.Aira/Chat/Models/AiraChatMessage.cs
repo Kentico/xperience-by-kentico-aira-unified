@@ -19,7 +19,19 @@ public class AiraChatMessage
     /// Role of the author of the message in the chat.
     /// </summary>
     public string Role { get; set; } = string.Empty;
+
+    /// <summary>
+    /// Suggested prompt texts.
+    /// </summary>
     public IEnumerable<string> QuickPrompts { get; set; } = [];
+
+    /// <summary>
+    /// Id of the prompt group generated and shown together in the message.
+    /// </summary>
     public string QuickPromptsGroupId { get; set; } = string.Empty;
+
+    /// <summary>
+    /// Chat message creation time.
+    /// </summary>
     public DateTime CreatedWhen { get; set; }
 }

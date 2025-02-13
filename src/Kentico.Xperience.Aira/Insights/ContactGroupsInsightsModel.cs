@@ -1,8 +1,17 @@
-﻿namespace Kentico.Xperience.Aira.Insights
+﻿namespace Kentico.Xperience.Aira.Insights;
+
+/// <summary>
+/// Contact groups insights model.
+/// </summary>
+public class ContactGroupsInsightsModel
 {
-    public class ContactGroupsInsightsModel
-    {
-        public List<ContactGroupInsightsModel> Groups { get; set; } = [];
-        public int AllCount { get; set; }
-    }
+    /// <summary>
+    /// Contact group insights model.
+    /// </summary>
+    public List<ContactGroupInsightsModel> Groups { get; set; } = [];
+
+    /// <summary>
+    /// Contact groups dynamic count.
+    /// </summary>
+    public int AllCount { get; set; }
 }

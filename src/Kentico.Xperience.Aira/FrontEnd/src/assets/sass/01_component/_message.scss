@@ -1,0 +1,132 @@
+.c-message{
+  width: 90%;
+  align-items: flex-start;
+  flex-shrink: 1;
+  &_wrapper{
+    display: flex;
+    flex-direction: column;
+    gap: .5rem;
+    padding-bottom: 9rem;
+    @include media-breakpoint-up(md){
+      padding-bottom: 0;
+    }
+  }
+  &.right{
+    align-self: flex-end;
+    text-align: right;
+  }
+  &_bubble,
+  &_img{
+    border-radius: 1rem;
+    overflow: clip;
+    text-align: left;
+    display: inline-block;
+  }
+  &_bubble{
+    font-size: .75rem;
+    line-height: 1.375rem;
+    padding: .5rem .75rem;
+    &.primary{
+      background: $k-primary;
+      color: $white;
+    }
+    &.secondary{
+      background: $k-secondary;
+      color: $white;
+    }
+    &.secondary-light{
+      background: $k-secondary-light;
+    }
+    &.white{
+      background: $white;
+    }
+    &.gray{
+      background: #D1C4BF;
+    }
+    p{
+      font-size: inherit;
+      line-height: inherit;
+      a{
+        color: $k-primary;
+        text-decoration: underline;
+        &:hover{
+          text-decoration: none;
+        }
+      }
+    }
+  }
+  .btn{
+    --bs-btn-border-radius: 1rem;
+    --bs-btn-font-size: .75rem;
+    --bs-btn-font-weight: inherit;
+    --bs-btn-padding-x: .75rem;
+    --bs-btn-padding-y: .5rem;
+    &.btn-lg{
+      --bs-btn-border-radius: #{$btn-border-radius-lg};
+      --bs-btn-font-size: #{$btn-font-size-lg};
+      --bs-btn-padding-x: #{$btn-padding-x-lg};
+      --bs-btn-padding-y: #{$btn-padding-y-lg};
+    }
+    &-add{
+      display: inline-flex;
+      align-items: center;
+      gap: 1rem;
+      font-size: 1rem;
+      height: auto;
+      &:focus{
+        border-color: transparentize(#f0561a, .75);
+      }
+      .c-icon{
+        font-size: 1.5rem;
+        margin-top: -1px;
+      }
+    }
+    &-remove-img{
+      position: absolute;
+      inset: 0 0 auto auto;
+      padding: .5rem;
+      color: $k-primary;
+      font-size: 1rem;
+      height: 2.25rem;
+      width: 2.25rem;
+      border: none !important;
+      transition: none !important;
+      .c-icon{
+        font-size: .875rem;
+      }
+      &:active{
+        color: $k-primary;
+      }
+    }
+  }
+  .form-check{
+    font-size: 1.5rem;
+    padding-left: 1.375em;
+    .form-check-input{
+      margin-left: -1.375em;
+    }
+  }
+  .form-label,
+  .form-check-label{
+    font-size: 1rem;
+  }
+  .form-check-label{
+    padding-top: .5rem;
+  }
+
+  .c-assets-transform-div {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: .5rem;
+    width: 100%;
+    .c-file_btn {
+      --bs-btn-padding-y: .375rem;
+      --bs-btn-padding-x: .375rem;
+      .c-icon{
+        font-size: .625rem;
+        margin-top: 0;
+      }
+    }
+  }
+}

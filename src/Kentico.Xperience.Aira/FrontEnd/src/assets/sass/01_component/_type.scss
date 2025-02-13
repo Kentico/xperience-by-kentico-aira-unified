@@ -1,0 +1,20 @@
+@use "sass:math";
+
+.c-note{
+  color: $gray-500;
+}
+.c-date{
+  font-size: .875rem;
+  color: $k-secondary;
+}
+
+h1,
+h2{
+  line-height: 2.5rem;
+}
+h3{
+  line-height: math.div(1.625, 1.375);
+}
+h4{
+  line-height: math.div(1.5, 1.125);
+}

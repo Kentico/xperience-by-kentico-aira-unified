@@ -1,0 +1,66 @@
+$font-path: '../font/';
+
+@font-face {
+  font-family: 'GT Walsheim Pro';
+  src: url('#{$font-path}GTWalsheimPro-Regular.eot');
+  src: local('GT Walsheim Pro Regular'), local('GTWalsheimPro-Regular'),
+  
+  url('#{$font-path}GTWalsheimPro-Regular.eot?#iefix') format('embedded-opentype'),
+  url('#{$font-path}GTWalsheimPro-Regular.woff2') format('woff2'),
+  url('#{$font-path}GTWalsheimPro-Regular.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'GT Walsheim Pro';
+  src: url('#{$font-path}GTWalsheimPro-Bold.eot');
+  src: local('GT Walsheim Pro Bold'), local('GTWalsheimPro-Bold'),
+  url('#{$font-path}GTWalsheimPro-Bold.eot?#iefix') format('embedded-opentype'),
+  url('#{$font-path}GTWalsheimPro-Bold.woff2') format('woff2'),
+  url('#{$font-path}GTWalsheimPro-Bold.ttf') format('truetype');
+  font-weight: bold;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'GT Walsheim Pro';
+  src: url('#{$font-path}GTWalsheimPro-Medium.eot');
+  src: local('GT Walsheim Pro Medium'), local('GTWalsheimPro-Medium'), 
+  url('#{$font-path}GTWalsheimPro-Medium.eot?#iefix') format('embedded-opentype'),
+  url('#{$font-path}GTWalsheimPro-Medium.woff2') format('woff2'),
+  url('#{$font-path}GTWalsheimPro-Medium.ttf') format('truetype');
+  font-weight: 500;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Vollkorn';
+  src: url('#{$font-path}Vollkorn-Regular.eot');
+  src: local('Vollkorn Regular'), local('Vollkorn-Regular'),
+  url('#{$font-path}Vollkorn-Regular.eot?#iefix') format('embedded-opentype'),
+  url('#{$font-path}Vollkorn-Regular.woff') format('woff'),
+  url('#{$font-path}Vollkorn-Regular.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Vollkorn';
+  src: url('#{$font-path}Vollkorn-Bold.eot');
+  src: local('Vollkorn Bold'), local('Vollkorn-Bold'),
+  url('#{$font-path}Vollkorn-Bold.eot?#iefix') format('embedded-opentype'),
+  url('#{$font-path}Vollkorn-Bold.woff') format('woff'),
+  url('#{$font-path}Vollkorn-Bold.ttf') format('truetype');
+  font-weight: bold;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Vollkorn';
+  src: url('#{$font-path}Vollkorn-Medium.eot');
+  src: local('Vollkorn Medium'), local('Vollkorn-Medium'),
+  url('#{$font-path}Vollkorn-Medium.eot?#iefix') format('embedded-opentype'),
+  url('#{$font-path}Vollkorn-Medium.woff') format('woff'),
+  url('#{$font-path}Vollkorn-Medium.ttf') format('truetype');
+  font-weight: 500;
+  font-style: normal;
+}

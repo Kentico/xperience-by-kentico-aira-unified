@@ -1,0 +1,13 @@
+.size-1of3{
+  width: 100%;
+}
+@include media-breakpoint-up(sm){
+  .size-1of3{
+    width: 50%;
+  }
+}
+@include media-breakpoint-up(lg){
+  .size-1of3{
+    width: 33.333%;
+  }
+}

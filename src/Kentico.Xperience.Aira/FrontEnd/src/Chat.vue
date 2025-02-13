@@ -9,16 +9,15 @@
         </div>
 
         <div class="c-app_body">
-            <div class="container">
-                <deep-chat
-                    :avatars="{
-                        ai : { 
+          <deep-chat
+              :avatars="{
+                        ai : {
                             src: `${this.baseUrl}${this.aiIconUrl}`,
                             styles: {
                                 avatar:
                                 {
-                                    height: '3rem',
-                                    width: '3rem'
+                                    height: '1.75rem',
+                                    width: '1.75rem'
                                 }
                             }
                         },
@@ -26,13 +25,13 @@
                             styles: {
                                 avatar:
                                 {
-                                    height: '3rem',
-                                    width: '3rem'
+                                    height: '1.75rem',
+                                    width: '1.75rem'
                                 }
                             }
                         }
                     }"
-                    :dropupStyles="{
+              :dropupStyles="{
                         button: {
                             styles: {
                                 container: {
@@ -62,65 +61,170 @@
                             }
                         }
                     }"
-                    :connect="{
+              :connect="{
                         url: `${this.baseUrl}${this.airaBaseUrl}/${this.navBarModel.chatItem.url}/message`,
                         method: 'POST'
                     }"
-                    :chatStyle="{ height: '100%', width: '100%' }"
-                    :history="[]"
-                    :textInput="{
-                        placeholder: { text: 'Message AIRA' },
-                        styles: {
-                           container: {
-                            borderRadius: '8px',
-                            lineHeight: '1.8em'
-                           }
+              :chatStyle="{ height: '100%', width: '100%' }"
+              :history="[]"
+              :textInput="{
+                    styles: {
+                        container: {
+                          borderRadius: '1.5rem',
+                          border: '1px solid #8C8C8C',
+                          backgroundColor: '#ffffff',
+                          boxShadow: 'none',
+                          width: '90%',
+                        },
+                        text: {
+                          padding: '.625rem .875rem',
+                          fontSize: '.875rem',
+                          color: '#231F20',
+                          lineHeight: '1.333',
+                        },
+                      },
+                      placeholder: {
+                        text: 'Message AIRA' ,
+                        style: {
+                          color: '#999'
                         }
+                      }
                     }"
-                    :submitButtonStyles="{
-                        submit: {
-                            container: {
-                                default: {
-                                    height: '1.7em',
-                                    bottom: '1.1em',
-                                    right: '0.9em'
-                                }
-                            },
-                            svg: {
-                                styles: {
-                                    default: {
-                                        fontSize: '2rem',
-                                        bottom: '1rem'
-                                    }
-                                }
+              :submitButtonStyles="{
+                submit: {
+                  container: {
+                    default: {
+                      width: '1.375rem',
+                      height: '1.375rem',
+                      marginBottom: '0',
+                      padding: '.5rem',
+                    }
+                  },
+                  svg: {
+                    styles: {
+                      default: {
+                        width: '1.375rem',
+                        height: '1.375rem',
+                      }
+                    }
+                  }
+                }
+              }"
+              id="chatElement"
+              ref="chatElementRef"
+              :requestBodyLimits="{ maxMessages: 1 }"
+              style="border-radius: 8px;"
+              :introMessage="{ text: '' }"
+              :messageStyles="{
+                    default: {
+                        shared: { bubble: { fontSize: '0.75rem', lineHeight: '1.375rem', padding: '0.5rem 0.75rem', marginTop: '.375rem' } },
+                        ai: { bubble: { background: '#edeeff', borderRadius: '0 1.125rem 1.125rem 1.125rem' } },
+                        user: { bubble: { color: '#fff', borderRadius: '1.125rem 1.125rem 0 1.125rem' } }
+                    },
+                    image: {
+                        user: { bubble: { borderRadius: '1rem', overflow: 'clip', textAlign: 'left', display: 'inline-block' } }
+                    },
+                    html: {
+                        shared: {
+                            bubble: {
+                                backgroundColor: 'unset', 
+                                padding: '0px'
                             }
                         }
-                    }"
-                    id="chatElement"
-                    ref="chatElementRef"
-                    :requestBodyLimits="{ maxMessages: 1 }"
-                    style="border-radius: 8px;"
-                    :introMessage="{ text: '' }"
-                    :messageStyles="{
-                        default: {
-                            shared: { bubble: { fontSize: '0.75rem', lineHeight: '1.375rem', padding: '0.5rem 0.75rem' } },
-                            ai: { bubble: { background: '#F7F1FF' } },
-                            user: { bubble: { color: '#fff' } }
-                        },
-                        image: {
-                            user: { bubble: { borderRadius: '1rem', overflow: 'clip', textAlign: 'left', display: 'inline-block' } }
-                        },
-                        html: {
-                           shared: {
-                                bubble: {
-                                    backgroundColor: 'unset', 
-                                    padding: '0px'
-                                }
-                           }
-                        }
-                    }">
-                </deep-chat>
+                    }
+                }">
+          </deep-chat>
+         
+           <!-- <div>
+            <div class="c-prompt-suggestions">
+              <div class="c-prompt-suggestions_inner">
+                <button class="btn btn-outline-primary" @click="handleSuggestionClick('Tell me a fun fact')">Tell me a fun
+                  fact
+                </button>
+                <button class="btn btn-outline-primary" @click="handleSuggestionClick('What\'s the weather like today?')">What�s
+                  the weather like today?
+                </button>
+                <button class="btn btn-outline-primary" @click="handleSuggestionClick('Suggest a good movie')">Suggest a good
+                  movie
+                </button>
+                <button class="btn btn-outline-primary" @click="showAllSuggestions = true">More</button>
+              </div>
             </div>
+
+            <div v-if="showAllSuggestions" class="c-prompt-overlay">
+              <div class="container">
+                <div class="d-flex justify-content-between align-items-center">
+                  <h3>Suggestions</h3>
+                  <button class="c-link primary-upper" @click="showAllSuggestions = false">
+                    Back
+                  </button>
+                </div>
+                <h4 class="mt-4">General</h4>
+                <div class="d-flex gap-2 flex-wrap mt-3">
+                  <button class="btn btn-outline-primary"
+                          @click="showAllSuggestions = false; handleSuggestionClick('What is today\'s news?')">
+                    What is today's news?
+                  </button>
+                  <button class="btn btn-outline-primary"
+                          @click="showAllSuggestions = false; handleSuggestionClick('Tell me a joke!')">
+                    Tell me a joke!
+                  </button>
+                  <button class="btn btn-outline-primary"
+                          @click="showAllSuggestions = false; handleSuggestionClick('Suggest a good movie')">
+                    Suggest a good movie
+                  </button>
+                </div>
+
+                <h4 class="mt-4">Technology</h4>
+                <div class="d-flex gap-2 flex-wrap mt-3">
+                  <button class="btn btn-outline-primary"
+                          @click="showAllSuggestions = false; handleSuggestionClick('Explain the latest tech trends')">
+                    Explain the latest tech trends
+                  </button>
+                  <button class="btn btn-outline-primary"
+                          @click="showAllSuggestions = false; handleSuggestionClick('What is Artificial Intelligence?')">
+                    What is Artificial Intelligence?
+                  </button>
+                  <button class="btn btn-outline-primary"
+                          @click="showAllSuggestions = false; handleSuggestionClick('Tell me about blockchain technology')">
+                    Tell me about blockchain technology
+                  </button>
+                </div>
+
+                <h4 class="mt-4">Travel</h4>
+                <div class="d-flex gap-2 flex-wrap mt-3">
+                  <button class="btn btn-outline-primary"
+                          @click="showAllSuggestions = false; handleSuggestionClick('Top places to visit in Europe')">
+                    Top places to visit in Europe
+                  </button>
+                  <button class="btn btn-outline-primary"
+                          @click="showAllSuggestions = false; handleSuggestionClick('What are the best travel tips?')">
+                    What are the best travel tips?
+                  </button>
+                  <button class="btn btn-outline-primary"
+                          @click="showAllSuggestions = false; handleSuggestionClick('Suggest a weekend getaway')">
+                    Suggest a weekend getaway
+                  </button>
+                </div>
+
+                <h4 class="mt-4">Health</h4>
+                <div class="d-flex gap-2 flex-wrap mt-3">
+                  <button class="btn btn-outline-primary"
+                          @click="showAllSuggestions = false; handleSuggestionClick('How to stay fit at home?')">
+                    How to stay fit at home?
+                  </button>
+                  <button class="btn btn-outline-primary"
+                          @click="showAllSuggestions = false; handleSuggestionClick('What are some healthy snacks?')">
+                    What are some healthy snacks?
+                  </button>
+                  <button class="btn btn-outline-primary"
+                          @click="showAllSuggestions = false; handleSuggestionClick('Tips for better sleep')">
+                    Tips for better sleep
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>-->
         </div>
     </div>
 </template>
@@ -148,7 +252,8 @@ export default {
             submitButton: null,
             started: false,
             messagesMetadata: new Map(),
-            history: []
+            history: [],
+            showAllSuggestions: false
         }
     },
     mounted() {
@@ -344,7 +449,42 @@ export default {
             const style = document.createElement('style');
 
             style.textContent =
-                `.btn-outline-primary {
+                `
+                #messages {
+                    scrollbar-width: none;
+                }
+                #messages::-webkit-scrollbar {
+                    display: none;
+                }
+                .c-prompt-btn{
+                  appearance: none;
+                  background: #fff;
+                  cursor: pointer;
+                  font-size: .875rem;
+                  line-height: 1rem;
+                  padding: .75rem;
+                  text-align: center;
+                  color: #000D48;
+                  border: 2px solid #000D48;
+                  border-radius: .375rem;
+                  transition: background-color 0.2s ease;
+                }
+                .c-prompt-btn:hover{
+                  background: #ebe7e5;
+                }
+                .c-prompt-btn:active{
+                  background: #ddd9d7;
+                }
+
+                .c-prompt-btn-wrapper{
+                  display: flex;
+                  flex-wrap: wrap;
+                  align-items: center;
+                  gap: .25rem;
+                  padding-top: .25rem;
+                }
+
+                .btn-outline-primary {
                     color: ${this.themeColorInRgb};
                     background-color: transparent;
                     border: 1px solid ${this.themeColorInRgb};
@@ -464,10 +604,10 @@ export default {
             }
         },
         getPromptsViewModel(message) {
-            let prompts = `<div prompt-quick-suggestion-button-group-id="${message.quickPromptsGroupId}">`;
+            let prompts = `<div class="c-prompt-btn-wrapper" prompt-quick-suggestion-button-group-id="${message.quickPromptsGroupId}">`;
 
             for (var prompt of message.quickPrompts) {
-                prompts += `<button class="btn-outline-primary" prompt-quick-suggestion-button value="${prompt}">${prompt}</button>`;
+                prompts += `<button class="c-prompt-btn" prompt-quick-suggestion-button value="${prompt}">${prompt}</button>`;
             }
 
             prompts += '</div>';

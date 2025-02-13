@@ -18,6 +18,6 @@ public interface INavBarService
     /// Retrieves url for a file displayed in the PWA.
     /// </summary>
     /// <param name="identifier">Identifier of the file.</param>
-    /// <returns><see cref="IMediaFileUrl"/>The file referencee.</returns>
+    /// <returns><see cref="IMediaFileUrl"/>The file reference.</returns>
     IMediaFileUrl? GetMediaFileUrl(string identifier);
 }

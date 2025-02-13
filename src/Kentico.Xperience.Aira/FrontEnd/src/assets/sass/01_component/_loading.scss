@@ -1,0 +1,42 @@
+.c-loading{
+  position: fixed;
+  inset: 0;
+  padding: 2rem;
+  background: $white;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3rem;
+  transition: .5s opacity ease-in-out;
+  z-index: 18;
+  p{
+    margin: 0;
+    font-size: .875rem;
+    line-height: 1.5rem;
+  }
+
+  &.is-hidden{
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  &_spinner{
+    width: 4.875rem;
+    height: 4.875rem;
+    animation: rotate 1.2s linear infinite;
+  }
+
+  @include media-breakpoint-up(md){
+    position: absolute;
+  }
+}
+
+@keyframes rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}

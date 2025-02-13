@@ -66,8 +66,8 @@ internal class AiraEndpointDataSource : MutableEndpointDataSource
             ),
             CreateAiraEndpoint(configuration,
                 AiraCompanionAppConstants.SigninRelativeUrl,
-                nameof(AiraCompanionAppController.Signin),
-                (controller) => controller.Signin()
+                nameof(AiraCompanionAppController.SignIn),
+                (controller) => controller.SignIn()
             ),
             CreateAiraEndpointFromBody<AiraUsedPromptGroupModel>(configuration,
                 AiraCompanionAppConstants.RemoveUsedPromptGroupRelativeUrl,
@@ -80,7 +80,7 @@ internal class AiraEndpointDataSource : MutableEndpointDataSource
         AiraConfigurationItemInfo configurationInfo,
         string subPath,
         string actionName,
-        Func<AiraCompanionAppController, T, Task<IActionResult>> actionWithModel
+        Func<AiraCompanionAppController, T, IActionResult> actionWithModel
     ) where T : class, new() =>
         CreateEndpoint($"{configurationInfo.AiraConfigurationItemAiraPathBase}/{subPath}", async context =>
         {
@@ -101,7 +101,7 @@ internal class AiraEndpointDataSource : MutableEndpointDataSource
 
                     if (requestObject is not null)
                     {
-                        var result = await actionWithModel.Invoke(airaController, requestObject);
+                        var result = actionWithModel.Invoke(airaController, requestObject);
                         await result.ExecuteResultAsync(airaController.ControllerContext);
                     }
                     else
@@ -122,61 +122,6 @@ internal class AiraEndpointDataSource : MutableEndpointDataSource
                 // Handle unsupported content types
                 context.Response.StatusCode = StatusCodes.Status415UnsupportedMediaType;
                 await context.Response.WriteAsync("Unsupported content type. Expected 'application/json'.");
-            }
-        });
-
-    private static Endpoint CreateAiraEndpoint<T>(AiraConfigurationItemInfo configurationInfo,
-        string subPath,
-        string actionName,
-        Func<AiraCompanionAppController, Task<IActionResult>> paramlessAction,
-        Func<AiraCompanionAppController, T, Task<IActionResult>> actionWithForm) where T : class, new()
-        => CreateEndpoint($"{configurationInfo.AiraConfigurationItemAiraPathBase}/{subPath}", async context =>
-        {
-            if (!await CheckHttps(context))
-            {
-                return;
-            }
-
-            var airaController = await GetAiraCompanionAppControllerInContext(context, actionName);
-
-            if (context.Request.ContentType is not null &&
-                context.Request.ContentType.Contains("application/x-www-form-urlencoded"))
-            {
-                var form = await context.Request.ReadFormAsync();
-                var requestObject = new T();
-                foreach (var key in form.Keys)
-                {
-                    var property = typeof(T).GetProperty(key, BindingFlags.Public | BindingFlags.Instance | BindingFlags.IgnoreCase);
-
-                    var value = form[key].ToString();
-
-                    property?.SetValue(requestObject, Convert.ChangeType(value, property.PropertyType));
-                }
-
-                var result = await actionWithForm.Invoke(airaController, requestObject);
-
-                await result.ExecuteResultAsync(airaController.ControllerContext);
-            }
-            else if (context.Request.ContentLength > 0
-                && string.Equals(context.Request.ContentType, "application/json"))
-            {
-                var requestObject = new T();
-                using var reader = new StreamReader(context.Request.Body);
-                var body = await reader.ReadToEndAsync();
-                requestObject = JsonSerializer.Deserialize<T>(body, new JsonSerializerOptions
-                {
-                    PropertyNameCaseInsensitive = true
-                })!;
-
-                var result = await actionWithForm.Invoke(airaController, requestObject);
-
-                await result.ExecuteResultAsync(airaController.ControllerContext);
-            }
-            else
-            {
-                var result = await paramlessAction.Invoke(airaController);
-
-                await result.ExecuteResultAsync(airaController.ControllerContext);
             }
         });
 

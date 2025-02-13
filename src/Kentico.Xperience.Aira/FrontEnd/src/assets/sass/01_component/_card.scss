@@ -1,0 +1,486 @@
+@use "sass:math";
+
+.c-card{
+  display:flex;
+  flex-direction: column;
+  justify-content: space-between;
+  color: $k-card-color;
+  &.xs{
+    padding: .875rem 1rem .875rem 1.5rem;
+  }
+  &.sm{
+    padding: 1rem 1.25rem;
+  }
+  &.md{
+    padding: 1rem;
+  }
+  &.lg{
+    padding: 1.5rem 1rem;
+  }
+  &.bg-1{
+    background: $k-card-bg;
+    .c-card.bg-1{
+      background: $white;
+    }
+  }
+  &.bg-2{
+    background: $k-card-bg-2;
+    .c-card.bg-2{
+      background: $white;
+    }
+  }
+
+  @include media-breakpoint-up(md) {
+    &.md{
+      padding: 1.5rem;
+    }
+    &.lg{
+      padding: 2.5rem;
+    }
+  }
+}
+
+.c-card {
+  &.home{
+    position:relative;
+    overflow: hidden;
+    height: 22.5rem;
+    p {
+      margin-top: 1.2rem;
+      height: auto;
+      overflow: hidden;
+    }
+    .c-card{
+      &_img{
+        flex-grow: 0;
+        flex-shrink: 0;
+        position: relative;
+        height: 13rem;
+        img{
+          position: absolute;
+          inset: 0;
+          height: 100%;
+          width: 100%;
+          object-fit: cover;
+        }
+      }
+      &_body{
+        padding: 1.25rem 1.875rem .375rem;
+        flex-grow: 1;
+        h4, p{
+          --lh: 1.375rem;
+          line-height: var(--lh);
+        }
+        p{
+          font-size: .875rem;
+        }
+      }
+      &_footer{
+        padding: 0 1.875rem 1.5rem;
+        margin-top: auto;
+      }
+    }
+  }
+
+  &.featured{
+    display: flex;
+    height: 27.5rem;
+    overflow: hidden;
+    .c-card{
+      &_img{
+        width: 56%;
+        position: relative;
+        img{
+          position: absolute;
+          inset: 0;
+          height: 100%;
+          width: 100%;
+          object-fit: cover;
+        }
+      }
+      &_body{
+        flex-grow: 1;
+        padding: 4rem 2.5rem 4rem 4rem;
+      }
+    }
+
+    @include media-breakpoint-up(sm){
+      flex-direction: row;
+    }
+  }
+
+  &.big{
+    padding: 1.25rem .875rem;
+
+    @include media-breakpoint-up(sm){
+      padding: 2rem 1.5rem;
+    }
+    @include media-breakpoint-up(md){
+      padding: 3.625rem 2.125rem 3.125rem;
+    }
+  }
+
+  &.benefit{
+    padding-left: 3rem;
+    &.bullet{
+      position: relative;
+      &:before{
+        content: '';
+        display: block;
+        position: absolute;
+        left: .625rem;
+        top: .25rem;
+        width: 13px;
+        height: 13px;
+        border-radius: 50%;
+        background: $k-secondary;
+      }
+    }
+    .c-card{
+      &_num{
+        font-size: 2.875rem;
+        font-weight: $font-weight-bold;
+        color: $k-secondary;
+        line-height: 1.3;
+      }
+      &_icon{
+        padding-bottom: .75rem;
+        img{
+          height: 2rem;
+          width: auto;
+          max-width: 100%;
+        }
+        .c-icon{
+          color: $k-secondary;
+          width: 2rem;
+          height: 2rem;
+        }
+      }
+    }
+    @include media-breakpoint-up(md){
+      padding-right: 2rem;
+    }
+  }
+
+  &.filter{
+    border: 1px solid $gray-600;
+    border-radius: $k-border-radius-2;
+  }
+
+  &.search-result{
+    .c-card_heading{
+      a{
+        color: inherit;
+        text-decoration: none;
+      }
+    }
+    p{
+      a{
+        color: $k-primary;
+        text-decoration: none;
+        &:hover{
+          text-decoration: underline;
+        }
+      }
+    }
+  }
+
+  &.dashboard{
+    background: $k-body-bg;
+    padding: 1rem 1rem 2rem;
+    border-radius: $k-border-radius-2;
+    width: 100%;
+    box-shadow: none;
+    transition: .15s box-shadow ease;
+    .c-card{
+      &_heading{
+        font-size: .875rem;
+        line-height: 1rem;
+        text-align: center;
+        transition: .15s color ease;
+      }
+      &_img-wrapper{
+        padding: .5rem 1rem;
+      }
+      &_img{
+        display: block;
+        max-width: 100%;
+        max-height: 9.875rem;
+        margin: 0 auto;
+      }
+      &_props-arrows-wrapper{
+        position: relative;
+        display: inline-block;
+        vertical-align: top;
+        font-size: 1.21875rem;
+        height: 1em;
+        width: 1em;
+      }
+      &_props-arrow{
+        position: absolute;
+        animation: 3.5s linear infinite;
+        animation-play-state: paused;
+        inset: 0;
+        &:nth-child(1){
+          animation-name: dashboard-props-arrow-top;
+        }
+        &:nth-child(2){
+          translate: 0 -100%;
+          opacity: 0;
+          animation-name: dashboard-props-arrow-bottom;
+        }
+      }
+      &_props-inner{
+        display: inline-block;
+        animation: linear infinite;
+        animation-delay: 1.45s;
+        animation-play-state: paused;
+
+        @for $i from 2 through 8 {
+          &.animation-#{$i}-items{
+            animation-duration: (1.75s * $i);
+            animation-name: dashboard-props-carousel-#{$i}-top;
+          }
+        }
+      }
+      &_props-wrapper{
+        color: $k-dashboard-prop-color;
+        height: 1.25rem;
+        margin-bottom: .75rem;
+        overflow: hidden;
+        &.bottom-one{
+          text-align: right;
+          .c-card{
+            &_props-arrows-wrapper{
+              rotate: 180deg;
+            }
+            &_props-inner{
+              @for $i from 2 through 8 {
+                &.animation-#{$i}-items{
+                  animation-duration: (1.75s * $i);
+                  animation-name: dashboard-props-carousel-#{$i}-bottom;
+                }
+              }
+            }
+          }
+        }
+      }
+      &_prop{
+        text-decoration: none;
+        font-size: .875rem;
+        transition: .15s all ease;
+      }
+    }
+    &.main{
+      position: relative;
+      margin-bottom: 4rem;
+      border: 5px solid $k-card-bg;
+      &:before{
+        content: '';
+        width: 5px;
+        height: 4rem;
+        position: absolute;
+        display: block;
+        inset: calc(100% + 5px) 0 auto;
+        margin: 0 auto;
+        background-color: $k-card-bg;
+      }
+    }
+  }
+
+  &.hospital{
+    display: flex;
+    flex-direction: column;
+    overflow: clip;
+
+    .c-card{
+      &_img{
+        height: 10rem;
+        flex-shrink: 0;
+        img{
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+        }
+      }
+      &_body{
+        padding: 1.5rem;
+      }
+    }
+
+    @include media-breakpoint-up(sm){
+      flex-direction: row;
+
+      .c-card{
+        &_img{
+          height: auto;
+          width: 10rem;
+        }
+      }
+    }
+    @include media-breakpoint-between(md, lg){
+      .c-card{
+        &_img{
+          width: 8rem;
+        }
+      }
+    }
+  }
+  &.doctor{
+    display: flex;
+    flex-direction: row;
+    overflow: clip;
+
+    .c-card{
+      &_img{
+        width: 30%;
+        flex-shrink: 0;
+        img{
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+        }
+      }
+      &_body{
+        padding: 1rem 1.25rem;
+      }
+    }
+
+    @include media-breakpoint-up(sm){
+
+      .c-card{
+        &_img{
+          width: 10rem;
+        }
+        &_body{
+          padding: 1.5rem;
+        }
+      }
+    }
+    @include media-breakpoint-between(md, lg){
+      .c-card{
+        &_img{
+          width: 8rem;
+        }
+      }
+    }
+  }
+}
+
+.c-card-wrapper {
+  padding:2rem 1rem;
+  background-color: $k-card-bg;
+  
+    .c-card-home_content-01{
+      background-color: $light;
+    }
+
+  @include media-breakpoint-up(md){
+    padding:2rem 1.5rem;
+  }
+
+  @include media-breakpoint-up(lg){
+    padding:2rem 3rem;
+  }
+}
+
+.c-card-anchor{
+  text-decoration: none;
+
+  .c-card{
+    &.bg-1{
+      background-color: $k-card-bg;
+      transition: transform 0.3s, box-shadow 0.5s, background-color 0.3s ease-in-out;
+    }
+  }
+
+  &:hover{
+    .c-card{
+      &.bg-1{
+        background-color: $k-card-bg-hover;
+      }
+      &.dashboard{
+        box-shadow: $k-dashboard-hover-shadow;
+        .c-card_props-inner,
+        .c-card_props-arrow{
+          animation-play-state: running;
+        }
+        .c-card_props-wrapper,
+        .c-card_heading{
+          color: $k-secondary;
+        }
+      }
+    }
+  }
+}
+
+.j-truncate{
+  &_heading,
+  &_paragraph{
+    max-height: calc(var(--lh, 1.5rem) * var(--lines, 2));
+    text-overflow:ellipsis;
+    overflow: hidden;
+    display: -webkit-box !important;
+    -webkit-line-clamp: var(--lines, 2);
+    -webkit-box-orient: vertical;
+    white-space: normal;
+  }
+}
+@for $i from 2 through 8 {
+  @keyframes dashboard-props-carousel-#{$i}-top {
+    0%{
+      translate: 0 0;
+    }
+    @for $j from 1 through $i{
+      #{percentage(math.div(1, $i) * ($j - 1) + math.div(.1, $i))}, #{percentage(math.div(1, $i) * $j)}{
+        translate: 0 #{percentage(-1 * math.div(1, $i + 1) * $j)};
+      }
+    }
+  }
+  @keyframes dashboard-props-carousel-#{$i}-bottom {
+    0%{
+      translate: 0 #{percentage(-1 * math.div(1, $i + 1) * $i)};
+    }
+    @for $j from 1 through $i{
+      #{percentage(math.div(1, $i) * ($j - 1) + math.div(.1, $i))}, #{percentage(math.div(1, $i) * $j)}{
+        translate: 0 #{percentage(-1 * math.div(1, $i + 1) * ($i - $j))};
+      }
+    }
+  }
+}
+@keyframes dashboard-props-arrow-top {
+  0%, 30%, 100%{
+    translate: 0 0;
+    opacity: 1;
+  }
+  36%, 41%{
+    translate: 0 40%;
+    opacity: 1;
+  }
+  46%{
+    translate: 0 -100%;
+    opacity: 0;
+  }
+  95%{
+    translate: 0 100%;
+    opacity: 0;
+  }
+}
+@keyframes dashboard-props-arrow-bottom {
+  0%, 45%{
+    translate: 0 100%;
+    opacity: 0;
+  }
+  50%, 80%{
+    translate: 0 0;
+    opacity: 1;
+  }
+  86%, 91%{
+    translate: 0 40%;
+    opacity: 1;
+  }
+  96%, 100%{
+    translate: 0 -100%;
+    opacity: 0;
+  }
+}
