@@ -31,6 +31,7 @@
     <ProjectReference Include="..\..\src\Kentico.Xperience.Aira\Kentico.Xperience.Aira.csproj" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="App_Data\CIRepository\%40global\cms.class\" />
     <Folder Include="App_Data\CIRepository\%40global\cms.contentitemcommondata\" />
     <Folder Include="App_Data\CIRepository\%40global\cms.contentitemlanguagemetadata\" />
     <Folder Include="App_Data\CIRepository\%40global\cms.contentitem\" />
@@ -39,5 +40,6 @@
     <Folder Include="App_Data\CIRepository\%40global\contentitemdata.aira.airaassetexample\" />
     <Folder Include="App_Data\CIRepository\%40global\kenticoaira.airaconfigurationitem\" />
     <Folder Include="App_Data\CIRepository\%40global\media.file\" />
+    <Folder Include="assets\media\" />
   </ItemGroup>
 </Project>
