@@ -6,8 +6,6 @@ using CMS.DataEngine;
 using CMS.EmailLibrary;
 using CMS.Websites;
 
-using Kentico.Membership;
-
 namespace Kentico.Xperience.Aira.Insights;
 
 internal class AiraInsightsService : IAiraInsightsService
@@ -54,9 +52,9 @@ internal class AiraInsightsService : IAiraInsightsService
         this.contactInfoProvider = contactInfoProvider;
     }
 
-    public async Task<ContentInsightsModel> GetContentInsights(ContentType contentType, AdminApplicationUser user, string? status = null)
+    public async Task<ContentInsightsModel> GetContentInsights(ContentType contentType, int userId, string? status = null)
     {
-        var content = await GetContent(user, contentType.ToString(), status);
+        var content = await GetContent(userId, contentType.ToString(), status);
 
         var items = new List<ContentItemInsightsModel>();
 
@@ -75,11 +73,11 @@ internal class AiraInsightsService : IAiraInsightsService
         };
     }
 
-    public async Task<EmailInsightsModel> GetEmailInsights(AdminApplicationUser user)
+    public async Task<EmailInsightsModel> GetEmailInsights(int userId)
     {
         var channels = channelInfoProvider.Get().ToList();
         var statistics = emailStatisticsInfoProvider.Get().ToList();
-        var items = await GetContent(user, "Email");
+        var items = await GetContent(userId, "Email");
 
         var regularEmails = emailConfigurationInfoProvider.Get().Where(c => c.WhereEquals("EmailConfigurationPurpose", "Regular")).ToList();
 
@@ -157,7 +155,7 @@ internal class AiraInsightsService : IAiraInsightsService
         };
     }
 
-    private async Task<IEnumerable<ContentItemModel>> GetContent(AdminApplicationUser user, string classType = "Reusable", string? status = null)
+    private async Task<IEnumerable<ContentItemModel>> GetContent(int userId, string classType = "Reusable", string? status = null)
     {
         var builder = classType switch
         {
@@ -191,8 +189,8 @@ internal class AiraInsightsService : IAiraInsightsService
                 {
                     return status switch
                     {
-                        "Draft" => await FilterDrafts(items),
-                        "Scheduled" => await FilterScheduled(user, items),
+                        "Draft" => FilterDrafts(items),
+                        "Scheduled" => await FilterScheduled(userId, items),
                         _ => await FilterCustomWorkflowStep(items, status),
                     };
                 }
@@ -244,11 +242,11 @@ internal class AiraInsightsService : IAiraInsightsService
         };
     }
 
-    private async Task<IEnumerable<ContentItemModel>> FilterScheduled(AdminApplicationUser user, IEnumerable<ContentItemModel> items)
+    private async Task<IEnumerable<ContentItemModel>> FilterScheduled(int userId, IEnumerable<ContentItemModel> items)
     {
         List<ContentItemModel> result = [];
 
-        var contentItemManager = contentItemManagerFactory.Create(user.UserID);
+        var contentItemManager = contentItemManagerFactory.Create(userId);
         foreach (var item in items)
         {
             var language = await contentLanguageInfoProvider.GetAsync(item.LanguageId);
@@ -262,7 +260,7 @@ internal class AiraInsightsService : IAiraInsightsService
         return result;
     }
 
-    private static async Task<IEnumerable<ContentItemModel>> FilterDrafts(IEnumerable<ContentItemModel> items)
+    private static IEnumerable<ContentItemModel> FilterDrafts(IEnumerable<ContentItemModel> items)
     {
         List<ContentItemModel> result = [];
 

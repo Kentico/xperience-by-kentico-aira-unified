@@ -1,6 +1,4 @@
-﻿using System.Text;
-
-using CMS.Membership;
+﻿using CMS.Membership;
 
 using HotChocolate.Authorization;
 
@@ -86,17 +84,17 @@ public sealed class AiraCompanionAppController : Controller
         if (chatModel.History.Count == 0)
         {
             chatModel.History = [
-                new AiraChatMessage
+                new AiraChatMessageViewModel
                 {
                     Message = Resource.InitialAiraMessage1,
                     Role = AiraCompanionAppConstants.AiraChatRoleName
                 },
-                new AiraChatMessage
+                new AiraChatMessageViewModel
                 {
                     Message = Resource.InitialAiraMessage1,
                     Role = AiraCompanionAppConstants.AiraChatRoleName
                 },
-                new AiraChatMessage
+                new AiraChatMessageViewModel
                 {
                     Message = Resource.InitialAiraMessage1,
                     Role = AiraCompanionAppConstants.AiraChatRoleName
@@ -105,7 +103,7 @@ public sealed class AiraCompanionAppController : Controller
         }
         else
         {
-            chatModel.History.Add(new AiraChatMessage
+            chatModel.History.Add(new AiraChatMessageViewModel
             {
                 Message = Resource.WelcomeBackAiraMessage,
                 Role = AiraCompanionAppConstants.AiraChatRoleName
@@ -139,72 +137,63 @@ public sealed class AiraCompanionAppController : Controller
             return Redirect(signinRedirectUrl);
         }
 
-        string? message = null;
+        var message = string.Empty;
 
-#pragma warning disable IDE0079 // Kept for development. This will be restored in subsequent versions.
-#pragma warning disable S6932 // Kept for development. This will be restored in subsequent versions.
         if (request.TryGetValue("message", out var messages))
         {
             message = messages.ToString().Replace("\"", "");
         }
-#pragma warning restore S6932 //
-#pragma warning restore IDE0079 //
-
-        AiraChatMessage response;
-
-        airaChatService.SaveMessage(message ?? "", user.UserID, AiraCompanionAppConstants.UserChatRoleName);
-
-        if (message == "Prompts")
-        {
-            response = await airaChatService.GenerateAiraPrompts(user.UserID);
-            response.Message = "OK";
-        }
         else
         {
-            try
-            {
-                switch (message)
-                {
-                    case "Reusable Drafts":
-                        var reusableDraftResult = await airaInsightsService.GetContentInsights(ContentType.Reusable, user, "Draft");
-                        response = BuildMessage(reusableDraftResult);
-                        break;
-                    case "Website Scheduled":
-                        var websiteScheduledResult = await airaInsightsService.GetContentInsights(ContentType.Website, user, "Scheduled");
-                        response = BuildMessage(websiteScheduledResult);
-                        break;
-                    case "Emails":
-                        var emailsResult = await airaInsightsService.GetEmailInsights(user);
-                        response = BuildMessage(emailsResult);
-                        break;
-                    case "Contact Groups":
-                        var contactGroupsResult = airaInsightsService.GetContactGroupInsights(["Females", "Males"]);
-                        response = BuildMessage(contactGroupsResult);
-                        break;
-                    default:
-                        response = new AiraChatMessage
-                        {
-                            Role = AiraCompanionAppConstants.AiraChatRoleName,
-                            Message = "Ok",
-                            QuickPrompts = message == "Prompts" ?
-                                ["Reusable Drafts", "Website Scheduled", "Emails", "Contact Groups"] : []
-                        };
-                        break;
-                }
-            }
-            catch (Exception ex)
-            {
-                response = new AiraChatMessage
-                {
-                    Role = AiraCompanionAppConstants.AiraChatRoleName,
-                    Message = $"Error: {ex.Message}"
-                };
-            }
+            return Ok();
+        }
+        if (string.IsNullOrEmpty(message))
+        {
+            return Ok();
         }
 
-        airaChatService.SaveMessage(response.Message ?? "", user.UserID, AiraCompanionAppConstants.AiraChatRoleName);
+        AiraChatMessageViewModel result;
 
-        return Ok(response);
+        airaChatService.SaveMessage(message, user.UserID, AiraCompanionAppConstants.UserChatRoleName);
+
+        try
+        {
+            var aiResponse = await airaChatService.GetAIResponseOrNull(message, numberOfIncludedHistoryMessages: 5, user.UserID);
+
+            if (aiResponse is null)
+            {
+                return Ok();
+            }
+
+            airaChatService.SaveMessage(aiResponse.Response, user.UserID, AiraCompanionAppConstants.AiraChatRoleName);
+
+            airaChatService.UpdateChatSummary(user.UserID, message);
+
+            result = new AiraChatMessageViewModel
+            {
+                Role = AiraCompanionAppConstants.AiraChatRoleName,
+                Message = aiResponse.Response
+            };
+
+            if (aiResponse.SuggestedQuestions is not null)
+            {
+                var promptGroup = airaChatService.GenerateAiraPrompts(user.UserID, aiResponse.SuggestedQuestions);
+                result.QuickPrompts = promptGroup.QuickPrompts;
+                result.QuickPromptsGroupId = promptGroup.QuickPromptsGroupId.ToString();
+            }
+        }
+        catch (Exception ex)
+        {
+            result = new AiraChatMessageViewModel
+            {
+                Role = AiraCompanionAppConstants.AiraChatRoleName,
+                Message = $"Error: {ex.Message}"
+            };
+        }
+
+        airaChatService.SaveMessage(result.Message ?? "", user.UserID, AiraCompanionAppConstants.AiraChatRoleName);
+
+        return Ok(result);
     }
 
     /// <summary>
@@ -352,83 +341,5 @@ public sealed class AiraCompanionAppController : Controller
         var baseUrl = $"{Request.Scheme}://{Request.Host}";
 
         return $"{baseUrl}{airaPathBase}/{relativeUrl}";
-    }
-
-    private AiraChatMessage BuildMessage(ContentInsightsModel content)
-    {
-        var message = new StringBuilder();
-
-        foreach (var item in content.Items)
-        {
-            if (message.Length > 0)
-            {
-                message.Append(", ");
-            }
-
-            message.Append(item.DisplayName);
-        }
-
-        return new AiraChatMessage
-        {
-            Role = AiraCompanionAppConstants.AiraChatRoleName,
-            Message = message.Length == 0 ? "No Content" : message.ToString()
-        };
-    }
-
-    private AiraChatMessage BuildMessage(EmailInsightsModel emails)
-    {
-        var message = new StringBuilder();
-
-        foreach (var item in emails.Emails)
-        {
-            if (message.Length > 0)
-            {
-                message.Append(", ");
-            }
-
-            message.AppendFormat("{0} ({1}, {2})", item.EmailName, item.ContentTypeName, item.ChannelName);
-        }
-
-        message.Append(" - ");
-        message.AppendFormat("Sent: {0}, ", emails.EmailsSent);
-        message.AppendFormat("Delivered: {0}, ", emails.EmailsDelivered);
-        message.AppendFormat("Clicked: {0}, ", emails.LinksClicked);
-        message.AppendFormat("Opened: {0}, ", emails.EmailsOpened);
-        message.AppendFormat("Unsubscribed: {0}, ", emails.UnsubscribeRate);
-        message.AppendFormat("Spam Reports: {0}", emails.SpamReports);
-
-        message.Insert(0, "Email: ");
-
-        return new AiraChatMessage
-        {
-            Role = AiraCompanionAppConstants.AiraChatRoleName,
-            Message = message.Length == 0 ? "No Emails" : message.ToString()
-        };
-    }
-
-    private AiraChatMessage BuildMessage(ContactGroupsInsightsModel contactGroups)
-    {
-        var message = new StringBuilder();
-
-        foreach (var contactGroup in contactGroups.Groups)
-        {
-            var percentage = contactGroup.Count * (100M / contactGroups.AllCount);
-            if (message.Length > 0)
-            {
-                message.Append(", ");
-            }
-
-            message.Append(contactGroup.Name);
-            message.AppendFormat(" (Count: {0}, Percentage {1}%)", contactGroup.Count, Math.Round(percentage, 2));
-        }
-
-        message.Append(" - ");
-        message.AppendFormat("Contacts: {0}", contactGroups.AllCount);
-
-        return new AiraChatMessage
-        {
-            Role = AiraCompanionAppConstants.AiraChatRoleName,
-            Message = message.Length == 0 ? "No Contact Groups" : message.ToString()
-        };
     }
 }

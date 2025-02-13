@@ -3,7 +3,7 @@
 /// <summary>
 /// Model for the Aira chat message.
 /// </summary>
-public class AiraChatMessage
+public class AiraChatMessageViewModel
 {
     /// <summary>
     /// The text message.

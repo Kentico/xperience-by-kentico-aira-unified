@@ -52,7 +52,7 @@ builder.Services.AddLocalization()
 
 builder.Services.AddDancingGoatServices();
 
-builder.Services.AddKenticoAira();
+builder.Services.AddKenticoAira(builder.Configuration);
 
 builder.Services.AddSingleton<IEmailActivityTrackingEvaluator, EmailActivityTrackingEvaluator>();
 
