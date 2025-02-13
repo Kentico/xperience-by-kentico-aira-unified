@@ -20,7 +20,7 @@ public class ChatViewModel
     /// <summary>
     /// User's chat history messages.
     /// </summary>
-    public List<AiraChatMessage> History { get; set; } = [];
+    public List<AiraChatMessageViewModel> History { get; set; } = [];
 
     /// <summary>
     /// Path base for the Chat page.

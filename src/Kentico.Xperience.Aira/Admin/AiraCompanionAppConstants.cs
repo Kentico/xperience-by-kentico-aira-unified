@@ -40,6 +40,12 @@ public static class AiraCompanionAppConstants
     /// </summary>
     public const string AiraChatRoleName = "ai";
 
+    public const string AIRequestAssistantRoleName = "assistant";
+
+    public const string AIRequestUserRoleName = "user";
+
+    public const string AiraAIEndpoint = "https://kenticoairaapimanager.azure-api.net/aira/rag";
+
     /// <summary>
     /// The identifier of the ai role used to identify the role in the database.
     /// </summary>

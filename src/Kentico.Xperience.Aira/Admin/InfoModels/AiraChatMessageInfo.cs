@@ -11,6 +11,7 @@ using Kentico.Xperience.Aira.Admin.InfoModels;
 
 namespace Kentico.Xperience.Aira.Admin.InfoModels;
 
+[Serializable]
 public class AiraChatMessageInfo : AbstractInfo<AiraChatMessageInfo, IInfoProvider<AiraChatMessageInfo>>
 {
     /// <summary>
@@ -56,7 +57,7 @@ public class AiraChatMessageInfo : AbstractInfo<AiraChatMessageInfo, IInfoProvid
 
 
     /// <summary>
-    /// Chat message cration time.
+    /// Chat message creation time.
     /// </summary>
     [DatabaseField]
     [Required]

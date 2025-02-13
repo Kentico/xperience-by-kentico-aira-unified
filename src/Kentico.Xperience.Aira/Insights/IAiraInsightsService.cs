@@ -1,6 +1,4 @@
-﻿using Kentico.Membership;
-
-namespace Kentico.Xperience.Aira.Insights;
+﻿namespace Kentico.Xperience.Aira.Insights;
 
 /// <summary>
 /// Service providing aira insights.
@@ -11,17 +9,17 @@ public interface IAiraInsightsService
     /// Gets content items insights.
     /// </summary>
     /// <param name="contentType"><see cref="ContentType"/>Reusable or website content type.</param>
-    /// <param name="user">Admin application user.</param>
+    /// <param name="userId">Admin application user.</param>
     /// <param name="status">Status of the content type.</param>
     /// <returns><see cref="ContentInsightsModel"/></returns>
-    Task<ContentInsightsModel> GetContentInsights(ContentType contentType, AdminApplicationUser user, string? status = null);
+    Task<ContentInsightsModel> GetContentInsights(ContentType contentType, int userId, string? status = null);
 
     /// <summary>
     /// Gets email insights.
     /// </summary>
-    /// <param name="user">Admin application user.</param>
+    /// <param name="userId">Admin application user.</param>
     /// <returns><see cref="EmailInsightsModel"/></returns>
-    Task<EmailInsightsModel> GetEmailInsights(AdminApplicationUser user);
+    Task<EmailInsightsModel> GetEmailInsights(int userId);
 
     /// <summary>
     /// Gets contact groups insights.

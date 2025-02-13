@@ -11,15 +11,15 @@ public interface IAiraChatService
     /// Returns the chat history of a user.
     /// </summary>
     /// <param name="userId">Admin application user id.</param>
-    /// <returns>A Task returning a List of <see cref="AiraChatMessage"/> in User's history.</returns>
-    Task<List<AiraChatMessage>> GetUserChatHistory(int userId);
+    /// <returns>A Task returning a List of <see cref="AiraChatMessageViewModel"/> in User's history.</returns>
+    Task<List<AiraChatMessageViewModel>> GetUserChatHistory(int userId);
 
     /// <summary>
     /// Generates new suggested prompts for a user and saves them in the history.
     /// </summary>
     /// <param name="userId">Admin application user id.</param>
-    /// <returns>A task returning a <see cref="AiraChatMessage"/> with the generated prompts.</returns>
-    Task<AiraChatMessage> GenerateAiraPrompts(int userId);
+    /// <returns>A task returning a <see cref="AiraChatMessageViewModel"/> with the generated prompts.</returns>
+    AiraPromptGroupModel GenerateAiraPrompts(int userId, List<string> suggestions);
 
     /// <summary>
     /// Removes used prompt group.
@@ -34,4 +34,8 @@ public interface IAiraChatService
     /// <param name="userId">Admin application user id.</param>
     /// <param name="role">Role of the chat member.</param>
     void SaveMessage(string text, int userId, string role);
+
+    Task<AiraAIResponse?> GetAIResponseOrNull(string message, int numberOfIncludedHistoryMessages, int userId);
+
+    void UpdateChatSummary(int userId, string summary);
 }

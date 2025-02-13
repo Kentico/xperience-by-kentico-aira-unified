@@ -2,6 +2,7 @@
 
 using CMS.DataEngine;
 using CMS.FormEngine;
+using CMS.Membership;
 using CMS.Modules;
 
 using Kentico.Xperience.Aira.Admin.InfoModels;
@@ -40,10 +41,11 @@ internal class AiraModuleInstaller : IAiraModuleInstaller
 
     private static void InstallModuleClasses(ResourceInfo resourceInfo)
     {
+        InstallAiraChatMessageClass(resourceInfo);
         InstallAiraConfigurationClass(resourceInfo);
         InstallAiraChatPromptClass(resourceInfo);
         InstallAiraChatPromptGroupClass(resourceInfo);
-        InstallAiraChatMessageClass(resourceInfo);
+        InstallAiraChatSummaryClass(resourceInfo);
     }
 
     private static void InstallAiraConfigurationClass(ResourceInfo resourceInfo)
@@ -90,6 +92,61 @@ internal class AiraModuleInstaller : IAiraModuleInstaller
         }
     }
 
+    private static void InstallAiraChatSummaryClass(ResourceInfo resourceInfo)
+    {
+        var info = DataClassInfoProvider.GetDataClassInfo(AiraChatSummaryInfo.OBJECT_TYPE) ??
+            DataClassInfo.New(AiraChatSummaryInfo.OBJECT_TYPE);
+
+        info.ClassName = AiraChatSummaryInfo.TYPEINFO.ObjectClassName;
+        info.ClassTableName = AiraChatSummaryInfo.TYPEINFO.ObjectClassName.Replace(".", "_");
+        info.ClassDisplayName = "Aira Chat Summary";
+        info.ClassResourceID = resourceInfo.ResourceID;
+        info.ClassType = ClassType.OTHER;
+        var formInfo = FormHelper.GetBasicFormDefinition(nameof(AiraChatSummaryInfo.AiraChatSummaryId));
+
+        var formItem = new FormFieldInfo
+        {
+            Name = nameof(AiraChatSummaryInfo.AiraChatSummaryGuid),
+            AllowEmpty = false,
+            Precision = 0,
+            Visible = true,
+            DataType = FieldDataType.Guid,
+            Enabled = true
+        };
+        formInfo.AddFormItem(formItem);
+
+        formItem = new FormFieldInfo
+        {
+            Name = nameof(AiraChatSummaryInfo.AiraChatSummaryContent),
+            AllowEmpty = false,
+            Precision = 0,
+            Visible = true,
+            DataType = FieldDataType.LongText,
+            Enabled = true
+        };
+        formInfo.AddFormItem(formItem);
+
+        formItem = new FormFieldInfo
+        {
+            Name = nameof(AiraChatSummaryInfo.AiraChatSummaryUserId),
+            AllowEmpty = false,
+            Visible = true,
+            Precision = 0,
+            DataType = FieldDataType.Integer,
+            Enabled = true,
+            ReferenceToObjectType = UserInfo.OBJECT_TYPE,
+            ReferenceType = ObjectDependencyEnum.Required
+        };
+        formInfo.AddFormItem(formItem);
+
+        SetFormDefinition(info, formInfo);
+
+        if (info.HasChanged)
+        {
+            DataClassInfoProvider.SetDataClassInfo(info);
+        }
+    }
+
     private static void InstallAiraChatPromptClass(ResourceInfo resourceInfo)
     {
         var info = DataClassInfoProvider.GetDataClassInfo(AiraChatPromptInfo.OBJECT_TYPE) ??
@@ -124,7 +181,61 @@ internal class AiraModuleInstaller : IAiraModuleInstaller
         info.ClassType = ClassType.OTHER;
         var formInfo = FormHelper.GetBasicFormDefinition(nameof(AiraChatMessageInfo.AiraChatMessageId));
 
-        formInfo = AddFormItems(formInfo, typeof(AiraChatMessageInfo), nameof(AiraChatMessageInfo.AiraChatMessageId));
+        var formItem = new FormFieldInfo
+        {
+            Name = nameof(AiraChatMessageInfo.AiraChatMessageGuid),
+            AllowEmpty = false,
+            Precision = 0,
+            Visible = true,
+            DataType = FieldDataType.Guid,
+            Enabled = true
+        };
+        formInfo.AddFormItem(formItem);
+
+        formItem = new FormFieldInfo
+        {
+            Name = nameof(AiraChatMessageInfo.AiraChatMessageText),
+            AllowEmpty = false,
+            Visible = true,
+            Precision = 0,
+            DataType = FieldDataType.LongText,
+            Enabled = true
+        };
+        formInfo.AddFormItem(formItem);
+
+        formItem = new FormFieldInfo
+        {
+            Name = nameof(AiraChatMessageInfo.AiraChatMessageUserId),
+            AllowEmpty = false,
+            Visible = true,
+            Precision = 0,
+            DataType = FieldDataType.Integer,
+            Enabled = true,
+            ReferenceToObjectType = UserInfo.OBJECT_TYPE,
+            ReferenceType = ObjectDependencyEnum.Required
+        };
+        formInfo.AddFormItem(formItem);
+
+        formItem = new FormFieldInfo
+        {
+            Name = nameof(AiraChatMessageInfo.AiraChatMessageCreatedWhen),
+            AllowEmpty = false,
+            Visible = true,
+            DataType = FieldDataType.DateTime,
+            Enabled = true,
+        };
+        formInfo.AddFormItem(formItem);
+
+        formItem = new FormFieldInfo
+        {
+            Name = nameof(AiraChatMessageInfo.AiraChatMessageRole),
+            AllowEmpty = false,
+            Visible = true,
+            Precision = 0,
+            DataType = FieldDataType.Text,
+            Enabled = true
+        };
+        formInfo.AddFormItem(formItem);
 
         SetFormDefinition(info, formInfo);
 
