@@ -1,0 +1,198 @@
+.c-app{
+  position: relative;
+  width: 100%;
+  &_inner{
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    background: $k-app-bg;
+    inset: 0;
+    overflow-x: clip;
+    overflow-y: scroll;
+    scrollbar-width: none;
+    &::-webkit-scrollbar {
+      width: 0;
+      height: 0;
+    }
+
+  }
+  &_header{
+    position: fixed;
+    inset: 0 0 auto;
+    padding: .75rem 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: $k-app-bg;
+    h1{
+      line-height: 2.5rem;
+    }
+    @include media-breakpoint-up(md){
+      padding: 5vh 0 1.13vh;
+      position: sticky;
+      background: $k-app-bg url("../img/status-bar.png") no-repeat center top;
+      background-size: 89% auto;
+      h1{
+        line-height: 1.5rem;
+      }
+    }
+  }
+  &_title{
+    font-size: .875rem;
+    font-weight: $font-weight-bold;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    padding-top: .125rem;
+    .c-icon{
+      font-size: 1.5rem;
+      margin-right: .5rem;
+    }
+  }
+
+  &_body{
+    padding-block: 5rem .75rem;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow: hidden;
+    h1, h2, h3, h4, h5, h6, p{
+      margin-bottom: 0;
+    }
+    .form-control{
+      border: none;
+    }
+    .form-label{
+      margin: .375rem 0 .375rem;
+      font-size: 1rem;
+      font-weight: 400;
+    }
+
+    &.login{
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-grow: 1;
+    }
+
+    .c-app_logo{
+      height: 6.875rem;
+    }
+
+    .form-control{
+      background: transparent;
+      border: 1px solid #E5DEDC;
+      border-radius: 1.5rem;
+      padding: .75rem 1.5rem;
+      font-size: 1rem;
+      line-height: 1.5;
+    }
+
+    @include media-breakpoint-up(md){
+      padding-block: .75rem;
+    }
+  }
+
+  &_loading{
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: var(--k-app-card-bg,#f7f1ff);
+    z-index: 5;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    &:before {
+      content: "";
+      display: block;
+      width: 4rem;
+      height: 4rem;
+      border: .625rem solid var(--k-primary, #f0561a);
+      border-left-color: var(--k-app-card-bg, #f7f1ff);
+      border-radius: 50%;
+      animation: loading-spinner 1.5s linear infinite;
+    }
+
+  }
+
+  .progress-bar{
+    min-width: 2rem;
+    max-width: 100%;
+  }
+
+  .c-card{
+    background: $k-app-card-bg;
+    &.bg-2{
+      background: $k-app-card-bg-2;
+      color: $k-app-bg;
+    }
+    &_heading{
+      &.ellipsis-3{
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        line-height: 1.2em;
+        height: 3.6em;
+      }
+    }
+  }
+
+  
+    .c-app{
+      &_inner{
+        &.is-loaded{
+        overflow: auto;
+
+        .c-app_loading{
+          visibility: hidden;
+          opacity: 0;
+          transition: .5s all ease;
+        }
+      }
+    }  
+  }
+
+  @include media-breakpoint-up(md){
+    aspect-ratio: 971 / 2000;
+    width: auto;
+    min-height: 88vh;
+    min-width: 20rem;
+    &:after{
+      content: '';
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background: url("../img/iphone15-frame.png") no-repeat center center;
+      background-size: cover;
+      z-index: 20;
+    }
+
+    &_inner{
+      inset: 0.8% 2.1% .8% 2.7%;
+      border-radius: 13%/6.1%;
+      flex-direction: column;
+    }
+
+  }
+}
+
+@keyframes loading-spinner {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+#chat-view{
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}

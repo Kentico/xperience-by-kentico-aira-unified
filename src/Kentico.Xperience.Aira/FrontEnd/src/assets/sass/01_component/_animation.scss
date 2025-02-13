@@ -1,0 +1,27 @@
+.c-checkmark{
+  width: 40%;
+  display: block;
+  margin: 0 auto;
+  .path{
+    stroke-dasharray: 100;
+    stroke-dashoffset: 100;
+    stroke-linecap: round;
+    stroke: $k-primary;
+  }
+
+  &.do-animation{
+    .path{
+      stroke-dashoffset: -100;
+      animation: dash-check 1s .25s ease-in-out forwards;
+    }
+  }
+}
+
+@keyframes dash-check {
+  0% {
+    stroke-dashoffset: 100;
+  }
+  100% {
+    stroke-dashoffset: 200;
+  }
+}

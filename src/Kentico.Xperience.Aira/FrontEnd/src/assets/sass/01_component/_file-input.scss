@@ -1,0 +1,51 @@
+.c-dropzone{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-direction: column;
+  padding: 1rem 2rem;
+  background: $k-app-card-bg;
+  border: 4px dashed $k-app-card-bg-2;
+  border-radius: $k-border-radius;
+  gap: .75rem;
+  text-align: center;
+
+  .c-icon{
+    font-size: 3rem;
+    color: $k-app-card-bg-2;
+  }
+  &_note{
+    display: block;
+    color: $gray-500;
+    line-height: 1.2;
+    font-size: .75rem;
+  }
+}
+
+.c-file{
+  display: flex;
+  align-items: center;
+  width: 100%;
+  gap: .75rem;
+  font-size: .875rem;
+
+  & + &{
+    margin-top: .375rem;
+  }
+  &_btn{
+    flex-shrink: 0;
+    --bs-btn-padding-x: .75rem;
+    --bs-btn-padding-y: .625rem;
+    display: inline-flex;
+    align-items: center;
+    .c-icon{
+      font-size: 1rem;
+    }
+  }
+
+  &.uploaded{
+    padding-left: 1.5rem;
+    background: $k-app-card-bg;
+    border-radius: $border-radius-pill;
+  }
+}

@@ -1,0 +1,26 @@
+@include media-breakpoint-up(xs){
+  .columns-xs-2{
+    columns: 2;
+    column-gap: 1rem;
+    > *{
+      break-inside: avoid-column;
+    }
+  }
+}
+@include media-breakpoint-up(md){
+  .columns-md-1{
+    columns: 1;
+  }
+}
+
+@include media-breakpoint-up(md){
+  .collapse.md-dont-collapse{
+    display: block;
+    height: auto !important;
+    visibility: visible;
+  }
+}
+
+.object-fit-cover{
+  object-fit: cover;
+}

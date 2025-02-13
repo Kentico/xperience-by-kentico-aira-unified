@@ -1,0 +1,214 @@
+.c-form{
+  &_heading{
+    color: $k-form-heading-color;
+    &_dot{
+      color: $k-form-heading-dot;
+    }
+  }
+}
+
+.c-select{
+  &.subheading{
+    border: none;
+    font-size: 1.125rem;
+    @include media-breakpoint-up(sm){
+      width: 56%;
+    }
+    @include media-breakpoint-up(md){
+      width: 41%;
+    }
+    @include media-breakpoint-up(lg){
+      width: 30%;
+    }
+  }
+  &.subheading2{
+    border: none;
+    font-size: 1.125rem;
+    font-weight: $font-weight-bold;
+    width: auto;
+  }
+}
+
+textarea.form-control{
+  height: 6.25rem;
+  resize: none;
+}
+
+.form-control[type="radio"] {
+  width: 16px;
+  height: 16px;
+  margin-top: 0.25em;
+  vertical-align: top;
+  background-color: #fff;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  border: 1px solid $purple;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  color-adjust: exact;
+  float: left;
+  border-radius: 0.5em;
+  padding: 0;
+  margin-right: 8px;
+}
+
+.form-control[type="radio"]:checked {
+  // background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3e%3cpath fill='none' stroke='%23fff' stroke-linecap='round' stroke-linejoin='round' stroke-width='3' d='m6 10 3 3 6-6'/%3e%3c/svg%3e");
+  background-color: #{$k-primary};
+}
+
+.ktc-radio-list {
+  display: flex;
+  flex-direction: column;
+
+  label {
+    vertical-align: middle;
+  }
+
+  input {
+    margin-right: 0.5rem;
+    accent-color: #f0561a;
+    width: 1rem;
+    height: 1rem;
+    vertical-align: middle;
+  }
+}
+
+.ktc-radio {
+  label {
+   display: -webkit-box;
+  }
+}
+
+span {
+  .ktc-radio { 
+    label {
+      padding-top: 0.5rem;
+      display: block;
+    }
+  }
+}
+
+.form-control[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  margin-top: 0.25em;
+  vertical-align: top;
+  background-color: #fff;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  border: 1px solid $purple;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  color-adjust: exact;
+  float: left;
+  border-radius: 0.25em;
+  padding: 0;
+  margin-right: 8px;
+}
+
+.form-control[type="checkbox"]:checked {
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3e%3cpath fill='none' stroke='%23fff' stroke-linecap='round' stroke-linejoin='round' stroke-width='3' d='m6 10 3 3 6-6'/%3e%3c/svg%3e");
+  background-color: #{$k-primary};
+}
+
+.ktc-checkbox {
+  label {
+   display: -webkit-box;
+  }
+}
+
+span {
+  .ktc-checkbox { 
+    label {
+      padding-top: 0.5rem;
+      display: block;
+    }
+  }
+}
+
+.form-control.search{
+  background-image: url("#{$img-path}icons/search.svg");
+  background-repeat: no-repeat;
+  background-position: left 1.125rem center;
+  background-size: 1rem 1rem;
+  padding-left: 2.75rem;
+}
+
+.form{
+  form{
+  display: grid;
+  input[type=submit] {
+    margin: 1.5rem 0;
+    background-color: #{$k-primary};
+    color: #{$white};
+    border: none;
+    border-top-left-radius: 1.75rem;
+    border-bottom-left-radius: 1.75rem;
+    border-top-right-radius: 1.75rem;
+    border-bottom-right-radius: 1.75rem;
+    transition: .15s opacity, .15s transform, .15s background-color;
+    letter-spacing: .1em;
+    white-space: nowrap;
+    font-size: $btn-font-size;
+    font-weight: $font-weight-bold;
+    line-height: $btn-line-height;
+    padding: $btn-padding-y $btn-padding-x;
+    width: max-content;
+    justify-self: center;
+    text-transform: uppercase;
+
+    &:hover{
+      background-color: #{$k-primary-hover};
+      border-color: #{$k-primary-hover};
+      color: #{$white};
+      border: none;
+    }
+  }
+
+  .form-control{
+    margin-top: 0.75rem;
+
+    &.input-validation-error{
+      color: #FF4547;
+      border-color: #FF4547;
+      border-width: 2px;
+    }
+  }
+
+  .form-field{
+    margin: 1rem 0;
+    position: relative;
+
+    .control-label{
+      font-size: 1rem;
+      font-weight: 400;
+    }
+
+    .field-validation-error{
+      position: absolute;
+      line-height: 1.5rem;
+      margin-top: 0.25rem;
+      padding: 0.125rem 0;
+      display: inline-block;
+      color: #FF4547;
+      font-size: 0.875rem;
+      font-weight: 400;
+    }
+  }
+  }
+
+  .formwidget-submit-text {
+    text-align: center;
+    margin: 2rem 0;
+    font-weight: $font-weight-bold;
+  }
+
+  h1, h2, h3, h4, h5{
+    color: #{$white};
+  }
+}

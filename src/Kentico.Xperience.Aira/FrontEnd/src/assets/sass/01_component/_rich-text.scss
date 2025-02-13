@@ -1,0 +1,35 @@
+.c-rich-text{
+  > :first-child{
+    margin-top: 0 !important;
+  }
+  > :last-child{
+    margin-bottom: 0 !important;
+  }
+  p{
+    white-space: pre-line;
+  }
+  &.alert-bar{
+    h2, h3, h4{
+      font-size: 1rem;
+      line-height: 1.333333333;
+    }
+  }
+  &.hospital-detail{
+    h2{
+      font-size: 1.125rem;
+      line-height: 1.333333333;
+    }
+    p{
+      margin-block: 1rem;
+    }
+    h2, h3, h4{
+      margin-block: 3rem 1.5rem;
+    }
+    @include media-breakpoint-up(sm){
+      h2{
+        font-size: 1.375rem;
+        line-height: 1.1818181818;
+      }
+    }
+  }
+}

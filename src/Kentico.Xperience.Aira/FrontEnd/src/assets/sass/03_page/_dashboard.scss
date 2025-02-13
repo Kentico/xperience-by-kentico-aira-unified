@@ -1,0 +1,56 @@
+@use "sass:list";
+@use "sass:math";
+
+.p-dashboard{
+  .container{
+    position: relative;
+    z-index: 1;
+  }
+
+  .c-card{
+    &.lg{
+      .row{
+        --bs-gutter-x: 1rem;
+        --bs-gutter-y: 1rem;
+      }
+    }
+  }
+
+  .c-circle{
+    border: 1px solid;
+    &_wrapper{
+      position: absolute;
+      inset: 0;
+      z-index: -1;
+    }
+    $dashboard-circles-bg: $k-dashboard-circle-1-bg $k-dashboard-circle-2-bg $k-dashboard-circle-3-bg $k-dashboard-circle-4-bg $k-dashboard-circle-5-bg $k-dashboard-circle-6-bg $k-dashboard-circle-7-bg;
+    $dashboard-circles-border: $k-dashboard-circle-1-border $k-dashboard-circle-2-border $k-dashboard-circle-3-border $k-dashboard-circle-4-border $k-dashboard-circle-5-border $k-dashboard-circle-6-border $k-dashboard-circle-7-border;
+    $dashboard-circles-width: 128px 42px 147px 54px 55px 121px 279px;
+    $dashboard-circles-position: [23.7% auto auto -13px, 28.4% auto auto -33px, auto auto 12.5% -71px, auto auto 11.5% -73px, 41.6% -28px auto auto, auto -28px 24.77% auto, auto -222px 11.5% auto];
+    @for $i from 1 through 7{
+      &.circle-#{$i}{
+        border-color: list.nth($dashboard-circles-border, $i);
+        background-color: list.nth($dashboard-circles-bg, $i);
+        padding: math.div(list.nth($dashboard-circles-width, $i), 2);
+        inset: list.nth($dashboard-circles-position, $i);
+      }
+    }
+  }
+
+  @include media-breakpoint-up(md){
+    .c-card{
+      &.lg{
+        padding: 2.25rem;
+        .row{
+          --bs-gutter-x: 2.25rem;
+          --bs-gutter-y: 2.25rem;
+        }
+      }
+    }
+  }
+  @include media-breakpoint-up(xl){
+    .container{
+      max-width: 1284px;
+    }
+  }
+}
