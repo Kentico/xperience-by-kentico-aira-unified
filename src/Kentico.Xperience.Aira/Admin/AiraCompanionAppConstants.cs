@@ -77,9 +77,9 @@ public static class AiraCompanionAppConstants
     public const string PictureNetworkGraphImgPath = "img/icons/network-purple.svg";
 
     /// <summary>
-    /// Path where the hat icon is located.
+    /// Path where the star icon is located.
     /// </summary>
-    public const string PictureStarImgPath = "img/icons/stars-icon-purple.svg";
+    public const string PictureStarImgPath = "img/icons/stars-icon.svg";
 
     /// <summary>
     /// Name of the Xperience Admin User authentication scheme.

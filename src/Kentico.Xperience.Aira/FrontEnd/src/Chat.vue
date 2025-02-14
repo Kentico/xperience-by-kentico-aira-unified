@@ -134,7 +134,8 @@
                     }
                 }">
           </deep-chat>
-         
+
+          <InstallDialogComponent v-if="!isInstalledPWA" :baseUrl="baseUrl" :logoImgRelativePath="navBarModel.logoImgRelativePath" />
            <!-- <div>
             <div class="c-prompt-suggestions">
               <div class="c-prompt-suggestions_inner">
@@ -232,10 +233,12 @@
 <script>
 import 'deep-chat';
 import NavBarComponent from "./Navigation.vue";
+import InstallDialogComponent from './InstallDialog.vue';
 
 export default {
     components: {
-        NavBarComponent
+        NavBarComponent,
+        InstallDialogComponent
     },
     props: {
         airaBaseUrl: null,
@@ -253,13 +256,17 @@ export default {
             started: false,
             messagesMetadata: new Map(),
             history: [],
-            showAllSuggestions: false
+            showAllSuggestions: false,
+            isInstalledPWA: false
         }
     },
     mounted() {
         document.onreadystatechange = () => {
             if (document.readyState === "complete") {
                 this.main();
+
+                this.isInstalledPWA = window.matchMedia('(display-mode: window-controls-overlay)').matches ||
+                    window.matchMedia('(display-mode: standalone)').matches;
             }
         };
     },

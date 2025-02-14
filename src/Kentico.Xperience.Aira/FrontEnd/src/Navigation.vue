@@ -54,7 +54,10 @@
 </template>
 
 <script>
+
 export default {
+    components: {
+    },
     props: {
         baseUrl: null,
         navBarModel: null,
@@ -73,7 +76,8 @@ export default {
     },
     methods: {
         main() {
-        }
+            
+        },
     }
 }
 </script>
