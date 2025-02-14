@@ -72,9 +72,9 @@
 
     &.login{
       display: flex;
-      justify-content: center;
       align-items: center;
       flex-grow: 1;
+      padding-block: 10vh;
     }
 
     .c-app_logo{
