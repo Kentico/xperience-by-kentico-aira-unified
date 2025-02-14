@@ -191,8 +191,6 @@ public sealed class AiraCompanionAppController : Controller
             };
         }
 
-        airaChatService.SaveMessage(result.Message ?? "", user.UserID, AiraCompanionAppConstants.AiraChatRoleName);
-
         return Ok(result);
     }
 
