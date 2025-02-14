@@ -11,4 +11,6 @@ public class SignInViewModel
     /// ACA base url.
     /// </summary>
     public string PathBase { get; set; } = string.Empty;
+
+    public string LogoImageRelativePath { get; set; } = string.Empty;
 }

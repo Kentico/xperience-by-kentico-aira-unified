@@ -323,7 +323,8 @@ public sealed class AiraCompanionAppController : Controller
         var model = new SignInViewModel
         {
             PathBase = airaPathBase,
-            ChatRelativeUrl = AiraCompanionAppConstants.ChatRelativeUrl
+            ChatRelativeUrl = AiraCompanionAppConstants.ChatRelativeUrl,
+            LogoImageRelativePath = $"/{AiraCompanionAppConstants.RCLUrlPrefix}/{AiraCompanionAppConstants.PictureStarImgPath}"
         };
 
         return View("~/Authentication/SignIn.cshtml", model);

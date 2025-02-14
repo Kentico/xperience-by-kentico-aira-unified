@@ -1,5 +1,6 @@
 ﻿import ChatComponent from "./Chat.vue";
 import AssetsComponent from "./Assets.vue";
+import InstallDialogComponent from "./InstallDialog.vue";
 import { createApp } from "vue";
 
 function mountChat(chatElement) {
@@ -39,6 +40,13 @@ function mountSignin(signinElement) {
             openModalLogin(signinElement);
         });
     }
+
+    const baseUrl = signinElement.dataset.baseUrl || "";
+    const logoImgRelativePath = signinElement.dataset.logoImgRelativePath || "";
+    createApp(InstallDialogComponent, {
+        baseUrl,
+        logoImgRelativePath
+    }).mount("#install-dialog");
 }
 
 function openModalLogin(signinElement) {

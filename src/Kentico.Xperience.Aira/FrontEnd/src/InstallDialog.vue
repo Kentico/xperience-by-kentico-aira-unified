@@ -54,8 +54,6 @@ export default {
     },
     methods: {
         main() {
-            console.log(this.baseUrl);
-            console.log(this.logoImgRelativePath);
             if (!this.isIOS())
             {
                 window.addEventListener('beforeinstallprompt', e => {
