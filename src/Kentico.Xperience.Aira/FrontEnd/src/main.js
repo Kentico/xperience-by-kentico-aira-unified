@@ -43,6 +43,7 @@ function mountSignin(signinElement) {
 
     const baseUrl = signinElement.dataset.baseUrl || "";
     const logoImgRelativePath = signinElement.dataset.logoImgRelativePath || "";
+    
     createApp(InstallDialogComponent, {
         baseUrl,
         logoImgRelativePath

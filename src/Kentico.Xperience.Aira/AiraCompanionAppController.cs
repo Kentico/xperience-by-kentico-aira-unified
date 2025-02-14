@@ -30,14 +30,14 @@ public sealed class AiraCompanionAppController : Controller
     private readonly IAiraInsightsService airaInsightsService;
     private readonly IAiraChatService airaChatService;
     private readonly IAiraAssetService airaAssetService;
-    private readonly INavBarService airaUIService;
+    private readonly INavBarService navBarService;
 
     public AiraCompanionAppController(
         AdminUserManager adminUserManager,
         IAiraConfigurationService airaConfigurationService,
         IAiraInsightsService airaInsightsService,
         IAiraAssetService airaAssetService,
-        INavBarService airaUIService,
+        INavBarService navBarService,
         IAiraChatService airaChatService)
     {
         this.adminUserManager = adminUserManager;
@@ -45,7 +45,7 @@ public sealed class AiraCompanionAppController : Controller
         this.airaInsightsService = airaInsightsService;
         this.airaAssetService = airaAssetService;
         this.airaChatService = airaChatService;
-        this.airaUIService = airaUIService;
+        this.navBarService = navBarService;
     }
 
     /// <summary>
@@ -77,7 +77,7 @@ public sealed class AiraCompanionAppController : Controller
             PathBase = airaPathBase,
             History = await airaChatService.GetUserChatHistory(user.UserID),
             AIIconImagePath = $"/{AiraCompanionAppConstants.RCLUrlPrefix}/{AiraCompanionAppConstants.PictureStarImgPath}",
-            NavBarViewModel = await airaUIService.GetNavBarViewModel(AiraCompanionAppConstants.ChatRelativeUrl),
+            NavBarViewModel = await navBarService.GetNavBarViewModel(AiraCompanionAppConstants.ChatRelativeUrl),
             RemovePromptUrl = AiraCompanionAppConstants.RemoveUsedPromptGroupRelativeUrl
         };
 
@@ -263,7 +263,7 @@ public sealed class AiraCompanionAppController : Controller
 
         var model = new AssetsViewModel
         {
-            NavBarViewModel = await airaUIService.GetNavBarViewModel(AiraCompanionAppConstants.SmartUploadRelativeUrl),
+            NavBarViewModel = await navBarService.GetNavBarViewModel(AiraCompanionAppConstants.SmartUploadRelativeUrl),
             PathBase = airaPathBase
         };
 
@@ -318,13 +318,15 @@ public sealed class AiraCompanionAppController : Controller
     [AllowAnonymous]
     public async Task<IActionResult> SignIn()
     {
-        var airaPathBase = await GetAiraPathBase();
+        var airaConfiguration = await airaConfigurationService.GetAiraConfiguration();
+        var logoUrl = navBarService.GetMediaFileUrl(airaConfiguration.AiraConfigurationItemAiraRelativeLogoId)?.RelativePath;
+        logoUrl = navBarService.GetSanitizedImageUrl(logoUrl, $"/{AiraCompanionAppConstants.RCLUrlPrefix}/{AiraCompanionAppConstants.PictureStarImgPath}", "AIRA Logo");
 
         var model = new SignInViewModel
         {
-            PathBase = airaPathBase,
+            PathBase = airaConfiguration.AiraConfigurationItemAiraPathBase,
             ChatRelativeUrl = AiraCompanionAppConstants.ChatRelativeUrl,
-            LogoImageRelativePath = $"/{AiraCompanionAppConstants.RCLUrlPrefix}/{AiraCompanionAppConstants.PictureStarImgPath}"
+            LogoImageRelativePath = logoUrl
         };
 
         return View("~/Authentication/SignIn.cshtml", model);

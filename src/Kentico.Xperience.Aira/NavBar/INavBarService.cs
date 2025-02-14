@@ -20,4 +20,6 @@ public interface INavBarService
     /// <param name="identifier">Identifier of the file.</param>
     /// <returns><see cref="IMediaFileUrl"/>The file reference.</returns>
     IMediaFileUrl? GetMediaFileUrl(string identifier);
+
+    string GetSanitizedImageUrl(string? configuredUrl, string defaultUrl, string imagePurpose);
 }

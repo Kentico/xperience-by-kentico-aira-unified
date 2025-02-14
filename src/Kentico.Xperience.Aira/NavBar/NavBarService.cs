@@ -74,7 +74,7 @@ internal class NavBarService : INavBarService
         return default;
     }
 
-    private string GetSanitizedImageUrl(string? configuredUrl, string defaultUrl, string imagePurpose)
+    public string GetSanitizedImageUrl(string? configuredUrl, string defaultUrl, string imagePurpose)
     {
         if (string.IsNullOrEmpty(configuredUrl))
         {
