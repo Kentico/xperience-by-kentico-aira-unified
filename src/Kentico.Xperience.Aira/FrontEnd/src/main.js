@@ -41,13 +41,19 @@ function mountSignin(signinElement) {
         });
     }
 
-    const baseUrl = signinElement.dataset.baseUrl || "";
-    const logoImgRelativePath = signinElement.dataset.logoImgRelativePath || "";
+    const isInstalledPWA = window.matchMedia('(display-mode: window-controls-overlay)').matches ||
+        window.matchMedia('(display-mode: standalone)').matches;
     
-    createApp(InstallDialogComponent, {
-        baseUrl,
-        logoImgRelativePath
-    }).mount("#install-dialog");
+    if (!isInstalledPWA)
+    {
+        const baseUrl = signinElement.dataset.baseUrl || "";
+        const logoImgRelativePath = signinElement.dataset.logoImgRelativePath || "";
+
+        createApp(InstallDialogComponent, {
+            baseUrl,
+            logoImgRelativePath
+        }).mount("#install-dialog");
+    }
 }
 
 function openModalLogin(signinElement) {
