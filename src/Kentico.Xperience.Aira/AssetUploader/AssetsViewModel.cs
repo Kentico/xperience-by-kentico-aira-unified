@@ -16,4 +16,9 @@ public class AssetsViewModel
     /// View model for the navigation.
     /// </summary>
     public NavBarViewModel NavBarViewModel { get; set; } = new NavBarViewModel();
+
+    /// <summary>
+    /// Allowed file extensions.
+    /// </summary>
+    public List<string> AllowedFileExtensions { get; set; } = [];
 }

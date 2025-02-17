@@ -24,11 +24,13 @@ function mountAssets(assetsElement) {
     const airaBaseUrl = assetsElement.dataset.airaBaseUrl;
     const baseUrl = assetsElement.dataset.baseUrl || "";
     const navBarModel = JSON.parse(assetsElement.dataset.navBarModel || "{}");
+    const allowedFileExtensions = JSON.parse(assetsElement.dataset.allowedFileExtensions);
     
     createApp(AssetsComponent, {
         airaBaseUrl,
         baseUrl,
-        navBarModel
+        navBarModel,
+        allowedFileExtensions
     }).mount("#assets-app");
 }
 

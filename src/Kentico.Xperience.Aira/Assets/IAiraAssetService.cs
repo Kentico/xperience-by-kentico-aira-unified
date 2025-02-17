@@ -22,4 +22,10 @@ public interface IAiraAssetService
     /// <param name="userId">The admin application user id.</param>
     /// <returns>A Task indicating whether the user has the specified permission.</returns>
     Task<bool> DoesUserHaveAiraCompanionAppPermission(string permission, int userId);
+
+    /// <summary>
+    /// Retrieves the file extensions which are configured for mass asset upload.
+    /// </summary>
+    /// <returns>Allowed file extensions.</returns>
+    Task<List<string>> GetAllowedFileExtensions();
 }

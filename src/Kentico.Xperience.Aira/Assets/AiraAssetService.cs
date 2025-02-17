@@ -4,6 +4,7 @@ using CMS.ContentEngine;
 using CMS.Core;
 using CMS.DataEngine;
 using CMS.DataEngine.Query;
+using CMS.FormEngine;
 using CMS.Membership;
 
 using Kentico.Xperience.Aira.Admin;
@@ -56,18 +57,47 @@ internal class AiraAssetService : IAiraAssetService
         return countOfRolesWithTheRightWhereUserIsContained > 0;
     }
 
-    public async Task HandleFileUpload(IFormFileCollection files, int userId)
+    private async Task<Dictionary<string, string>> GetMassAssetUploadConfiguration()
     {
         var massAssetUploadConfiguration = (await settingsKeyProvider
-            .Get()
-            .WhereEquals(nameof(SettingsKeyInfo.KeyName), AiraCompanionAppConstants.MassAssetUploadConfigurationKey)
-            .GetEnumerableTypedResultAsync())
-            .First();
+           .Get()
+           .WhereEquals(nameof(SettingsKeyInfo.KeyName), AiraCompanionAppConstants.MassAssetUploadConfigurationKey)
+           .GetEnumerableTypedResultAsync())
+           .First();
 
         var contentTypeInfo = JsonSerializer.Deserialize<Dictionary<string, string>>(massAssetUploadConfiguration.KeyValue) ??
             throw new InvalidOperationException("No content type is configured for mass upload.");
 
-        var contentTypeGuid = Guid.Parse(contentTypeInfo["ContentTypeGuid"]);
+        return contentTypeInfo;
+    }
+
+    public async Task<List<string>> GetAllowedFileExtensions()
+    {
+        var massAssetConfigurationInfo = await GetMassAssetUploadConfiguration();
+        var contentItemAssetColumnCodeName = massAssetConfigurationInfo["AssetFieldName"];
+        var contentTypeGuid = Guid.Parse(massAssetConfigurationInfo["ContentTypeGuid"]);
+
+        var contentType = (await DataClassInfoProvider.ProviderObject
+           .Get()
+           .WhereEquals(nameof(DataClassInfo.ClassGUID), contentTypeGuid)
+           .GetEnumerableTypedResultAsync())
+           .Single();
+
+        var contentTypeFormInfo = new FormInfo(contentType.ClassFormDefinition);
+        var fields = contentTypeFormInfo.GetFormField(contentItemAssetColumnCodeName);
+
+        var settings = JsonSerializer.Deserialize<List<string>>((string)(fields.Settings["InputImageExtensions"]
+           ?? throw new InvalidOperationException("No file format is configured for Smart Upload.")));
+
+        return settings
+            ?? throw new InvalidOperationException("No file format is configured for Smart Upload.");
+    }
+
+    public async Task HandleFileUpload(IFormFileCollection files, int userId)
+    {
+        var massAssetConfigurationInfo = await GetMassAssetUploadConfiguration();
+
+        var contentTypeGuid = Guid.Parse(massAssetConfigurationInfo["ContentTypeGuid"]);
 
         var contentType = (await DataClassInfoProvider.ProviderObject
             .Get()
@@ -75,14 +105,14 @@ internal class AiraAssetService : IAiraAssetService
             .GetEnumerableTypedResultAsync())
             .Single();
 
-        var contentItemAssetColumnCodeName = contentTypeInfo["AssetFieldName"];
-
         var languageName = (await contentLanguageProvider
             .Get()
             .WhereEquals(nameof(ContentLanguageInfo.ContentLanguageIsDefault), true)
             .GetEnumerableTypedResultAsync())
             .First()
             .ContentLanguageName;
+
+        var contentItemAssetColumnCodeName = massAssetConfigurationInfo["AssetFieldName"];
 
         foreach (var file in files)
         {
@@ -93,7 +123,7 @@ internal class AiraAssetService : IAiraAssetService
     }
 
     /// <summary>
-    /// ID of newly created content item assset.
+    /// ID of newly created content item asset.
     /// </summary>
     /// <param name="createContentItemParameters"></param>
     /// <param name="file"></param>
@@ -107,6 +137,18 @@ internal class AiraAssetService : IAiraAssetService
         var tempDirectory = Directory.CreateTempSubdirectory();
 
         var tempFilePath = Path.Combine(tempDirectory.FullName, file.FileName);
+
+        var allowedExtensions = await GetAllowedFileExtensions();
+
+        var extension = Path.GetExtension(tempFilePath);
+
+        var extensionWithoutLeadingDot = extension[1..];
+
+        if (extension[0] != '.' || !allowedExtensions.Contains(extensionWithoutLeadingDot))
+        {
+            throw new InvalidOperationException($"File type {extension} is not configured for smart asset upload.");
+        }
+
         using var fileStream = File.Create(tempFilePath);
         await file.CopyToAsync(fileStream);
 
@@ -114,7 +156,7 @@ internal class AiraAssetService : IAiraAssetService
 
         var assetMetadata = new ContentItemAssetMetadata()
         {
-            Extension = Path.GetExtension(tempFilePath),
+            Extension = extension,
             Identifier = Guid.NewGuid(),
             LastModified = DateTime.Now,
             Name = Path.GetFileName(tempFilePath),

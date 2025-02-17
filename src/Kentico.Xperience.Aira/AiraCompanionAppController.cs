@@ -275,7 +275,8 @@ public sealed class AiraCompanionAppController : Controller
         var model = new AssetsViewModel
         {
             NavBarViewModel = await airaUIService.GetNavBarViewModel(AiraCompanionAppConstants.SmartUploadRelativeUrl),
-            PathBase = airaPathBase
+            PathBase = airaPathBase,
+            AllowedFileExtensions = await airaAssetService.GetAllowedFileExtensions()
         };
 
         return View("~/AssetUploader/Assets.cshtml", model);

@@ -48,7 +48,7 @@
     <div class="c-app_body">
         <div class="container">
             <form>
-                <input ref="fileInput" hidden type="file" accept=".jpg,.jpeg,.png,.bmp" class="d-none" multiple>
+                <input ref="fileInput" hidden type="file" :accept="fileInputAccept" class="d-none" multiple>
             </form>
             <template v-if="phase == 'empty'">
                 <div class="c-empty-page-layout">
@@ -111,7 +111,13 @@
         props: {
             airaBaseUrl: null,
             baseUrl: null,
-            navBarModel: null
+            navBarModel: null,
+            allowedFileExtensions: null
+        },
+        computed: {
+            fileInputAccept() {
+                return this.allowedFileExtensions.map(ext => `.${ext}`).join(',');
+            }
         },
         data() {
             return {
