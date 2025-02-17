@@ -12,6 +12,8 @@ public class ChatViewModel
     /// </summary>
     public NavBarViewModel NavBarViewModel { get; set; } = new NavBarViewModel();
 
+    public ServicePageViewModel ServicePageViewModel { get; set; } = new ServicePageViewModel();
+
     /// <summary>
     /// Count of messages in User's chat history.
     /// </summary>

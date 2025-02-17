@@ -20,6 +20,7 @@
 
 		<!-- Required to prevent type conflicts with existing types -->
 		<HotChocolateImplicitUsings>disable</HotChocolateImplicitUsings>
+		<UserSecretsId>ac64a589-17e8-4bc2-8726-99ef4319f12b</UserSecretsId>
 	</PropertyGroup>
 
 	<ItemGroup>

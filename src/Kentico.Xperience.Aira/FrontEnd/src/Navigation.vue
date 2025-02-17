@@ -39,8 +39,8 @@
                         </div>
 
                         <hr class="c-nav_hr">
-                        <div class="c-nav_content">
-                            <p id="nav-content"></p>
+                        <div class="">
+                            {{`${this.navBarModel.menuMessage}`}}
                         </div>
                         <div class="c-nav_footer">
                             <p id="appVersion"></p>

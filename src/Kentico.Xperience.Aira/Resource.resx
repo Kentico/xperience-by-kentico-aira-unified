@@ -126,6 +126,15 @@
   <data name="InitialAiraMessage3" xml:space="preserve">
     <value>We can try it right now, choose one of the prompts below or you can use our prompt library below the chat.</value>
   </data>
+  <data name="NavigationMenuMessage" xml:space="preserve">
+    <value>This is a PREVIEW version. Expect updates and improvements.</value>
+  </data>
+  <data name="ServicePageChatTryAgainLater" xml:space="preserve">
+    <value>Please try again later, we'll be back shortly!</value>
+  </data>
+  <data name="ServicePageChatUnavailable" xml:space="preserve">
+    <value>Sorry, Aira chat is currently unavailable due to maintenance.</value>
+  </data>
   <data name="WelcomeBackAiraMessage" xml:space="preserve">
     <value>What can I help you with ?</value>
   </data>

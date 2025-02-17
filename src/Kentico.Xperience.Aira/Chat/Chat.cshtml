@@ -17,7 +17,8 @@
      data-base-url="@baseUrl"
      data-nav-bar-model='@Html.Raw(Json.Serialize(Model.NavBarViewModel))'
      data-history='@Html.Raw(Json.Serialize(Model.History))'
-     data-use-prompt-url='@Model.RemovePromptUrl'>
+     data-use-prompt-url='@Model.RemovePromptUrl'
+     data-service-page-model='@Html.Raw(Json.Serialize(Model.ServicePageViewModel))'>
 </div>
 
 <script>

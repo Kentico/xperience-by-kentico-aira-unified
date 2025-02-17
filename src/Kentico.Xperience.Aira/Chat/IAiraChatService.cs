@@ -19,7 +19,7 @@ public interface IAiraChatService
     /// </summary>
     /// <param name="userId">Admin application user id.</param>
     /// <returns>A task returning a <see cref="AiraChatMessageViewModel"/> with the generated prompts.</returns>
-    AiraPromptGroupModel GenerateAiraPrompts(int userId, List<string> suggestions);
+    AiraPromptGroupModel SaveAiraPrompts(int userId, List<string> suggestions);
 
     /// <summary>
     /// Removes used prompt group.

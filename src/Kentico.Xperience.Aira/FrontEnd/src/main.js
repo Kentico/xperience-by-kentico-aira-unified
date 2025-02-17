@@ -10,6 +10,7 @@ function mountChat(chatElement) {
     const rawHistory = JSON.parse(chatElement.dataset.history || {});
     const aiIconUrl = chatElement.dataset.aiIconUrl || "";
     const usePromptUrl = chatElement.dataset.usePromptUrl || "";
+    const servicePageModel = JSON.parse(chatElement.dataset.servicePageModel || {});
 
     createApp(ChatComponent, {
         airaBaseUrl,
@@ -17,7 +18,8 @@ function mountChat(chatElement) {
         baseUrl,
         usePromptUrl,
         navBarModel,
-        rawHistory
+        rawHistory,
+        servicePageModel
     }).mount("#chat-app");
 }
 

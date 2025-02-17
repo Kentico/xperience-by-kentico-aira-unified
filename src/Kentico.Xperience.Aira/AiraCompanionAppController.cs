@@ -27,7 +27,6 @@ public sealed class AiraCompanionAppController : Controller
 {
     private readonly AdminUserManager adminUserManager;
     private readonly IAiraConfigurationService airaConfigurationService;
-    private readonly IAiraInsightsService airaInsightsService;
     private readonly IAiraChatService airaChatService;
     private readonly IAiraAssetService airaAssetService;
     private readonly INavBarService navBarService;
@@ -35,14 +34,12 @@ public sealed class AiraCompanionAppController : Controller
     public AiraCompanionAppController(
         AdminUserManager adminUserManager,
         IAiraConfigurationService airaConfigurationService,
-        IAiraInsightsService airaInsightsService,
         IAiraAssetService airaAssetService,
         INavBarService navBarService,
         IAiraChatService airaChatService)
     {
         this.adminUserManager = adminUserManager;
         this.airaConfigurationService = airaConfigurationService;
-        this.airaInsightsService = airaInsightsService;
         this.airaAssetService = airaAssetService;
         this.airaChatService = airaChatService;
         this.navBarService = navBarService;
@@ -78,7 +75,14 @@ public sealed class AiraCompanionAppController : Controller
             History = await airaChatService.GetUserChatHistory(user.UserID),
             AIIconImagePath = $"/{AiraCompanionAppConstants.RCLUrlPrefix}/{AiraCompanionAppConstants.PictureStarImgPath}",
             NavBarViewModel = await navBarService.GetNavBarViewModel(AiraCompanionAppConstants.ChatRelativeUrl),
-            RemovePromptUrl = AiraCompanionAppConstants.RemoveUsedPromptGroupRelativeUrl
+            RemovePromptUrl = AiraCompanionAppConstants.RemoveUsedPromptGroupRelativeUrl,
+            ServicePageViewModel = new ServicePageViewModel()
+            {
+                ChatAiraIconUrl = $"/{AiraCompanionAppConstants.RCLUrlPrefix}/{AiraCompanionAppConstants.PictureStarImgPath}",
+                ChatUnavailableIconUrl = $"/{AiraCompanionAppConstants.RCLUrlPrefix}/{AiraCompanionAppConstants.PictureMessageImgPath}",
+                ChatUnvailableMainMessage = Resource.ServicePageChatUnavailable,
+                ChatUnavailableTryAgainMessage = Resource.ServicePageChatTryAgainLater
+            }
         };
 
         if (chatModel.History.Count == 0)
@@ -91,12 +95,12 @@ public sealed class AiraCompanionAppController : Controller
                 },
                 new AiraChatMessageViewModel
                 {
-                    Message = Resource.InitialAiraMessage1,
+                    Message = Resource.InitialAiraMessage2,
                     Role = AiraCompanionAppConstants.AiraChatRoleName
                 },
                 new AiraChatMessageViewModel
                 {
-                    Message = Resource.InitialAiraMessage1,
+                    Message = Resource.InitialAiraMessage3,
                     Role = AiraCompanionAppConstants.AiraChatRoleName
                 },
             ];
@@ -162,7 +166,12 @@ public sealed class AiraCompanionAppController : Controller
 
             if (aiResponse is null)
             {
-                return Ok();
+                result = new AiraChatMessageViewModel
+                {
+                    ServiceUnavailable = true,
+                };
+
+                return Ok(result);
             }
 
             airaChatService.SaveMessage(aiResponse.Response, user.UserID, AiraCompanionAppConstants.AiraChatRoleName);
@@ -177,7 +186,7 @@ public sealed class AiraCompanionAppController : Controller
 
             if (aiResponse.SuggestedQuestions is not null)
             {
-                var promptGroup = airaChatService.GenerateAiraPrompts(user.UserID, aiResponse.SuggestedQuestions);
+                var promptGroup = airaChatService.SaveAiraPrompts(user.UserID, aiResponse.SuggestedQuestions);
                 result.QuickPrompts = promptGroup.QuickPrompts;
                 result.QuickPromptsGroupId = promptGroup.QuickPromptsGroupId.ToString();
             }
@@ -187,6 +196,7 @@ public sealed class AiraCompanionAppController : Controller
             result = new AiraChatMessageViewModel
             {
                 Role = AiraCompanionAppConstants.AiraChatRoleName,
+                ServiceUnavailable = true,
                 Message = $"Error: {ex.Message}"
             };
         }

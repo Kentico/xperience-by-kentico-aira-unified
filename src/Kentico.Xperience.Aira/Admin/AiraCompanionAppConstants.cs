@@ -82,6 +82,11 @@ public static class AiraCompanionAppConstants
     public const string PictureStarImgPath = "img/icons/stars-icon.svg";
 
     /// <summary>
+    /// 
+    /// </summary>
+    public const string PictureMessageImgPath = "img/icons/chatbot-smile-bubble-orange.svg";
+
+    /// <summary>
     /// Name of the Xperience Admin User authentication scheme.
     /// </summary>
     public const string XperienceAdminSchemeName = "Xperience.Application";

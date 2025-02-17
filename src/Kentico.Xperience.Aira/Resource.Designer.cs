@@ -88,6 +88,33 @@ namespace Kentico.Xperience.Aira {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to This is a PREVIEW version. Expect updates and improvements..
+        /// </summary>
+        internal static string NavigationMenuMessage {
+            get {
+                return ResourceManager.GetString("NavigationMenuMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Please try again later, we&apos;ll be back shortly!.
+        /// </summary>
+        internal static string ServicePageChatTryAgainLater {
+            get {
+                return ResourceManager.GetString("ServicePageChatTryAgainLater", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sorry, Aira chat is currently unavailable due to maintenance..
+        /// </summary>
+        internal static string ServicePageChatUnavailable {
+            get {
+                return ResourceManager.GetString("ServicePageChatUnavailable", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to What can I help you with ?.
         /// </summary>
         internal static string WelcomeBackAiraMessage {

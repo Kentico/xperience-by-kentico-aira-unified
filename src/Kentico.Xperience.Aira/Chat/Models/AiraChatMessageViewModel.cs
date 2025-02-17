@@ -34,4 +34,6 @@ public class AiraChatMessageViewModel
     /// Chat message creation time.
     /// </summary>
     public DateTime CreatedWhen { get; set; }
+
+    public bool ServiceUnavailable { get; set; } = false;
 }

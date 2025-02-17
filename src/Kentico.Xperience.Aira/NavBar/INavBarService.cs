@@ -21,5 +21,12 @@ public interface INavBarService
     /// <returns><see cref="IMediaFileUrl"/>The file reference.</returns>
     IMediaFileUrl? GetMediaFileUrl(string identifier);
 
+    /// <summary>
+    /// Retrieves url of an image with configured url or logs warning if it doesn't exist.
+    /// </summary>
+    /// <param name="configuredUrl"></param>
+    /// <param name="defaultUrl"></param>
+    /// <param name="imagePurpose"></param>
+    /// <returns></returns>
     string GetSanitizedImageUrl(string? configuredUrl, string defaultUrl, string imagePurpose);
 }

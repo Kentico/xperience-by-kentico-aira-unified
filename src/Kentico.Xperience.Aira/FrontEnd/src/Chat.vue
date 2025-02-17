@@ -9,7 +9,7 @@
         </div>
 
         <div class="c-app_body">
-          <deep-chat
+          <deep-chat v-if="serviceAvailable"
               :avatars="{
                         ai : {
                             src: `${this.baseUrl}${this.aiIconUrl}`,
@@ -134,7 +134,12 @@
                     }
                 }">
           </deep-chat>
-
+          <div v-if="!serviceAvailable">
+            <img :src="`${this.baseUrl}${this.servicePageModel.chatAiraIconUrl}`" class="c-icon text-primary"/>
+            <img :src="`${this.baseUrl}${this.servicePageModel.chatUnavailableIconUrl}`" class="c-icon text-primary"/>
+            <p>{{`${this.servicePageModel.chatUnvailableMainMessage}`}}</p>
+            <p>{{`${this.servicePageModel.chatUnavailableTryAgainMessage}`}}</p>
+          </div>
           <InstallDialogComponent v-if="!isInstalledPWA" :baseUrl="baseUrl" :logoImgRelativePath="navBarModel.logoImgRelativePath" />
            <!-- <div>
             <div class="c-prompt-suggestions">
@@ -246,7 +251,8 @@ export default {
         baseUrl: null,
         usePromptUrl: null,
         navBarModel: null,
-        rawHistory: null
+        rawHistory: null,
+        servicePageModel: null
     },
     data() {
         return {
@@ -257,7 +263,8 @@ export default {
             messagesMetadata: new Map(),
             history: [],
             showAllSuggestions: false,
-            isInstalledPWA: false
+            isInstalledPWA: false,
+            serviceAvailable: true
         }
     },
     mounted() {
@@ -288,13 +295,14 @@ export default {
                 if (!this.started) {
                     this.started = true;
                     document.addEventListener('visibilitychange', function () {
-                        if (document.visibilityState === 'visible') {
+                        if (document.visibilityState === 'visible' && this.$refs.chatElementRef) {
                             this.$refs.chatElementRef.scrollToBottom();
                         }
                     });
 
                     this.setRequestInterceptor();
                     this.setOnMessage();
+                    this.setOnError();
                     this.setResponseInterceptor();
                     this.setHistory();
                 }
@@ -422,7 +430,12 @@ export default {
                 
                 this.history.push(messageViewModel);
 
-                if (response.quickPrompts.length > 0)
+                if (response.serviceUnavailable)
+                {
+                    this.serviceAvailable = false
+                }
+
+                if (response.quickPrompts && response.quickPrompts.length > 0)
                 {
                     this.$refs.chatElementRef.addMessage(messageViewModel);
                     const promptMessage = this.getPromptsViewModel(response);
@@ -431,7 +444,6 @@ export default {
 
                     return promptMessage;
                 }
-
                 return messageViewModel;
             };
         },
@@ -439,6 +451,11 @@ export default {
             this.$refs.chatElementRef.onMessage = (message) => {
                 this.bindPromptButtons();
             };
+        },
+        setOnError() {
+            this.$refs.chatElementRef.onError = (error) => {
+                this.serviceAvailable = false;
+            }
         },
         setBorders(){
             this.$refs.chatElementRef.style.borderLeftStyle = 'none';
@@ -626,21 +643,9 @@ export default {
             }
         },
         getMessageViewModel(message) {
-            if (message.url !== null) {
-                return {
-                    role: "user",
-                    files: [
-                        {
-                            src: message.url,
-                            type: "image"
-                        }
-                    ]
-                };
-            }
-
             return {
-                role: message.role,
-                text: message.message
+                role: message.role ?? "",
+                text: message.message ?? ""
             }
         },
         isJSONWithProperty(string, property) {

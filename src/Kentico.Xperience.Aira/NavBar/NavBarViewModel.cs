@@ -29,4 +29,9 @@ public class NavBarViewModel
     /// Smart upload menu item model.
     /// </summary>
     public MenuItemModel SmartUploadItem { get; set; } = new MenuItemModel();
+
+    /// <summary>
+    /// The message displayed bellow the navigation items in the menu.
+    /// </summary>
+    public string MenuMessage { get; set; } = string.Empty;
 }

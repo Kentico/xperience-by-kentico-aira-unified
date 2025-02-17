@@ -222,7 +222,7 @@ internal class AiraChatService : IAiraChatService
         return result;
     }
 
-    public AiraPromptGroupModel GenerateAiraPrompts(int userId, List<string> suggestions)
+    public AiraPromptGroupModel SaveAiraPrompts(int userId, List<string> suggestions)
     {
         var chatPromptGroup = new AiraChatPromptGroupInfo
         {
