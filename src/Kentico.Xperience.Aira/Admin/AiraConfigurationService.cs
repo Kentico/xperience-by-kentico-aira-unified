@@ -21,21 +21,21 @@ internal class AiraConfigurationService : IAiraConfigurationService
 
         if (existingConfiguration is null)
         {
-            if (!string.IsNullOrWhiteSpace(configurationModel.RelativePathBase))
+            if (string.IsNullOrWhiteSpace(configurationModel.RelativePathBase))
             {
-                var configurationCount = await airaConfigurationProvider.Get().GetCountAsync();
-
-                if (configurationCount > 0)
-                {
-                    return false;
-                }
-
-                var newConfigurationInfo = configurationModel.MapToAiraConfigurationInfo();
-                airaConfigurationProvider.Set(newConfigurationInfo);
-
-                return true;
+                return false;
             }
-            return false;
+            var configurationCount = await airaConfigurationProvider.Get().GetCountAsync();
+
+            if (configurationCount > 0)
+            {
+                return false;
+            }
+
+            var newConfigurationInfo = configurationModel.MapToAiraConfigurationInfo();
+            airaConfigurationProvider.Set(newConfigurationInfo);
+
+            return true;
         }
 
         existingConfiguration = configurationModel.MapToAiraConfigurationInfo(existingConfiguration);
