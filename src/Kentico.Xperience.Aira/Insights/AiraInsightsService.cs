@@ -24,9 +24,12 @@ internal class AiraInsightsService : IAiraInsightsService
     private readonly IInfoProvider<EmailConfigurationInfo> emailConfigurationInfoProvider;
     private readonly IInfoProvider<ContactInfo> contactInfoProvider;
 
-    private string[]? reusableTypes = null;
-    private string[]? pageTypes = null;
-    private string[]? emailTypes = null;
+    private string[]? reusableTypes;
+    private string[]? emailTypes;
+    private string[]? pageTypes;
+    private string[] ReusableTypes => reusableTypes ??= GetReusableTypes();
+    private string[] PageTypes => pageTypes ??= GetPageTypes();
+    private string[] EmailTypes => emailTypes ??= GetEmailTypes();
 
     public AiraInsightsService(
         IContentItemManagerFactory contentItemManagerFactory,
@@ -314,30 +317,23 @@ internal class AiraInsightsService : IAiraInsightsService
 
     };
 
-    private string[] ReusableTypes
-    {
-        get
-        {
-            reusableTypes ??= DataClassInfoProvider.GetClasses().Where(nameof(DataClassInfo.ClassContentTypeType), QueryOperator.Equals, "Reusable").Select(c => c.ClassName).ToArray();
-            return reusableTypes;
-        }
-    }
+    private static string[] GetReusableTypes() =>
+        DataClassInfoProvider.GetClasses()
+            .Where(nameof(DataClassInfo.ClassContentTypeType), QueryOperator.Equals, "Reusable")
+            .Select(c => c.ClassName)
+            .ToArray();
 
-    private string[] PageTypes
-    {
-        get
-        {
-            pageTypes ??= DataClassInfoProvider.GetClasses().Where(nameof(DataClassInfo.ClassContentTypeType), QueryOperator.Equals, "Website").Select(c => c.ClassName).ToArray();
-            return pageTypes;
-        }
-    }
+    private static string[] GetPageTypes() =>
+        DataClassInfoProvider.GetClasses()
+            .Where(nameof(DataClassInfo.ClassContentTypeType), QueryOperator.Equals, "Website")
+            .Select(c => c.ClassName)
+            .ToArray();
 
-    private string[] EmailTypes
-    {
-        get
-        {
-            emailTypes ??= DataClassInfoProvider.GetClasses().Where(nameof(DataClassInfo.ClassContentTypeType), QueryOperator.Equals, "Email").Select(c => c.ClassName).ToArray();
-            return emailTypes;
-        }
-    }
+
+
+    private static string[] GetEmailTypes() =>
+        DataClassInfoProvider.GetClasses()
+            .Where(nameof(DataClassInfo.ClassContentTypeType), QueryOperator.Equals, "Email")
+            .Select(c => c.ClassName)
+            .ToArray();
 }
