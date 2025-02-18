@@ -31,11 +31,11 @@ internal class NavBarService : INavBarService
         var defaultImageUrl = "path-to-not-found/image.jpg";
         var airaConfiguration = await airaConfigurationService.GetAiraConfiguration();
         var logoUrl = GetMediaFileUrl(airaConfiguration.AiraConfigurationItemAiraRelativeLogoId)?.RelativePath;
-        logoUrl = GetSanitizedImageUrl(logoUrl, defaultImageUrl, "AIRA Logo");
+        var sanitizedLogoUrl = GetSanitizedImageUrl(logoUrl, defaultImageUrl, "AIRA Logo");
 
         return new NavBarViewModel
         {
-            LogoImgRelativePath = logoUrl,
+            LogoImgRelativePath = sanitizedLogoUrl,
             TitleImagePath = activePage == AiraCompanionAppConstants.ChatRelativeUrl ?
              $"/{AiraCompanionAppConstants.RCLUrlPrefix}/{AiraCompanionAppConstants.PictureNetworkGraphImgPath}"
              : $"/{AiraCompanionAppConstants.RCLUrlPrefix}/{AiraCompanionAppConstants.PicturePlaceholderImgPath}",
@@ -76,12 +76,12 @@ internal class NavBarService : INavBarService
 
     private string GetSanitizedImageUrl(string? configuredUrl, string defaultUrl, string imagePurpose)
     {
-        if (string.IsNullOrEmpty(configuredUrl))
+        if (!string.IsNullOrEmpty(configuredUrl))
         {
-            eventLogService.LogWarning(nameof(INavBarService), imagePurpose, "Configured URL is empty, using default");
-            return defaultUrl;
+            return configuredUrl;
         }
 
-        return configuredUrl;
+        eventLogService.LogWarning(nameof(INavBarService), imagePurpose, "Configured URL is empty, using default");
+        return defaultUrl;
     }
 }
