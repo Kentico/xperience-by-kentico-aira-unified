@@ -86,60 +86,6 @@ internal class AiraChatService : IAiraChatService
         airaChatMessageProvider.Set(message);
     }
 
-    public async Task<AiraChatMessage> GenerateAiraPrompts(int userId)
-    {
-        var chatPromptGroup = new AiraChatPromptGroupInfo
-        {
-            AiraChatPromptGroupCreatedWhen = DateTime.Now,
-            AiraChatPromptUserId = userId,
-        };
-
-        airaChatPromptGroupProvider.Set(chatPromptGroup);
-
-        var messages = new List<AiraChatPromptInfo>();
-
-        var drafts = new AiraChatPromptInfo
-        {
-            AiraChatPromptText = "Reusable Drafts",
-            AiraChatPromptChatPromptGroupId = chatPromptGroup.AiraChatPromptGroupId
-        };
-
-        var scheduled = new AiraChatPromptInfo
-        {
-            AiraChatPromptText = "Website Scheduled",
-            AiraChatPromptChatPromptGroupId = chatPromptGroup.AiraChatPromptGroupId
-        };
-
-        var emails = new AiraChatPromptInfo
-        {
-            AiraChatPromptText = "Emails",
-            AiraChatPromptChatPromptGroupId = chatPromptGroup.AiraChatPromptGroupId
-        };
-
-        var contactGroups = new AiraChatPromptInfo
-        {
-            AiraChatPromptText = "Contact Groups",
-            AiraChatPromptChatPromptGroupId = chatPromptGroup.AiraChatPromptGroupId
-        };
-
-        airaChatPromptProvider.Set(drafts);
-        airaChatPromptProvider.Set(scheduled);
-        airaChatPromptProvider.Set(emails);
-        airaChatPromptProvider.Set(contactGroups);
-
-        messages.Add(drafts);
-        messages.Add(scheduled);
-        messages.Add(emails);
-        messages.Add(contactGroups);
-
-        return await Task.FromResult(new AiraChatMessage
-        {
-            QuickPromptsGroupId = chatPromptGroup.AiraChatPromptGroupId.ToString(),
-            CreatedWhen = chatPromptGroup.AiraChatPromptGroupCreatedWhen,
-            QuickPrompts = messages.Select(x => x.AiraChatPromptText)
-        });
-    }
-
     public void RemoveUsedPrompts(string promptGroupId)
     {
         if (int.TryParse(promptGroupId, out var id))

@@ -15,13 +15,6 @@ public interface IAiraChatService
     Task<List<AiraChatMessage>> GetUserChatHistory(int userId);
 
     /// <summary>
-    /// Generates new suggested prompts for a user and saves them in the history.
-    /// </summary>
-    /// <param name="userId">Admin application user id.</param>
-    /// <returns>A task returning a <see cref="AiraChatMessage"/> with the generated prompts.</returns>
-    Task<AiraChatMessage> GenerateAiraPrompts(int userId);
-
-    /// <summary>
     /// Removes used prompt group.
     /// </summary>
     /// <param name="promptGroupId">Prompt group id.</param>

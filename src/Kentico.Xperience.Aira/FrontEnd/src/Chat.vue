@@ -259,7 +259,6 @@ export default {
 
                 if (Object.hasOwn(requestDetails.body, 'messages'))
                 { 
-                    //formData.append('message', requestDetails.body.messages[0].text);
                     jsonData = requestDetails.body.messages[0].text;
                 }
                 else
@@ -333,10 +332,6 @@ export default {
             this.$refs.chatElementRef.style.borderTopStyle = 'none';
             this.$refs.chatElementRef.style.borderRightStyle = 'none';
             this.$refs.chatElementRef.style.borderBottomStyle = 'none';
-        },
-        enableSubmitButtonForUpload() {
-            //this.submitButton.addEventListener('click', this.customSubmitFunction);
-            //this.submitButton.addEventListener('mouseenter', this.enableOnHover);
         },
         addClassesToShadowRoot() {
             let shadowRoot = this.$refs.chatElementRef.shadowRoot;

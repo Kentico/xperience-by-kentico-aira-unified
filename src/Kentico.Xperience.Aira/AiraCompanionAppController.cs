@@ -149,53 +149,11 @@ public sealed class AiraCompanionAppController : Controller
 
         airaChatService.SaveMessage(message ?? "", user.UserID, AiraCompanionAppConstants.UserChatRoleName);
 
-        if (message == "Prompts")
+        response = new AiraChatMessage
         {
-            response = await airaChatService.GenerateAiraPrompts(user.UserID);
-            response.Message = "OK";
-        }
-        else
-        {
-            try
-            {
-                switch (message)
-                {
-                    case "Reusable Drafts":
-                        var reusableDraftResult = await airaInsightsService.GetContentInsights(ContentType.Reusable, user, "Draft");
-                        response = BuildMessage(reusableDraftResult);
-                        break;
-                    case "Website Scheduled":
-                        var websiteScheduledResult = await airaInsightsService.GetContentInsights(ContentType.Website, user, "Scheduled");
-                        response = BuildMessage(websiteScheduledResult);
-                        break;
-                    case "Emails":
-                        var emailsResult = await airaInsightsService.GetEmailInsights(user);
-                        response = BuildMessage(emailsResult);
-                        break;
-                    case "Contact Groups":
-                        var contactGroupsResult = airaInsightsService.GetContactGroupInsights(["Females", "Males"]);
-                        response = BuildMessage(contactGroupsResult);
-                        break;
-                    default:
-                        response = new AiraChatMessage
-                        {
-                            Role = AiraCompanionAppConstants.AiraChatRoleName,
-                            Message = "Ok",
-                            QuickPrompts = message == "Prompts" ?
-                                ["Reusable Drafts", "Website Scheduled", "Emails", "Contact Groups"] : []
-                        };
-                        break;
-                }
-            }
-            catch (Exception ex)
-            {
-                response = new AiraChatMessage
-                {
-                    Role = AiraCompanionAppConstants.AiraChatRoleName,
-                    Message = $"Error: {ex.Message}"
-                };
-            }
-        }
+            Role = AiraCompanionAppConstants.AiraChatRoleName,
+            Message = "Ok"
+        };
 
         airaChatService.SaveMessage(response.Message ?? "", user.UserID, AiraCompanionAppConstants.AiraChatRoleName);
 
