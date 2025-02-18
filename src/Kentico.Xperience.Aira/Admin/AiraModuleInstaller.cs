@@ -61,11 +61,6 @@ internal class AiraModuleInstaller : IAiraModuleInstaller
         formInfo = AddFormItems(formInfo, typeof(AiraConfigurationItemInfo), nameof(AiraConfigurationItemInfo.AiraConfigurationItemId));
 
         SetFormDefinition(info, formInfo);
-
-        if (info.HasChanged)
-        {
-            DataClassInfoProvider.SetDataClassInfo(info);
-        }
     }
 
     private static void InstallAiraChatPromptGroupClass(ResourceInfo resourceInfo)
@@ -83,11 +78,6 @@ internal class AiraModuleInstaller : IAiraModuleInstaller
         formInfo = AddFormItems(formInfo, typeof(AiraChatPromptGroupInfo), nameof(AiraChatPromptGroupInfo.AiraChatPromptGroupId));
 
         SetFormDefinition(info, formInfo);
-
-        if (info.HasChanged)
-        {
-            DataClassInfoProvider.SetDataClassInfo(info);
-        }
     }
 
     private static void InstallAiraChatPromptClass(ResourceInfo resourceInfo)
@@ -105,11 +95,6 @@ internal class AiraModuleInstaller : IAiraModuleInstaller
         formInfo = AddFormItems(formInfo, typeof(AiraChatPromptInfo), nameof(AiraChatPromptInfo.AiraChatPromptId));
 
         SetFormDefinition(info, formInfo);
-
-        if (info.HasChanged)
-        {
-            DataClassInfoProvider.SetDataClassInfo(info);
-        }
     }
 
     private static void InstallAiraChatMessageClass(ResourceInfo resourceInfo)
@@ -127,11 +112,6 @@ internal class AiraModuleInstaller : IAiraModuleInstaller
         formInfo = AddFormItems(formInfo, typeof(AiraChatMessageInfo), nameof(AiraChatMessageInfo.AiraChatMessageId));
 
         SetFormDefinition(info, formInfo);
-
-        if (info.HasChanged)
-        {
-            DataClassInfoProvider.SetDataClassInfo(info);
-        }
     }
 
     private static void SetFormDefinition(DataClassInfo info, FormInfo form)
@@ -146,11 +126,13 @@ internal class AiraModuleInstaller : IAiraModuleInstaller
         {
             info.ClassFormDefinition = form.GetXmlDefinition();
         }
+
+        if (info.HasChanged)
+        {
+            DataClassInfoProvider.SetDataClassInfo(info);
+        }
     }
 
-    /// <summary>
-    /// Loop through all AiraConfigurationItemInfo properties and add them as Form Items
-    /// </summary>
     private static FormInfo AddFormItems(FormInfo formInfo, Type infoType, string idPropertyName)
     {
         var properties = infoType.GetProperties();

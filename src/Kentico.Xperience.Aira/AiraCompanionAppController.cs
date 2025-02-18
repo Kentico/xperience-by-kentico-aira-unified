@@ -1,6 +1,4 @@
-﻿using System.Text;
-
-using CMS.Membership;
+﻿using CMS.Membership;
 
 using HotChocolate.Authorization;
 
@@ -29,7 +27,6 @@ public sealed class AiraCompanionAppController : Controller
 {
     private readonly AdminUserManager adminUserManager;
     private readonly IAiraConfigurationService airaConfigurationService;
-    private readonly IAiraInsightsService airaInsightsService;
     private readonly IAiraChatService airaChatService;
     private readonly IAiraAssetService airaAssetService;
     private readonly INavBarService airaUIService;
@@ -37,14 +34,12 @@ public sealed class AiraCompanionAppController : Controller
     public AiraCompanionAppController(
         AdminUserManager adminUserManager,
         IAiraConfigurationService airaConfigurationService,
-        IAiraInsightsService airaInsightsService,
         IAiraAssetService airaAssetService,
         INavBarService airaUIService,
         IAiraChatService airaChatService)
     {
         this.adminUserManager = adminUserManager;
         this.airaConfigurationService = airaConfigurationService;
-        this.airaInsightsService = airaInsightsService;
         this.airaAssetService = airaAssetService;
         this.airaChatService = airaChatService;
         this.airaUIService = airaUIService;
