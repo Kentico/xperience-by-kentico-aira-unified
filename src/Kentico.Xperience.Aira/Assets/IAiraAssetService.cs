@@ -12,7 +12,6 @@ public interface IAiraAssetService
     /// </summary>
     /// <param name="files">Files which will be added to the corresponding content item asset.</param>
     /// <param name="userId">The admin application user id.</param>
-    /// <returns>Task</returns>
     Task<bool> HandleFileUpload(IFormFileCollection files, int userId);
 
     /// <summary>
