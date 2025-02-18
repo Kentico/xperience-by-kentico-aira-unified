@@ -18,7 +18,7 @@ public class AssetsViewModel
     public NavBarViewModel NavBarViewModel { get; set; } = new NavBarViewModel();
 
     /// <summary>
-    /// Allowed file extensions.
+    /// Relative url to access the file extens
     /// </summary>
-    public List<string> AllowedFileExtensions { get; set; } = [];
+    public string AllowedFileExtensionsUrl { get; set; } = string.Empty;
 }

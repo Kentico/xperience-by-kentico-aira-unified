@@ -93,14 +93,9 @@ public sealed class AiraCompanionAppController : Controller
                 },
                 new AiraChatMessage
                 {
-                    Message = Resource.InitialAiraMessage1,
+                    Message = Resource.InitialAiraMessage2,
                     Role = AiraCompanionAppConstants.AiraChatRoleName
-                },
-                new AiraChatMessage
-                {
-                    Message = Resource.InitialAiraMessage1,
-                    Role = AiraCompanionAppConstants.AiraChatRoleName
-                },
+                }
             ];
         }
         else
@@ -244,8 +239,14 @@ public sealed class AiraCompanionAppController : Controller
             return Redirect(signinRedirectUrl);
         }
 
-        await airaAssetService.HandleFileUpload(request.Files, user.UserID);
-        return Ok();
+        var uploadSuccessful = await airaAssetService.HandleFileUpload(request.Files, user.UserID);
+
+        if (uploadSuccessful)
+        {
+            return Ok();
+        }
+
+        return BadRequest("Attempted to upload file with forbidden format.");
     }
 
     /// <summary>
@@ -276,10 +277,18 @@ public sealed class AiraCompanionAppController : Controller
         {
             NavBarViewModel = await airaUIService.GetNavBarViewModel(AiraCompanionAppConstants.SmartUploadRelativeUrl),
             PathBase = airaPathBase,
-            AllowedFileExtensions = await airaAssetService.GetAllowedFileExtensions()
+            AllowedFileExtensionsUrl = $"{AiraCompanionAppConstants.SmartUploadRelativeUrl}/{AiraCompanionAppConstants.SmartUploadAllowedFileExtensionsUrl}"
         };
 
         return View("~/AssetUploader/Assets.cshtml", model);
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> GetAllowedFileExtensions()
+    {
+        var allowedExtensions = await airaAssetService.GetAllowedFileExtensions();
+
+        return Ok(allowedExtensions);
     }
 
     /// <summary>

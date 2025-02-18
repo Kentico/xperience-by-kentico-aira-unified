@@ -73,6 +73,11 @@ internal class AiraEndpointDataSource : MutableEndpointDataSource
                 AiraCompanionAppConstants.RemoveUsedPromptGroupRelativeUrl,
                 nameof(AiraCompanionAppController.RemoveUsedPromptGroup),
                 (controller, model) => controller.RemoveUsedPromptGroup(model)
+            ),
+            CreateAiraEndpoint(configuration,
+                $"{AiraCompanionAppConstants.SmartUploadRelativeUrl}/{AiraCompanionAppConstants.SmartUploadAllowedFileExtensionsUrl}",
+                nameof(AiraCompanionAppController.GetAllowedFileExtensions),
+                controller => controller.GetAllowedFileExtensions()
             )
         ];
     }

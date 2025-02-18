@@ -13,7 +13,7 @@ public interface IAiraAssetService
     /// <param name="files">Files which will be added to the corresponding content item asset.</param>
     /// <param name="userId">The admin application user id.</param>
     /// <returns>Task</returns>
-    Task HandleFileUpload(IFormFileCollection files, int userId);
+    Task<bool> HandleFileUpload(IFormFileCollection files, int userId);
 
     /// <summary>
     /// Checks whether the specified user has a role which contains the specified permission to the ACA. 
@@ -27,5 +27,5 @@ public interface IAiraAssetService
     /// Retrieves the file extensions which are configured for mass asset upload.
     /// </summary>
     /// <returns>Allowed file extensions.</returns>
-    Task<List<string>> GetAllowedFileExtensions();
+    Task<string> GetAllowedFileExtensions();
 }
