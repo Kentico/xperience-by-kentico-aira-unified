@@ -10,7 +10,6 @@ using Kentico.Xperience.Aira.AssetUploader.Models;
 using Kentico.Xperience.Aira.Authentication;
 using Kentico.Xperience.Aira.Chat;
 using Kentico.Xperience.Aira.Chat.Models;
-using Kentico.Xperience.Aira.Insights;
 using Kentico.Xperience.Aira.NavBar;
 
 using Microsoft.AspNetCore.Http;
@@ -96,11 +95,6 @@ public sealed class AiraCompanionAppController : Controller
                 new AiraChatMessageViewModel
                 {
                     Message = Resource.InitialAiraMessage2,
-                    Role = AiraCompanionAppConstants.AiraChatRoleName
-                },
-                new AiraChatMessageViewModel
-                {
-                    Message = Resource.InitialAiraMessage3,
                     Role = AiraCompanionAppConstants.AiraChatRoleName
                 },
             ];

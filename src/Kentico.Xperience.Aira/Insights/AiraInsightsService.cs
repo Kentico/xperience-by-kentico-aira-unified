@@ -12,7 +12,6 @@ internal class AiraInsightsService : IAiraInsightsService
 {
     private readonly IContentItemManagerFactory contentItemManagerFactory;
     private readonly IContentQueryExecutor contentQueryExecutor;
-    private readonly IInfoProvider<ChannelInfo> channelInfoProvider;
     private readonly IInfoProvider<ContentLanguageInfo> contentLanguageInfoProvider;
     private readonly IInfoProvider<ContactGroupInfo> contactGroupInfoProvider;
     private readonly IInfoProvider<ContactGroupMemberInfo> contactGroupMemberInfoProvider;
@@ -29,7 +28,6 @@ internal class AiraInsightsService : IAiraInsightsService
     public AiraInsightsService(
         IContentItemManagerFactory contentItemManagerFactory,
         IContentQueryExecutor contentQueryExecutor,
-        IInfoProvider<ChannelInfo> channelInfoProvider,
         IInfoProvider<ContentLanguageInfo> contentLanguageInfoProvider,
         IInfoProvider<ContactGroupInfo> contactGroupInfoProvider,
         IInfoProvider<ContactGroupMemberInfo> contactGroupMemberInfoProvider,
@@ -41,7 +39,6 @@ internal class AiraInsightsService : IAiraInsightsService
     {
         this.contentItemManagerFactory = contentItemManagerFactory;
         this.contentQueryExecutor = contentQueryExecutor;
-        this.channelInfoProvider = channelInfoProvider;
         this.contentLanguageInfoProvider = contentLanguageInfoProvider;
         this.contactGroupInfoProvider = contactGroupInfoProvider;
         this.contactGroupMemberInfoProvider = contactGroupMemberInfoProvider;
@@ -73,62 +70,37 @@ internal class AiraInsightsService : IAiraInsightsService
         };
     }
 
-    public async Task<EmailInsightsModel> GetEmailInsights(int userId)
+    public async Task<List<EmailInsightsModel>> GetEmailInsights()
     {
-        var channels = channelInfoProvider.Get().ToList();
-        var statistics = emailStatisticsInfoProvider.Get().ToList();
-        var items = await GetContent(userId, "Email");
+        var statistics = await emailStatisticsInfoProvider.Get().GetEnumerableTypedResultAsync();
 
-        var regularEmails = emailConfigurationInfoProvider.Get().Where(c => c.WhereEquals("EmailConfigurationPurpose", "Regular")).ToList();
+        var regularEmails = await emailConfigurationInfoProvider
+            .Get()
+            .WhereEquals(nameof(EmailConfigurationInfo.EmailConfigurationPurpose), "Regular")
+            .GetEnumerableTypedResultAsync();
 
-        var sent = 0;
-        var delivered = 0;
-        var opened = 0;
-        var clicked = 0;
-        var unsubscribed = 0;
-        var spam = 0;
-
-        var emails = new List<EmailConfigurationInsightsModel>();
+        var emailsInsights = new List<EmailInsightsModel>();
 
         foreach (var email in regularEmails)
         {
-            var channel = channels.FirstOrDefault(ch => ch.ChannelID == email.EmailConfigurationEmailChannelID);
-            var item = items.FirstOrDefault(i => i.Id == email.EmailConfigurationContentItemID);
-
-            emails.Add(new EmailConfigurationInsightsModel
-            {
-                EmailId = email.EmailConfigurationID,
-                EmailName = email.EmailConfigurationName,
-                ChannelId = email.EmailConfigurationEmailChannelID,
-                ChannelName = channel?.ChannelName ?? "",
-                ContentTypeId = item?.ContentTypeId ?? 0,
-                ContentTypeName = item?.ContentTypeName ?? ""
-            });
-
             var stats = statistics.FirstOrDefault(s => s.EmailStatisticsEmailConfigurationID == email.EmailConfigurationID);
 
             if (stats != null)
             {
-                sent += stats.EmailStatisticsTotalSent;
-                delivered += stats.EmailStatisticsEmailsDelivered;
-                opened += stats.EmailStatisticsEmailOpens;
-                clicked += stats.EmailStatisticsEmailUniqueClicks;
-                unsubscribed += stats.EmailStatisticsUniqueUnsubscribes;
-                spam += stats.EmailStatisticsSpamReports ?? 0;
+                emailsInsights.Add(new EmailInsightsModel
+                {
+                    EmailsSent = stats.EmailStatisticsTotalSent,
+                    EmailsDelivered = stats.EmailStatisticsEmailsDelivered,
+                    EmailsOpened = stats.EmailStatisticsEmailOpens,
+                    LinksClicked = stats.EmailStatisticsEmailUniqueClicks,
+                    UnsubscribeRate = stats.EmailStatisticsUniqueUnsubscribes,
+                    SpamReports = stats.EmailStatisticsSpamReports ?? 0,
+                    EmailConfigurationName = email.EmailConfigurationName
+                });
             }
-
         }
 
-        return new EmailInsightsModel
-        {
-            Emails = emails,
-            EmailsSent = sent,
-            EmailsDelivered = delivered,
-            EmailsOpened = opened,
-            LinksClicked = clicked,
-            UnsubscribeRate = unsubscribed,
-            SpamReports = spam
-        };
+        return emailsInsights;
     }
 
     public ContactGroupsInsightsModel GetContactGroupInsights(string[] names)

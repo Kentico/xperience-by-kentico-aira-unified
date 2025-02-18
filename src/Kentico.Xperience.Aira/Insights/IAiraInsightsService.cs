@@ -17,9 +17,8 @@ public interface IAiraInsightsService
     /// <summary>
     /// Gets email insights.
     /// </summary>
-    /// <param name="userId">Admin application user.</param>
     /// <returns><see cref="EmailInsightsModel"/></returns>
-    Task<EmailInsightsModel> GetEmailInsights(int userId);
+    Task<List<EmailInsightsModel>> GetEmailInsights();
 
     /// <summary>
     /// Gets contact groups insights.

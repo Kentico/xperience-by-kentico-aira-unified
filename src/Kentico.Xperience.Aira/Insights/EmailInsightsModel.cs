@@ -6,11 +6,6 @@
 public class EmailInsightsModel
 {
     /// <summary>
-    /// Email configuration insights models.
-    /// </summary>
-    public List<EmailConfigurationInsightsModel> Emails { get; set; } = [];
-
-    /// <summary>
     /// Number of emails sent.
     /// </summary>
     public int EmailsSent { get; set; }
@@ -39,4 +34,6 @@ public class EmailInsightsModel
     /// Number of spam reports.
     /// </summary>
     public int SpamReports { get; set; }
+
+    public string EmailConfigurationName { get; set; } = string.Empty;
 }
