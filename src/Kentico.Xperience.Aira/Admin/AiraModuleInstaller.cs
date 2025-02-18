@@ -40,91 +40,72 @@ internal class AiraModuleInstaller : IAiraModuleInstaller
 
     private static void InstallModuleClasses(ResourceInfo resourceInfo)
     {
-        InstallAiraConfigurationClass(resourceInfo);
-        InstallAiraChatPromptClass(resourceInfo);
-        InstallAiraChatPromptGroupClass(resourceInfo);
-        InstallAiraChatMessageClass(resourceInfo);
+        InstallAiraClass(
+            resourceInfo,
+            AiraConfigurationItemInfo.TYPEINFO.ObjectClassName,
+            AiraConfigurationItemInfo.OBJECT_TYPE,
+            classDisplayName: "Aira Configuration Item",
+            typeof(AiraConfigurationItemInfo),
+            nameof(AiraConfigurationItemInfo.AiraConfigurationItemId)
+        );
+
+        InstallAiraClass(
+            resourceInfo,
+            AiraChatPromptGroupInfo.TYPEINFO.ObjectClassName,
+            AiraChatPromptGroupInfo.OBJECT_TYPE,
+            classDisplayName: "Aira Chat Prompt Group",
+            typeof(AiraChatPromptGroupInfo),
+            nameof(AiraChatPromptGroupInfo.AiraChatPromptGroupId)
+        );
+
+        InstallAiraClass(
+            resourceInfo,
+            AiraChatPromptInfo.TYPEINFO.ObjectClassName,
+            AiraChatPromptInfo.OBJECT_TYPE,
+            classDisplayName: "Aira Chat Prompt",
+            typeof(AiraChatPromptInfo),
+            nameof(AiraChatPromptInfo.AiraChatPromptId)
+        );
+
+        InstallAiraClass(
+          resourceInfo,
+          AiraChatMessageInfo.TYPEINFO.ObjectClassName,
+          AiraChatMessageInfo.OBJECT_TYPE,
+          classDisplayName: "Aira Chat Message",
+          typeof(AiraChatMessageInfo),
+          nameof(AiraChatMessageInfo.AiraChatMessageId)
+      );
     }
 
-    private static void InstallAiraConfigurationClass(ResourceInfo resourceInfo)
+    private static void InstallAiraClass(ResourceInfo resourceInfo, string objectClassName, string objectType, string classDisplayName, Type infoType, string idPropertyName)
     {
-        var info = DataClassInfoProvider.GetDataClassInfo(AiraConfigurationItemInfo.OBJECT_TYPE) ??
-            DataClassInfo.New(AiraConfigurationItemInfo.OBJECT_TYPE);
+        var info = DataClassInfoProvider.GetDataClassInfo(objectType) ??
+            DataClassInfo.New(objectType);
 
-        info.ClassName = AiraConfigurationItemInfo.TYPEINFO.ObjectClassName;
-        info.ClassTableName = AiraConfigurationItemInfo.TYPEINFO.ObjectClassName.Replace(".", "_");
-        info.ClassDisplayName = "Aira Configuration Item";
+        info.ClassName = objectClassName;
+        info.ClassTableName = objectClassName.Replace(".", "_");
+        info.ClassDisplayName = classDisplayName;
         info.ClassResourceID = resourceInfo.ResourceID;
         info.ClassType = ClassType.OTHER;
-        var formInfo = FormHelper.GetBasicFormDefinition(nameof(AiraConfigurationItemInfo.AiraConfigurationItemId));
 
-        formInfo = AddFormItems(formInfo, typeof(AiraConfigurationItemInfo), nameof(AiraConfigurationItemInfo.AiraConfigurationItemId));
-
-        SetFormDefinition(info, formInfo);
+        SetFormDefinition(info, infoType, idPropertyName);
     }
 
-    private static void InstallAiraChatPromptGroupClass(ResourceInfo resourceInfo)
+    private static void SetFormDefinition(DataClassInfo info, Type infoType, string idPropertyName)
     {
-        var info = DataClassInfoProvider.GetDataClassInfo(AiraChatPromptGroupInfo.OBJECT_TYPE) ??
-            DataClassInfo.New(AiraChatPromptGroupInfo.OBJECT_TYPE);
+        var formInfo = FormHelper.GetBasicFormDefinition(idPropertyName);
 
-        info.ClassName = AiraChatPromptGroupInfo.TYPEINFO.ObjectClassName;
-        info.ClassTableName = AiraChatPromptGroupInfo.TYPEINFO.ObjectClassName.Replace(".", "_");
-        info.ClassDisplayName = "Aira Chat Prompt Group";
-        info.ClassResourceID = resourceInfo.ResourceID;
-        info.ClassType = ClassType.OTHER;
-        var formInfo = FormHelper.GetBasicFormDefinition(nameof(AiraChatPromptGroupInfo.AiraChatPromptGroupId));
+        formInfo = AddFormItems(formInfo, infoType, idPropertyName);
 
-        formInfo = AddFormItems(formInfo, typeof(AiraChatPromptGroupInfo), nameof(AiraChatPromptGroupInfo.AiraChatPromptGroupId));
-
-        SetFormDefinition(info, formInfo);
-    }
-
-    private static void InstallAiraChatPromptClass(ResourceInfo resourceInfo)
-    {
-        var info = DataClassInfoProvider.GetDataClassInfo(AiraChatPromptInfo.OBJECT_TYPE) ??
-            DataClassInfo.New(AiraChatPromptInfo.OBJECT_TYPE);
-
-        info.ClassName = AiraChatPromptInfo.TYPEINFO.ObjectClassName;
-        info.ClassTableName = AiraChatPromptInfo.TYPEINFO.ObjectClassName.Replace(".", "_");
-        info.ClassDisplayName = "Aira Chat Prompt";
-        info.ClassResourceID = resourceInfo.ResourceID;
-        info.ClassType = ClassType.OTHER;
-        var formInfo = FormHelper.GetBasicFormDefinition(nameof(AiraChatPromptInfo.AiraChatPromptId));
-
-        formInfo = AddFormItems(formInfo, typeof(AiraChatPromptInfo), nameof(AiraChatPromptInfo.AiraChatPromptId));
-
-        SetFormDefinition(info, formInfo);
-    }
-
-    private static void InstallAiraChatMessageClass(ResourceInfo resourceInfo)
-    {
-        var info = DataClassInfoProvider.GetDataClassInfo(AiraChatMessageInfo.OBJECT_TYPE) ??
-            DataClassInfo.New(AiraChatMessageInfo.OBJECT_TYPE);
-
-        info.ClassName = AiraChatMessageInfo.TYPEINFO.ObjectClassName;
-        info.ClassTableName = AiraChatMessageInfo.TYPEINFO.ObjectClassName.Replace(".", "_");
-        info.ClassDisplayName = "Aira Chat Message";
-        info.ClassResourceID = resourceInfo.ResourceID;
-        info.ClassType = ClassType.OTHER;
-        var formInfo = FormHelper.GetBasicFormDefinition(nameof(AiraChatMessageInfo.AiraChatMessageId));
-
-        formInfo = AddFormItems(formInfo, typeof(AiraChatMessageInfo), nameof(AiraChatMessageInfo.AiraChatMessageId));
-
-        SetFormDefinition(info, formInfo);
-    }
-
-    private static void SetFormDefinition(DataClassInfo info, FormInfo form)
-    {
         if (info.ClassID > 0)
         {
             var existingForm = new FormInfo(info.ClassFormDefinition);
-            existingForm.CombineWithForm(form, new());
+            existingForm.CombineWithForm(formInfo, new());
             info.ClassFormDefinition = existingForm.GetXmlDefinition();
         }
         else
         {
-            info.ClassFormDefinition = form.GetXmlDefinition();
+            info.ClassFormDefinition = formInfo.GetXmlDefinition();
         }
 
         if (info.HasChanged)
