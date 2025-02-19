@@ -12,6 +12,9 @@ public class ChatViewModel
     /// </summary>
     public NavBarViewModel NavBarViewModel { get; set; } = new NavBarViewModel();
 
+    /// <summary>
+    /// View model for the service page displayed when the ai service is unavailable.
+    /// </summary>
     public ServicePageViewModel ServicePageViewModel { get; set; } = new ServicePageViewModel();
 
     /// <summary>

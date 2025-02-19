@@ -45,9 +45,20 @@ public static class AiraCompanionAppConstants
     /// </summary>
     public const string AiraChatRoleName = "ai";
 
+    /// <summary>
+    /// The name of the ai role used for ai endpoint identifier.
+    /// </summary>
     public const string AIRequestAssistantRoleName = "assistant";
 
+    /// <summary>
+    /// The name of the user role used for ai endpoint identifier.
+    /// </summary>
+
     public const string AIRequestUserRoleName = "user";
+
+    /// <summary>
+    /// The ai endpoint.
+    /// </summary>
 
     public const string AiraAIEndpoint = "https://kenticoairaapimanager.azure-api.net/aira/rag";
 
@@ -87,9 +98,9 @@ public static class AiraCompanionAppConstants
     public const string PictureStarImgPath = "img/icons/stars-icon.svg";
 
     /// <summary>
-    /// 
+    /// Path where the chat bot smile bubble orange icon is located.
     /// </summary>
-    public const string PictureMessageImgPath = "img/icons/chatbot-smile-bubble-orange.svg";
+    public const string PictureChatBotSmileBubbleOrangeImgPath = "img/icons/chatbot-smile-bubble-orange.svg";
 
     /// <summary>
     /// Name of the Xperience Admin User authentication scheme.

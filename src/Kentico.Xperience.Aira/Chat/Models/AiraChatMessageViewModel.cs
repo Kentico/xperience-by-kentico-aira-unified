@@ -35,5 +35,8 @@ public class AiraChatMessageViewModel
     /// </summary>
     public DateTime CreatedWhen { get; set; }
 
+    /// <summary>
+    /// True if the ai service is unavailable.
+    /// </summary>
     public bool ServiceUnavailable { get; set; } = false;
 }

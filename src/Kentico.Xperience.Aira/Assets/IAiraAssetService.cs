@@ -3,7 +3,7 @@
 namespace Kentico.Xperience.Aira.Assets;
 
 /// <summary>
-/// Service reponsible for handling files and accessing content item asset management.
+/// Service responsible for handling files and accessing content item asset management.
 /// </summary>
 public interface IAiraAssetService
 {

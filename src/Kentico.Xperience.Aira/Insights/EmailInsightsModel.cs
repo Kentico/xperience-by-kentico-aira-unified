@@ -35,5 +35,8 @@ public class EmailInsightsModel
     /// </summary>
     public int SpamReports { get; set; }
 
+    /// <summary>
+    /// The name of the email configuration.
+    /// </summary>
     public string EmailConfigurationName { get; set; } = string.Empty;
 }

@@ -35,7 +35,19 @@ public interface IAiraChatService
     /// <param name="role">Role of the chat member.</param>
     void SaveMessage(string text, int userId, string role);
 
+    /// <summary>
+    /// Calls the ai endpoint with a message from the user.
+    /// </summary>
+    /// <param name="message">The user message.</param>
+    /// <param name="numberOfIncludedHistoryMessages">Number of history messages added to the context.</param>
+    /// <param name="userId">The user id.</param>
+    /// <returns>A task returning the <see cref="AiraAIResponse"/> with the ai response.</returns>
     Task<AiraAIResponse?> GetAIResponseOrNull(string message, int numberOfIncludedHistoryMessages, int userId);
 
+    /// <summary>
+    /// Updates the chat summary of a user.
+    /// </summary>
+    /// <param name="userId">The user id.</param>
+    /// <param name="summary">New summary.</param>
     void UpdateChatSummary(int userId, string summary);
 }

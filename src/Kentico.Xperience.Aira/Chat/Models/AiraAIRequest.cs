@@ -2,7 +2,7 @@
 
 namespace Kentico.Xperience.Aira.Chat.Models;
 
-public class AiraAIRequest
+internal class AiraAIRequest
 {
     [JsonPropertyName("conversation_history")]
     public List<AiraChatMessageModel> ConversationHistory { get; set; } = [];

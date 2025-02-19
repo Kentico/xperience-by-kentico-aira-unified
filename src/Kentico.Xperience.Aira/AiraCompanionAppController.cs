@@ -62,7 +62,7 @@ public sealed class AiraCompanionAppController : Controller
             ServicePageViewModel = new ServicePageViewModel()
             {
                 ChatAiraIconUrl = $"/{AiraCompanionAppConstants.RCLUrlPrefix}/{AiraCompanionAppConstants.PictureStarImgPath}",
-                ChatUnavailableIconUrl = $"/{AiraCompanionAppConstants.RCLUrlPrefix}/{AiraCompanionAppConstants.PictureMessageImgPath}",
+                ChatUnavailableIconUrl = $"/{AiraCompanionAppConstants.RCLUrlPrefix}/{AiraCompanionAppConstants.PictureChatBotSmileBubbleOrangeImgPath}",
                 ChatUnvailableMainMessage = Resource.ServicePageChatUnavailable,
                 ChatUnavailableTryAgainMessage = Resource.ServicePageChatTryAgainLater
             }
@@ -103,12 +103,16 @@ public sealed class AiraCompanionAppController : Controller
     {
         var user = await adminUserManager.GetUserAsync(User);
 
-        string? message = null;
+        string? message;
 
+#pragma warning disable IDE0079 // Kept for development. This will be restored in subsequent versions.
+#pragma warning disable S6932 // Kept for development. This will be restored in subsequent versions.
         if (request.TryGetValue("message", out var messages))
         {
             message = messages.ToString().Replace("\"", "");
         }
+#pragma warning restore S6932 //
+#pragma warning restore IDE0079 //
         else
         {
             return Ok();
