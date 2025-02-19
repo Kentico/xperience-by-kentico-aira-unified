@@ -132,6 +132,12 @@
   <data name="ServicePageChatUnavailable" xml:space="preserve">
     <value>Sorry, Aira chat is currently unavailable due to maintenance.</value>
   </data>
+  <data name="SmartUploadFilesUploadedMessage" xml:space="preserve">
+    <value>Images created as content items (in draft), added to your content hub</value>
+  </data>
+  <data name="SmartUploadSelectFilesButton" xml:space="preserve">
+    <value>SELECT FILES</value>
+  </data>
   <data name="WelcomeBackAiraMessage" xml:space="preserve">
     <value>What can I help you with ?</value>
   </data>

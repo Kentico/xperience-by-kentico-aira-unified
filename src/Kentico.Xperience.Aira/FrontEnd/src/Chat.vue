@@ -10,104 +10,104 @@
 
         <div class="c-app_body">
             <deep-chat v-if="serviceAvailable"
-              :avatars="{
-                        ai : {
-                            src: `${this.baseUrl}${this.aiIconUrl}`,
-                            styles: {
-                                avatar:
-                                {
-                                    height: '1.75rem',
-                                    width: '1.75rem'
-                                }
-                            }
-                        },
-                        user : {
-                            styles: {
-                                avatar:
-                                {
-                                    height: '1.75rem',
-                                    width: '1.75rem'
-                                }
+                :avatars="{
+                    ai : {
+                        src: `${this.baseUrl}${this.aiIconUrl}`,
+                        styles: {
+                            avatar:
+                            {
+                                height: '1.75rem',
+                                width: '1.75rem'
                             }
                         }
-                    }"
-              :dropupStyles="{
-                        button: {
-                            styles: {
-                                container: {
-                                    default: { backgroundColor: '#eff8ff'},
-                                    hover: { backgroundColor: '#e4f3ff'},
-                                    click: { backgroundColor: '#d7edff'}
-                                }
+                    },
+                    user : {
+                        styles: {
+                            avatar:
+                            {
+                                height: '1.75rem',
+                                width: '1.75rem'
                             }
-                        },
-                        menu: {
+                        }
+                    }
+                }"
+                :dropupStyles="{
+                    button: {
+                        styles: {
                             container: {
-                                boxShadow: '#e2e2e2 0px 1px 3px 2px'
-                            },
-                            item: {
-                                hover: {
-                                    backgroundColor: '#e1f2ff'
-                                },
-                                click: {
-                                    backgroundColor: '#cfeaff'
-                                }
-                            },
-                            iconContainer: {
-                                width: '1.8em'
-                            },
-                            text: {
-                                fontSize: '1.05em'
+                                default: { backgroundColor: '#eff8ff'},
+                                hover: { backgroundColor: '#e4f3ff'},
+                                click: { backgroundColor: '#d7edff'}
                             }
                         }
-                    }"
-              :connect="{
-                        url: `${this.baseUrl}${this.airaBaseUrl}/${this.navBarModel.chatItem.url}/message`,
-                        method: 'POST'
-                    }"
-              :chatStyle="{ height: '100%', width: '100%' }"
-              :history="[]"
-              :textInput="{
-                    styles: {
+                    },
+                    menu: {
                         container: {
-                          borderRadius: '1.5rem',
-                          border: '1px solid #8C8C8C',
-                          backgroundColor: '#ffffff',
-                          boxShadow: 'none',
-                          width: '90%',
+                            boxShadow: '#e2e2e2 0px 1px 3px 2px'
+                        },
+                        item: {
+                            hover: {
+                                backgroundColor: '#e1f2ff'
+                            },
+                            click: {
+                                backgroundColor: '#cfeaff'
+                            }
+                        },
+                        iconContainer: {
+                            width: '1.8em'
                         },
                         text: {
-                          padding: '.625rem .875rem',
-                          fontSize: '.875rem',
-                          color: '#231F20',
-                          lineHeight: '1.333',
-                        },
-                      },
-                      placeholder: {
-                        text: 'Message AIRA' ,
-                        style: {
-                          color: '#999'
+                            fontSize: '1.05em'
                         }
-                      }
+                    }
+                }"
+                :connect="{
+                    url: `${this.baseUrl}${this.airaBaseUrl}/${this.navBarModel.chatItem.url}/message`,
+                    method: 'POST'
+                }"
+              :chatStyle="{ height: '100%', width: '100%' }"
+              :history="[]"
+                :textInput="{
+                    styles: {
+                        container: {
+                            borderRadius: '1.5rem',
+                            border: '1px solid #8C8C8C',
+                            backgroundColor: '#ffffff',
+                            boxShadow: 'none',
+                            width: '90%',
+                        },
+                        text: {
+                            padding: '.625rem .875rem',
+                            fontSize: '.875rem',
+                            color: '#231F20',
+                            lineHeight: '1.333',
+                        },
+                            },
+                            placeholder: {
+                            text: 'Message AIRA' ,
+                            style: {
+                                color: '#999'
+                            }
+                        }
                     }"
               :submitButtonStyles="{
                 submit: {
-                container: {
-                    default: {
-                    width: '1.375rem',
-                    height: '1.375rem',
-                    marginBottom: '0',
-                    padding: '.5rem',
-                    }
-                },
-                svg: {
-                    styles: {
-                    default: {
-                        width: '1.375rem',
-                        height: '1.375rem',
-                    }
-                    }
-                },
+                    container: {
+                        default: {
+                            width: '1.375rem',
+                            height: '1.375rem',
+                            marginBottom: '0',
+                            padding: '.5rem',
+                        }
+                    },
+                    svg: {
+                        styles: {
+                            default: {
+                                width: '1.375rem',
+                                height: '1.375rem',
+                            }
+                        }
+                    },
                     loading: {
                         svg: {
                             styles: {

@@ -28,12 +28,16 @@ function mountAssets(assetsElement) {
     const baseUrl = assetsElement.dataset.baseUrl || "";
     const navBarModel = JSON.parse(assetsElement.dataset.navBarModel || "{}");
     const allowedFileExtensionsUrl = assetsElement.dataset.allowedFileExtensionsUrl || "";
+    const selectFilesButton = assetsElement.dataset.selectFilesButton || "";
+    const uploadSuccessfulMessage = assetsElement.dataset.uploadSuccessfulMessage || "";
     
     createApp(AssetsComponent, {
         airaBaseUrl,
         baseUrl,
         navBarModel,
-        allowedFileExtensionsUrl
+        allowedFileExtensionsUrl,
+        selectFilesButton,
+        uploadSuccessfulMessage,
     }).mount("#assets-app");
 }
 

@@ -211,12 +211,18 @@ public sealed class AiraCompanionAppController : Controller
         {
             NavBarViewModel = await navBarService.GetNavBarViewModel(AiraCompanionAppConstants.SmartUploadRelativeUrl),
             PathBase = airaPathBase,
-            AllowedFileExtensionsUrl = $"{AiraCompanionAppConstants.SmartUploadRelativeUrl}/{AiraCompanionAppConstants.SmartUploadAllowedFileExtensionsUrl}"
+            AllowedFileExtensionsUrl = $"{AiraCompanionAppConstants.SmartUploadRelativeUrl}/{AiraCompanionAppConstants.SmartUploadAllowedFileExtensionsUrl}",
+            SelectFilesButton = Resource.SmartUploadSelectFilesButton,
+            FilesUploadedMessage = Resource.SmartUploadFilesUploadedMessage
         };
 
         return View("~/AssetUploader/Assets.cshtml", model);
     }
 
+    /// <summary>
+    /// Endpoint retrieving the allowed smart upload file extensions.
+    /// </summary>
+    /// <returns></returns>
     [HttpGet]
     public async Task<IActionResult> GetAllowedFileExtensions()
     {
