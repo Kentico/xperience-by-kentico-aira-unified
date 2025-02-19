@@ -4,6 +4,7 @@ using CMS.ContentEngine;
 using CMS.Core;
 using CMS.DataEngine;
 using CMS.DataEngine.Query;
+using CMS.FormEngine;
 using CMS.Membership;
 
 using Kentico.Xperience.Aira.Admin;
@@ -21,14 +22,20 @@ internal class AiraAssetService : IAiraAssetService
     private readonly IInfoProvider<ContentLanguageInfo> contentLanguageProvider;
     private readonly IInfoProvider<SettingsKeyInfo> settingsKeyProvider;
     private readonly IInfoProvider<RoleInfo> roleProvider;
+    private readonly IEventLogService eventLogService;
+    private readonly ISettingsService settingsService;
 
     public AiraAssetService(IInfoProvider<ContentLanguageInfo> contentLanguageProvider,
         IInfoProvider<SettingsKeyInfo> settingsKeyProvider,
-        IInfoProvider<RoleInfo> roleProvider
+        IEventLogService eventLogService,
+        IInfoProvider<RoleInfo> roleProvider,
+        ISettingsService settingsService
         )
     {
         this.contentLanguageProvider = contentLanguageProvider;
         this.roleProvider = roleProvider;
+        this.eventLogService = eventLogService;
+        this.settingsService = settingsService;
         this.settingsKeyProvider = settingsKeyProvider;
     }
 
@@ -56,26 +63,65 @@ internal class AiraAssetService : IAiraAssetService
         return countOfRolesWithTheRightWhereUserIsContained > 0;
     }
 
-    public async Task HandleFileUpload(IFormFileCollection files, int userId)
+    private async Task<Dictionary<string, string>> GetMassAssetUploadConfiguration()
     {
         var massAssetUploadConfiguration = (await settingsKeyProvider
-            .Get()
-            .WhereEquals(nameof(SettingsKeyInfo.KeyName), AiraCompanionAppConstants.MassAssetUploadConfigurationKey)
-            .GetEnumerableTypedResultAsync())
-            .First();
+           .Get()
+           .WhereEquals(nameof(SettingsKeyInfo.KeyName), AiraCompanionAppConstants.MassAssetUploadConfigurationKey)
+           .GetEnumerableTypedResultAsync())
+           .First();
 
         var contentTypeInfo = JsonSerializer.Deserialize<Dictionary<string, string>>(massAssetUploadConfiguration.KeyValue) ??
             throw new InvalidOperationException("No content type is configured for mass upload.");
 
-        var contentTypeGuid = Guid.Parse(contentTypeInfo["ContentTypeGuid"]);
+        return contentTypeInfo;
+    }
+
+    public async Task<string> GetAllowedFileExtensions()
+    {
+        var massAssetConfigurationInfo = await GetMassAssetUploadConfiguration();
+        var contentItemAssetColumnCodeName = massAssetConfigurationInfo["AssetFieldName"];
+        var contentTypeGuid = Guid.Parse(massAssetConfigurationInfo["ContentTypeGuid"]);
+
+        var contentType = (await DataClassInfoProvider.ProviderObject
+           .Get()
+           .WhereEquals(nameof(DataClassInfo.ClassGUID), contentTypeGuid)
+           .GetEnumerableTypedResultAsync())
+           .Single();
+
+        var contentTypeFormInfo = new FormInfo(contentType.ClassFormDefinition);
+        var fields = contentTypeFormInfo.GetFormField(contentItemAssetColumnCodeName);
+
+        var allowedExtensions = fields.Settings["AllowedExtensions"];
+
+        if (allowedExtensions is not string)
+        {
+            eventLogService.LogWarning(nameof(IAiraAssetService), nameof(GetAllowedFileExtensions), "No file format is configured for Smart Upload.");
+
+            return string.Empty;
+        }
+
+        var settings = (string)allowedExtensions;
+
+        if (string.Equals(settings, "_INHERITED_"))
+        {
+            return GetGlobalAllowedFileExtensions();
+        }
+
+        return settings;
+    }
+
+    public async Task<bool> HandleFileUpload(IFormFileCollection files, int userId)
+    {
+        var massAssetConfigurationInfo = await GetMassAssetUploadConfiguration();
+
+        var contentTypeGuid = Guid.Parse(massAssetConfigurationInfo["ContentTypeGuid"]);
 
         var contentType = (await DataClassInfoProvider.ProviderObject
             .Get()
             .WhereEquals(nameof(DataClassInfo.ClassGUID), contentTypeGuid)
             .GetEnumerableTypedResultAsync())
             .Single();
-
-        var contentItemAssetColumnCodeName = contentTypeInfo["AssetFieldName"];
 
         var languageName = (await contentLanguageProvider
             .Get()
@@ -84,29 +130,61 @@ internal class AiraAssetService : IAiraAssetService
             .First()
             .ContentLanguageName;
 
+        var contentItemAssetColumnCodeName = massAssetConfigurationInfo["AssetFieldName"];
+
         foreach (var file in files)
         {
             var createContentItemParameters = new CreateContentItemParameters(contentType.ClassName, null, file.FileName, languageName, "KenticoDefault");
 
-            await CreateContentAssetItem(createContentItemParameters, file, userId, contentItemAssetColumnCodeName);
+            var fileCreated = await CreateContentAssetItem(createContentItemParameters, file, userId, contentItemAssetColumnCodeName);
+
+            if (!fileCreated)
+            {
+                return false;
+            }
         }
+
+        return true;
     }
 
-    /// <summary>
-    /// ID of newly created content item assset.
-    /// </summary>
-    /// <param name="createContentItemParameters"></param>
-    /// <param name="file"></param>
-    /// <param name="userId"></param>
-    /// <param name="contentItemAssetColumnCodeName"></param>
-    /// <returns></returns>
-    private async Task<int> CreateContentAssetItem(CreateContentItemParameters createContentItemParameters, IFormFile file, int userId, string contentItemAssetColumnCodeName)
+    private async Task<bool> IsFileExtensionAllowed(string fileExtension)
+    {
+        fileExtension = fileExtension.ToLowerInvariant().TrimStart('.');
+
+        var allowedExtensions = (await GetAllowedFileExtensions()).ToLowerInvariant();
+
+        if (allowedExtensions.Trim() == string.Empty)
+        {
+            return true;
+        }
+
+        if (fileExtension == string.Empty)
+        {
+            // Handle empty extension
+            return allowedExtensions.Contains(";;") || allowedExtensions.StartsWith(";", StringComparison.Ordinal) || allowedExtensions.EndsWith(";", StringComparison.Ordinal);
+        }
+
+        allowedExtensions = string.Format(";{0};", allowedExtensions);
+        return allowedExtensions.Contains(string.Format(";{0};", fileExtension)) || allowedExtensions.Contains(";." + fileExtension + ";");
+    }
+
+    private async Task<bool> CreateContentAssetItem(CreateContentItemParameters createContentItemParameters, IFormFile file, int userId, string contentItemAssetColumnCodeName)
     {
         var contentItemManager = Service.Resolve<IContentItemManagerFactory>().Create(userId);
 
         var tempDirectory = Directory.CreateTempSubdirectory();
 
         var tempFilePath = Path.Combine(tempDirectory.FullName, file.FileName);
+
+        var extension = Path.GetExtension(tempFilePath);
+
+        if (!await IsFileExtensionAllowed(extension))
+        {
+            eventLogService.LogError(nameof(IAiraAssetService), nameof(CreateContentAssetItem), $"Smart uploader attempted to upload a file in {extension} format, which is not configured for mass upload.");
+
+            return false;
+        }
+
         using var fileStream = File.Create(tempFilePath);
         await file.CopyToAsync(fileStream);
 
@@ -114,7 +192,7 @@ internal class AiraAssetService : IAiraAssetService
 
         var assetMetadata = new ContentItemAssetMetadata()
         {
-            Extension = Path.GetExtension(tempFilePath),
+            Extension = extension,
             Identifier = Guid.NewGuid(),
             LastModified = DateTime.Now,
             Name = Path.GetFileName(tempFilePath),
@@ -128,11 +206,13 @@ internal class AiraAssetService : IAiraAssetService
             { contentItemAssetColumnCodeName, assetMetadataWithSource }
         });
 
-        var contentItemId = await contentItemManager.Create(createContentItemParameters, itemData);
+        await contentItemManager.Create(createContentItemParameters, itemData);
 
         File.Delete(tempFilePath);
         tempDirectory.Delete(true);
 
-        return contentItemId;
+        return true;
     }
+
+    public string GetGlobalAllowedFileExtensions() => settingsService["CMSMediaFileAllowedExtensions"];
 }

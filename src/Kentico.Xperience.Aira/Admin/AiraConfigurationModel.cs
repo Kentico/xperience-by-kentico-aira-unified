@@ -8,7 +8,12 @@ namespace Kentico.Xperience.Aira.Admin;
 public class AiraConfigurationModel
 {
     [RequiredValidationRule]
-    [TextInputComponent(Label = "Relative Path Base", Order = 0, ExplanationText = "Relative path where the ACA is available. The path is relative to the base url of your application.")]
+    [TextInputComponent(Label = "Relative Path Base", Order = 0,
+        ExplanationText = "Relative path where the ACA is available. " +
+        "The path is relative to the base url of your application. " +
+        "It must start with exactly one '/' and must not end with '/' . " +
+        "It can contain only letters, numbers, dashes and underscores. " +
+        "The path will prefix all other paths created by this integration.")]
     public string RelativePathBase { get; set; } = string.Empty;
 
     [RequiredValidationRule]

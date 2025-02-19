@@ -12,7 +12,9 @@
     <link href="@baseUrl/_content/Kentico.Xperience.Aira/css/style.css" rel="stylesheet" type="text/css">
 }
 
-<div id="assets-app" data-aira-base-url="@Model.PathBase" data-base-url="@baseUrl"
-    data-nav-bar-model='@Html.Raw(Json.Serialize(Model.NavBarViewModel))'>
-
+<div id="assets-app"
+    data-aira-base-url="@Model.PathBase"
+    data-base-url="@baseUrl"
+    data-nav-bar-model='@Html.Raw(Json.Serialize(Model.NavBarViewModel))'
+    data-allowed-file-extensions-url="@Model.AllowedFileExtensionsUrl">
 </div>

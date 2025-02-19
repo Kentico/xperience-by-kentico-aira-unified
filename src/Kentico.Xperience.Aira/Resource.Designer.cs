@@ -63,27 +63,18 @@ namespace Kentico.Xperience.Aira {
         /// <summary>
         ///   Looks up a localized string similar to Hi, I&apos;m AIRA your AI powered coworker. I can answer questions about your Kentico Xperience data and even carry out tasks for you. Let me show you how I work.....
         /// </summary>
-        internal static string InitialAiraMessage1 {
+        internal static string InitialAiraMessageIntroduction {
             get {
-                return ResourceManager.GetString("InitialAiraMessage1", resourceCulture);
+                return ResourceManager.GetString("InitialAiraMessageIntroduction", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Every time you open the chat dialog you can ask me directly or you can use some pre-made requests called prompts.
         /// </summary>
-        internal static string InitialAiraMessage2 {
+        internal static string InitialAiraMessagePromptExplanation {
             get {
-                return ResourceManager.GetString("InitialAiraMessage2", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to We can try it right now, choose one of the prompts below or you can use our prompt library below the chat..
-        /// </summary>
-        internal static string InitialAiraMessage3 {
-            get {
-                return ResourceManager.GetString("InitialAiraMessage3", resourceCulture);
+                return ResourceManager.GetString("InitialAiraMessagePromptExplanation", resourceCulture);
             }
         }
         

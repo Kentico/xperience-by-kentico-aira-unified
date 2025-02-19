@@ -21,6 +21,11 @@ public static class AiraCompanionAppConstants
     public const string SmartUploadRelativeUrl = "assets";
 
     /// <summary>
+    /// Relative path for retrieval of allowed file extensions in the Smart upload ACA page.
+    /// </summary>
+    public const string SmartUploadAllowedFileExtensionsUrl = "allowedFileExtensions";
+
+    /// <summary>
     /// Relative path for uploading assets to ACA.
     /// </summary>
     public const string SmartUploadUploadUrl = "upload";

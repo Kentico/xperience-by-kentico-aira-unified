@@ -117,14 +117,11 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="InitialAiraMessage1" xml:space="preserve">
+  <data name="InitialAiraMessageIntroduction" xml:space="preserve">
     <value>Hi, I'm AIRA your AI powered coworker. I can answer questions about your Kentico Xperience data and even carry out tasks for you. Let me show you how I work....</value>
   </data>
-  <data name="InitialAiraMessage2" xml:space="preserve">
+  <data name="InitialAiraMessagePromptExplanation" xml:space="preserve">
     <value>Every time you open the chat dialog you can ask me directly or you can use some pre-made requests called prompts</value>
-  </data>
-  <data name="InitialAiraMessage3" xml:space="preserve">
-    <value>We can try it right now, choose one of the prompts below or you can use our prompt library below the chat.</value>
   </data>
   <data name="NavigationMenuMessage" xml:space="preserve">
     <value>This is a PREVIEW version. Expect updates and improvements.</value>

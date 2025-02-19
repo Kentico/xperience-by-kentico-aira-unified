@@ -4,6 +4,7 @@ using System.Data;
 using CMS;
 using CMS.DataEngine;
 using CMS.Helpers;
+using CMS.Membership;
 
 using Kentico.Xperience.Aira.Admin.InfoModels;
 
@@ -26,6 +27,10 @@ public class AiraChatMessageInfo : AbstractInfo<AiraChatMessageInfo, IInfoProvid
     public static readonly ObjectTypeInfo TYPEINFO = new(typeof(IInfoProvider<AiraChatMessageInfo>), OBJECT_TYPE, "KenticoAira.AiraChatMessage", nameof(AiraChatMessageId), null, nameof(AiraChatMessageGuid), null, null, null, null, null)
     {
         TouchCacheDependencies = true,
+        DependsOn =
+        [
+            new(nameof(AiraChatMessageUserId), UserInfo.OBJECT_TYPE, ObjectDependencyEnum.Required)
+        ],
         ContinuousIntegrationSettings =
         {
             Enabled = false,

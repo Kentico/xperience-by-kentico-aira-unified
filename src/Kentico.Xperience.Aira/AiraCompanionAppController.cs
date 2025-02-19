@@ -1,6 +1,4 @@
-﻿using CMS.Membership;
-
-using HotChocolate.Authorization;
+﻿using HotChocolate.Authorization;
 
 using Kentico.Membership;
 using Kentico.Xperience.Admin.Base;
@@ -50,28 +48,14 @@ public sealed class AiraCompanionAppController : Controller
     [HttpGet]
     public async Task<IActionResult> Index()
     {
-        var airaPathBase = await GetAiraPathBase();
-
         var user = await adminUserManager.GetUserAsync(User);
-
-        var signinRedirectUrl = GetRedirectUrl(AiraCompanionAppConstants.SigninRelativeUrl, airaPathBase);
-
-        if (user is null)
-        {
-            return Redirect(signinRedirectUrl);
-        }
-
-        var hasAiraViewPermission = await airaAssetService.DoesUserHaveAiraCompanionAppPermission(SystemPermissions.VIEW, user.UserID);
-
-        if (!hasAiraViewPermission)
-        {
-            return Redirect(signinRedirectUrl);
-        }
+        var airaPathBase = await GetAiraPathBase();
 
         var chatModel = new ChatViewModel
         {
             PathBase = airaPathBase,
-            History = await airaChatService.GetUserChatHistory(user.UserID),
+            // User can not be null, because he is already checked in the AiraEndpointDataSource middleware
+            History = await airaChatService.GetUserChatHistory(user!.UserID),
             AIIconImagePath = $"/{AiraCompanionAppConstants.RCLUrlPrefix}/{AiraCompanionAppConstants.PictureStarImgPath}",
             NavBarViewModel = await navBarService.GetNavBarViewModel(AiraCompanionAppConstants.ChatRelativeUrl),
             RemovePromptUrl = AiraCompanionAppConstants.RemoveUsedPromptGroupRelativeUrl,
@@ -89,14 +73,14 @@ public sealed class AiraCompanionAppController : Controller
             chatModel.History = [
                 new AiraChatMessageViewModel
                 {
-                    Message = Resource.InitialAiraMessage1,
+                    Message = Resource.InitialAiraMessageIntroduction,
                     Role = AiraCompanionAppConstants.AiraChatRoleName
                 },
                 new AiraChatMessageViewModel
                 {
-                    Message = Resource.InitialAiraMessage2,
+                    Message = Resource.InitialAiraMessagePromptExplanation,
                     Role = AiraCompanionAppConstants.AiraChatRoleName
-                },
+                }
             ];
         }
         else
@@ -117,25 +101,9 @@ public sealed class AiraCompanionAppController : Controller
     [HttpPost]
     public async Task<IActionResult> PostChatMessage(IFormCollection request)
     {
-        var airaPathBase = await GetAiraPathBase();
-
         var user = await adminUserManager.GetUserAsync(User);
 
-        var signinRedirectUrl = GetRedirectUrl(AiraCompanionAppConstants.SigninRelativeUrl, airaPathBase);
-
-        if (user is null)
-        {
-            return Redirect(signinRedirectUrl);
-        }
-
-        var hasAiraViewPermission = await airaAssetService.DoesUserHaveAiraCompanionAppPermission(SystemPermissions.VIEW, user.UserID);
-
-        if (!hasAiraViewPermission)
-        {
-            return Redirect(signinRedirectUrl);
-        }
-
-        var message = string.Empty;
+        string? message = null;
 
         if (request.TryGetValue("message", out var messages))
         {
@@ -152,7 +120,8 @@ public sealed class AiraCompanionAppController : Controller
 
         AiraChatMessageViewModel result;
 
-        airaChatService.SaveMessage(message, user.UserID, AiraCompanionAppConstants.UserChatRoleName);
+        // User can not be null, because he is already checked in the AiraEndpointDataSource middleware
+        airaChatService.SaveMessage(message, user!.UserID, AiraCompanionAppConstants.UserChatRoleName);
 
         try
         {
@@ -217,26 +186,17 @@ public sealed class AiraCompanionAppController : Controller
     [HttpPost]
     public async Task<IActionResult> PostImages(IFormCollection request)
     {
-        var airaPathBase = await GetAiraPathBase();
-
         var user = await adminUserManager.GetUserAsync(User);
 
-        var signinRedirectUrl = GetRedirectUrl(AiraCompanionAppConstants.SigninRelativeUrl, airaPathBase);
+        // User can not be null, because he is already checked in the AiraEndpointDataSource middleware
+        var uploadSuccessful = await airaAssetService.HandleFileUpload(request.Files, user!.UserID);
 
-        if (user is null)
+        if (uploadSuccessful)
         {
-            return Redirect(signinRedirectUrl);
+            return Ok();
         }
 
-        var hasAiraViewPermission = await airaAssetService.DoesUserHaveAiraCompanionAppPermission(SystemPermissions.CREATE, user.UserID);
-
-        if (!hasAiraViewPermission)
-        {
-            return Redirect(signinRedirectUrl);
-        }
-
-        await airaAssetService.HandleFileUpload(request.Files, user.UserID);
-        return Ok();
+        return BadRequest("Attempted to upload file with forbidden format.");
     }
 
     /// <summary>
@@ -247,29 +207,22 @@ public sealed class AiraCompanionAppController : Controller
     {
         var airaPathBase = await GetAiraPathBase();
 
-        var user = await adminUserManager.GetUserAsync(User);
-
-        var signinRedirectUrl = GetRedirectUrl(AiraCompanionAppConstants.SigninRelativeUrl, airaPathBase);
-
-        if (user is null)
-        {
-            return Redirect(signinRedirectUrl);
-        }
-
-        var hasAiraCreatePermission = await airaAssetService.DoesUserHaveAiraCompanionAppPermission(SystemPermissions.CREATE, user.UserID);
-
-        if (!hasAiraCreatePermission)
-        {
-            return Redirect(signinRedirectUrl);
-        }
-
         var model = new AssetsViewModel
         {
             NavBarViewModel = await navBarService.GetNavBarViewModel(AiraCompanionAppConstants.SmartUploadRelativeUrl),
-            PathBase = airaPathBase
+            PathBase = airaPathBase,
+            AllowedFileExtensionsUrl = $"{AiraCompanionAppConstants.SmartUploadRelativeUrl}/{AiraCompanionAppConstants.SmartUploadAllowedFileExtensionsUrl}"
         };
 
         return View("~/AssetUploader/Assets.cshtml", model);
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> GetAllowedFileExtensions()
+    {
+        var allowedExtensions = await airaAssetService.GetAllowedFileExtensions();
+
+        return Ok(allowedExtensions);
     }
 
     /// <summary>
@@ -339,12 +292,5 @@ public sealed class AiraCompanionAppController : Controller
         var configuration = await airaConfigurationService.GetAiraConfiguration();
 
         return configuration.AiraConfigurationItemAiraPathBase;
-    }
-
-    private string GetRedirectUrl(string relativeUrl, string airaPathBase)
-    {
-        var baseUrl = $"{Request.Scheme}://{Request.Host}";
-
-        return $"{baseUrl}{airaPathBase}/{relativeUrl}";
     }
 }

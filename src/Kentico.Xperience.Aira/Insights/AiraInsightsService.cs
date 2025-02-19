@@ -21,9 +21,19 @@ internal class AiraInsightsService : IAiraInsightsService
     private readonly IInfoProvider<EmailConfigurationInfo> emailConfigurationInfoProvider;
     private readonly IInfoProvider<ContactInfo> contactInfoProvider;
 
-    private string[]? reusableTypes = null;
-    private string[]? pageTypes = null;
-    private string[]? emailTypes = null;
+    private string[]? reusableTypes;
+    private string[]? emailTypes;
+    private string[]? pageTypes;
+    private string[] ReusableTypes => reusableTypes ??= GetReusableTypes();
+    private string[] PageTypes => pageTypes ??= GetPageTypes();
+    private string[] EmailTypes => emailTypes ??= GetEmailTypes();
+
+    private const string CONTENT_ITEM_EMAIL_TYPE = "Email";
+    private const string CONTENT_ITEM_WEBSITE_TYPE = "Website";
+    private const string CONTENT_ITEM_REUSABLE_TYPE = "Reusable";
+
+    private const string SCHEDULED_IDENTIFIER = "Scheduled";
+    private const string DRAFT_IDENTIFIER = "Draft";
 
     public AiraInsightsService(
         IContentItemManagerFactory contentItemManagerFactory,
@@ -127,12 +137,12 @@ internal class AiraInsightsService : IAiraInsightsService
         };
     }
 
-    private async Task<IEnumerable<ContentItemModel>> GetContent(int userId, string classType = "Reusable", string? status = null)
+    private async Task<IEnumerable<ContentItemModel>> GetContent(int userId, string classType = CONTENT_ITEM_REUSABLE_TYPE, string? status = null)
     {
         var builder = classType switch
         {
-            "Email" => GetContentItemBuilder(EmailTypes),
-            "Website" => GetContentItemBuilder(PageTypes),
+            CONTENT_ITEM_EMAIL_TYPE => GetContentItemBuilder(EmailTypes),
+            CONTENT_ITEM_WEBSITE_TYPE => GetContentItemBuilder(PageTypes),
             _ => GetContentItemBuilder(ReusableTypes),
         };
 
@@ -142,45 +152,41 @@ internal class AiraInsightsService : IAiraInsightsService
             IncludeSecuredItems = true
         };
 
-        if (builder != null)
+        if (builder is null)
         {
-            if (status == "Draft")
-            {
-                builder.Parameters(q => q.Where(w => w
-                    .WhereEquals(nameof(ContentItemCommonDataInfo.ContentItemCommonDataVersionStatus), VersionStatus.Draft)
-                    .Or()
-                    .WhereEquals(nameof(ContentItemCommonDataInfo.ContentItemCommonDataVersionStatus), VersionStatus.InitialDraft)));
-
-                var items = await contentQueryExecutor.GetResult(builder, ContentItemBinder, options);
-                return items;
-            }
-            else
-            {
-                var items = await contentQueryExecutor.GetResult(builder, ContentItemBinder, options);
-                if (!string.IsNullOrEmpty(status))
-                {
-                    return status switch
-                    {
-                        "Draft" => FilterDrafts(items),
-                        "Scheduled" => await FilterScheduled(userId, items),
-                        _ => await FilterCustomWorkflowStep(items, status),
-                    };
-                }
-                else
-                {
-                    return items;
-                }
-            }
+            return [];
         }
 
-        return [];
+        if (status == DRAFT_IDENTIFIER)
+        {
+            builder.Parameters(q => q.Where(w => w
+                .WhereEquals(nameof(ContentItemCommonDataInfo.ContentItemCommonDataVersionStatus), VersionStatus.Draft)
+                .Or()
+                .WhereEquals(nameof(ContentItemCommonDataInfo.ContentItemCommonDataVersionStatus), VersionStatus.InitialDraft)));
+
+            return await contentQueryExecutor.GetResult(builder, ContentItemBinder, options);
+        }
+
+        var items = await contentQueryExecutor.GetResult(builder, ContentItemBinder, options);
+
+        if (string.IsNullOrEmpty(status))
+        {
+            return items;
+        }
+
+        return status switch
+        {
+            DRAFT_IDENTIFIER => FilterDrafts(items),
+            SCHEDULED_IDENTIFIER => await FilterScheduled(userId, items),
+            _ => await FilterCustomWorkflowStep(items, status),
+        };
     }
 
     private IEnumerable<ContactGroupInfo> GetContactGroups(string[] names)
     {
         List<ContactGroupInfo> result = [];
 
-        if (names != null && names.Length > 0)
+        if (names is not null && names.Length > 0)
         {
             foreach (var name in names)
             {
@@ -188,13 +194,10 @@ internal class AiraInsightsService : IAiraInsightsService
                 {
                     continue;
                 }
-                else
+                var group = contactGroupInfoProvider.Get().Where(g => g.ContactGroupDisplayName == name).FirstOrDefault();
+                if (group is not null)
                 {
-                    var group = contactGroupInfoProvider.Get().Where(g => g.ContactGroupDisplayName == name).FirstOrDefault();
-                    if (group != null)
-                    {
-                        result.Add(group);
-                    }
+                    result.Add(group);
                 }
             }
         }
@@ -253,7 +256,7 @@ internal class AiraInsightsService : IAiraInsightsService
 
         var step = contentWorkflowStepInfoProvider.Get().WhereEquals(nameof(ContentWorkflowStepInfo.ContentWorkflowStepDisplayName), status).FirstOrDefault();
 
-        if (step != null)
+        if (step is not null)
         {
             var languageMetadata = await contentItemLanguageMetadataInfoProvider
                 .Get()
@@ -284,30 +287,23 @@ internal class AiraInsightsService : IAiraInsightsService
 
     };
 
-    private string[] ReusableTypes
-    {
-        get
-        {
-            reusableTypes ??= DataClassInfoProvider.GetClasses().Where(nameof(DataClassInfo.ClassContentTypeType), QueryOperator.Equals, "Reusable").Select(c => c.ClassName).ToArray();
-            return reusableTypes;
-        }
-    }
+    private static string[] GetReusableTypes() =>
+        DataClassInfoProvider.GetClasses()
+            .Where(nameof(DataClassInfo.ClassContentTypeType), QueryOperator.Equals, CONTENT_ITEM_REUSABLE_TYPE)
+            .Select(c => c.ClassName)
+            .ToArray();
 
-    private string[] PageTypes
-    {
-        get
-        {
-            pageTypes ??= DataClassInfoProvider.GetClasses().Where(nameof(DataClassInfo.ClassContentTypeType), QueryOperator.Equals, "Website").Select(c => c.ClassName).ToArray();
-            return pageTypes;
-        }
-    }
+    private static string[] GetPageTypes() =>
+        DataClassInfoProvider.GetClasses()
+            .Where(nameof(DataClassInfo.ClassContentTypeType), QueryOperator.Equals, CONTENT_ITEM_WEBSITE_TYPE)
+            .Select(c => c.ClassName)
+            .ToArray();
 
-    private string[] EmailTypes
-    {
-        get
-        {
-            emailTypes ??= DataClassInfoProvider.GetClasses().Where(nameof(DataClassInfo.ClassContentTypeType), QueryOperator.Equals, "Email").Select(c => c.ClassName).ToArray();
-            return emailTypes;
-        }
-    }
+
+
+    private static string[] GetEmailTypes() =>
+        DataClassInfoProvider.GetClasses()
+            .Where(nameof(DataClassInfo.ClassContentTypeType), QueryOperator.Equals, CONTENT_ITEM_EMAIL_TYPE)
+            .Select(c => c.ClassName)
+            .ToArray();
 }

@@ -1,4 +1,6 @@
-﻿using CMS.DataEngine;
+﻿using System.Text.RegularExpressions;
+
+using CMS.DataEngine;
 using CMS.Membership;
 
 using Kentico.Xperience.Admin.Base;
@@ -47,6 +49,13 @@ internal class AiraConfigurationEditPage : ModelEditPage<AiraConfigurationModel>
 
     protected override async Task<ICommandResponse> ProcessFormData(AiraConfigurationModel model, ICollection<IFormItem> formItems)
     {
+        if (!IsValidSubpath(model.RelativePathBase))
+        {
+            return ResponseFrom(new FormSubmissionResult(
+                FormSubmissionStatus.ValidationFailure
+            )).AddErrorMessage($"{model.RelativePathBase} is not a valid path.");
+        }
+
         var result = await airaConfigurationService.TrySaveOrUpdateConfiguration(model);
 
         var response = ResponseFrom(new FormSubmissionResult(
@@ -64,6 +73,28 @@ internal class AiraConfigurationEditPage : ModelEditPage<AiraConfigurationModel>
             response.AddErrorMessage("Could not update aira configuration.");
         }
 
-        return await Task.FromResult<ICommandResponse>(response);
+        return response;
+    }
+
+    private static bool IsValidSubpath(string path)
+    {
+        if (string.IsNullOrEmpty(path) || path[0] != '/' || (path.Length > 1 && path[1] == '/'))
+        {
+            return false;
+        }
+
+        var pattern = @"^\/[a-zA-Z0-9-_\/]+$";
+
+        if (!Regex.IsMatch(path, pattern))
+        {
+            return false;
+        }
+
+        if (path.EndsWith('/'))
+        {
+            return false;
+        }
+
+        return true;
     }
 }
