@@ -194,26 +194,22 @@ internal class AiraInsightsService : IAiraInsightsService
                 .Or()
                 .WhereEquals(nameof(ContentItemCommonDataInfo.ContentItemCommonDataVersionStatus), VersionStatus.InitialDraft)));
 
-            var items = await contentQueryExecutor.GetResult(builder, ContentItemBinder, options);
+            return await contentQueryExecutor.GetResult(builder, ContentItemBinder, options);
+        }
+
+        var items = await contentQueryExecutor.GetResult(builder, ContentItemBinder, options);
+
+        if (string.IsNullOrEmpty(status))
+        {
             return items;
         }
-        else
+
+        return status switch
         {
-            var items = await contentQueryExecutor.GetResult(builder, ContentItemBinder, options);
-            if (!string.IsNullOrEmpty(status))
-            {
-                return status switch
-                {
-                    DRAFT_IDENTIFIER => FilterDrafts(items),
-                    SCHEDULED_IDENTIFIER => await FilterScheduled(user, items),
-                    _ => await FilterCustomWorkflowStep(items, status),
-                };
-            }
-            else
-            {
-                return items;
-            }
-        }
+            DRAFT_IDENTIFIER => FilterDrafts(items),
+            SCHEDULED_IDENTIFIER => await FilterScheduled(user, items),
+            _ => await FilterCustomWorkflowStep(items, status),
+        };
     }
 
     private IEnumerable<ContactGroupInfo> GetContactGroups(string[] names)
