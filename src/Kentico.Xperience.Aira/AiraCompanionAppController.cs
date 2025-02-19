@@ -82,12 +82,12 @@ public sealed class AiraCompanionAppController : Controller
             chatModel.History = [
                 new AiraChatMessage
                 {
-                    Message = Resource.InitialAiraMessage1,
+                    Message = Resource.InitialAiraMessageIntroduction,
                     Role = AiraCompanionAppConstants.AiraChatRoleName
                 },
                 new AiraChatMessage
                 {
-                    Message = Resource.InitialAiraMessage2,
+                    Message = Resource.InitialAiraMessagePromptExplanation,
                     Role = AiraCompanionAppConstants.AiraChatRoleName
                 }
             ];
