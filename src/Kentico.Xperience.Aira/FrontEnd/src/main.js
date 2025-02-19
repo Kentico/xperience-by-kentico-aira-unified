@@ -64,7 +64,7 @@ function openModalLogin(signinElement) {
     const baseUrl = signinElement.dataset.baseUrl || "";
     const airaBaseUrl = signinElement.dataset.airaBaseUrl || "";
     const chatUrl = signinElement.dataset.chatUrl || "";
-    
+
     const body = document.getElementsByClassName('c-app_body')[0];
 
     const modalOverlay = document.createElement('div');
@@ -79,54 +79,84 @@ function openModalLogin(signinElement) {
         display: flex;
         align-items: center;
         justify-content: center;
+        flex-direction: column;
     `;
 
     const iframe = document.createElement('iframe');
-    iframe.src = '/admin'; // URL for the admin page
+    iframe.src = '/admin';
     iframe.style = `
-        width: 90%;
-        height: 90%;
+        width: 100%;
+        height: 100%;
         background: white;
         border: none;
-        border-radius: 8px;
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: 1000;
     `;
-
-    const closeButton = document.createElement('button');
-
-    const closeImg = document.createElement('img');
-    closeImg.classList.add('c-icon');
-    closeImg.classList.add('fs-6');
-    closeImg.src = `${baseUrl}/_content/Kentico.Xperience.Aira/img/icons/cross.svg`;
-    closeImg.innerHTML = 'X';
-
-    closeButton.style = `
-        position: fixed;
-        top: 5%;
-        right: 5%;
-        z-index: 1001;
-        padding: 10px 15px;
-        background-color: #FF4D4F;
-        color: white;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-        font-size: 17px;
-    `;
-    closeButton.classList.add('btn');
-    closeButton.classList.add('btn-remove-img');
-    
-    closeButton.appendChild(closeImg);
-
-    closeButton.onclick = () => {
-        modalOverlay.remove();
-        window.location.href = `${baseUrl}${airaBaseUrl}/${chatUrl}`;
-    }
 
     modalOverlay.appendChild(iframe);
-    modalOverlay.appendChild(closeButton);
     body.appendChild(modalOverlay);
+    showReturnButton();
+
+    function showReturnButton() {
+        const messageBox = document.createElement('div');
+        messageBox.innerText = "After Signing in, press the return button to return to the app.";
+        messageBox.style = `
+            position: absolute;
+            top: 0%;
+            left: 0%;
+            width: 40%;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 1vw 2vw;
+            border-radius: 8px;
+            font-size: min(4vw, 16px);
+            text-align: center;
+            z-index: 1001;
+            white-space: normal;
+            word-wrap: break-word;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        `;
+
+        const closeButton = document.createElement('button');
+        closeButton.innerText = "Return to App";
+        closeButton.style = `
+            position: absolute;
+            top: 0%;
+            right: 0%;
+            width: 15%;
+            padding: 1vw 2vw;
+            background-color: #FF4D4F;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: min(4vw, 16px);
+            z-index: 1002;
+            white-space: normal;
+            word-wrap: break-word;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        `;
+
+        messageBox.style.maxWidth = "40vw";
+        closeButton.style.maxWidth = "20vw";
+
+        closeButton.onclick = () => {
+            modalOverlay.remove();
+            window.location.href = `${baseUrl}${airaBaseUrl}/${chatUrl}`;
+        };
+
+        modalOverlay.appendChild(messageBox);
+        modalOverlay.appendChild(closeButton);
+    }
 }
+
+
 
 document.addEventListener('DOMContentLoaded', () => {
     const chatElement = document.getElementById("chat-app");
