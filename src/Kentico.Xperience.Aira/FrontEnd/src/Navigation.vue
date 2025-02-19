@@ -39,11 +39,11 @@
                         </div>
 
                         <hr class="c-nav_hr">
-                        <div class="">
-                            {{`${this.navBarModel.menuMessage}`}}
-                        </div>
                         <div class="c-nav_footer">
-                            <p id="appVersion"></p>
+                            <p class="text-center fs-1">
+                                {{`${this.navBarModel.menuMessage}`}}
+                            </p>
+                            <p id="appVersion" class="mt-3"></p>
                             <p>© 2024 Kentico. All rights reserved.</p>
                         </div>
                     </div>

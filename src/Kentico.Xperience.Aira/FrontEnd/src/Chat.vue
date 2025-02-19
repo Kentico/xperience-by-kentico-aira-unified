@@ -92,22 +92,32 @@
                     }"
               :submitButtonStyles="{
                 submit: {
-                  container: {
+                container: {
                     default: {
-                      width: '1.375rem',
-                      height: '1.375rem',
-                      marginBottom: '0',
-                      padding: '.5rem',
+                    width: '1.375rem',
+                    height: '1.375rem',
+                    marginBottom: '0',
+                    padding: '.5rem',
                     }
-                  },
-                  svg: {
+                },
+                svg: {
                     styles: {
-                      default: {
+                    default: {
                         width: '1.375rem',
                         height: '1.375rem',
-                      }
                     }
-                  }
+                    }
+                },
+                    loading: {
+                        svg: {
+                            styles: {
+                                default: {
+                                    width: '.1875rem',
+                                    height: '.1875rem',
+                                }
+                            }
+                        }
+                    }
                 }
               }"
               id="chatElement"
@@ -134,103 +144,31 @@
                     }
                 }">
           </deep-chat>
-          <div v-if="!serviceAvailable">
-            <img :src="`${this.baseUrl}${this.servicePageModel.chatAiraIconUrl}`" class="c-icon text-primary"/>
-            <img :src="`${this.baseUrl}${this.servicePageModel.chatUnavailableIconUrl}`" class="c-icon text-primary"/>
-            <p>{{`${this.servicePageModel.chatUnvailableMainMessage}`}}</p>
-            <p>{{`${this.servicePageModel.chatUnavailableTryAgainMessage}`}}</p>
-          </div>
+          <div class="c-empty-page-layout justify-content-start" v-if="!serviceAvailable">
+            <div class="d-flex flex-wrap justify-content-center gap-3 text-center">
+                <svg class="c-image service-unavailable" width="150" height="189" viewBox="0 0 150 189" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <g clip-path="url(#clip0_844_34259)">
+                        <g clip-path="url(#clip1_844_34259)">
+                            <path d="M46.7024 68.3112C44.8611 66.516 41.9132 66.5533 40.118 68.3946C38.3228 70.2358 38.3601 73.1837 40.2013 74.979L68.3623 102.436L40.2013 129.893C38.3601 131.689 38.3228 134.637 40.118 136.478C41.9132 138.319 44.8611 138.356 46.7024 136.561L75.0322 108.939L103.361 136.561C105.203 138.356 108.151 138.319 109.946 136.477C111.741 134.636 111.704 131.688 109.863 129.893L81.7021 102.436L109.863 74.9795C111.704 73.1842 111.741 70.2363 109.946 68.3951C108.151 66.5538 105.203 66.5165 103.361 68.3117L75.0322 95.933L46.7024 68.3112Z" fill="#FF8852"/>
+                            <path fill-rule="evenodd" clip-rule="evenodd" d="M22.0883 49.3125C15.3474 49.3125 9.81273 54.8471 9.81273 61.5881L9.8125 139.595C9.8125 146.307 15.3186 151.791 22.088 151.791H42.3854C44.9569 151.791 47.0416 153.876 47.0416 156.447V174.234L71.9733 152.909C72.8167 152.187 73.89 151.791 74.9999 151.791H127.912C134.681 151.791 140.187 146.307 140.187 139.595V61.5881C140.187 54.8471 134.653 49.3125 127.912 49.3125H22.0883ZM0.50023 61.5881C0.50023 49.704 10.2042 40 22.0883 40H127.912C139.796 40 149.5 49.704 149.5 61.5881V139.595C149.5 151.507 139.767 161.103 127.912 161.103H76.7196L45.4119 187.882C44.0307 189.064 42.0884 189.333 40.4375 188.573C38.7867 187.813 37.7291 186.161 37.7291 184.344V161.103H22.088C10.2325 161.103 0.5 151.507 0.5 139.595L0.50023 61.5881Z" fill="#FF8852"/>
+                        </g>
+                        <path fill-rule="evenodd" clip-rule="evenodd" d="M139.738 10.6021L148.592 13.5533C149.803 13.9571 149.803 15.6703 148.592 16.074L139.738 19.0252C139.341 19.1574 139.03 19.4687 138.898 19.8654L135.947 28.7189C135.543 29.9301 133.83 29.9301 133.426 28.7189L130.475 19.8654C130.343 19.4687 130.031 19.1574 129.635 19.0252L120.781 16.074C119.57 15.6703 119.57 13.9571 120.781 13.5533L129.635 10.6021C130.031 10.4699 130.343 10.1586 130.475 9.76191L133.426 0.908415C133.83 -0.302802 135.543 -0.302806 135.947 0.908411L138.898 9.76191C139.03 10.1586 139.341 10.4699 139.738 10.6021ZM138.618 13.9631L141.169 14.8137L138.618 15.6642C137.163 16.1491 136.022 17.2905 135.537 18.7451L134.686 21.2968L133.836 18.7451C133.351 17.2905 132.209 16.1491 130.755 15.6642L128.203 14.8137L130.755 13.9631C132.209 13.4782 133.351 12.3368 133.836 10.8822L134.686 8.3305L135.537 10.8822C136.022 12.3368 137.163 13.4782 138.618 13.9631Z" fill="black"/>
+                        <path fill-rule="evenodd" clip-rule="evenodd" d="M109.892 27.1831C109.496 27.0508 109.184 26.7395 109.052 26.3428L104.996 14.1732C104.592 12.9619 102.879 12.9619 102.475 14.1732L98.4183 26.3428C98.2861 26.7395 97.9748 27.0508 97.5781 27.1831L85.4084 31.2396C84.1972 31.6434 84.1972 33.3566 85.4084 33.7604L97.5781 37.8169C97.9748 37.9492 98.2861 38.2605 98.4183 38.6572L102.475 50.8268C102.879 52.0381 104.592 52.0381 104.996 50.8269L109.052 38.6572C109.184 38.2605 109.496 37.9492 109.892 37.8169L122.062 33.7604C123.273 33.3566 123.273 31.6434 122.062 31.2396L109.892 27.1831ZM114.64 32.5L108.772 30.544C107.318 30.0592 106.176 28.9177 105.691 27.4632L103.735 21.5952L101.779 27.4632C101.294 28.9177 100.153 30.0592 98.6984 30.544L92.8305 32.5L98.6984 34.456C100.153 34.9408 101.294 36.0822 101.779 37.5368L103.735 43.4048L105.691 37.5368C106.176 36.0822 107.318 34.9408 108.772 34.456L114.64 32.5Z" fill="black"/>
+                        <path d="M121.897 51.5018C122.294 51.3695 122.605 51.0583 122.737 50.6615L124.583 45.1242C124.987 43.913 126.7 43.913 127.104 45.1242L128.949 50.6615C129.082 51.0583 129.393 51.3695 129.79 51.5018L135.327 53.3476C136.538 53.7513 136.538 55.4645 135.327 55.8683L129.79 57.714C129.393 57.8463 129.082 58.1576 128.949 58.5543L127.104 64.0916C126.7 65.3028 124.987 65.3028 124.583 64.0916L122.737 58.5543C122.605 58.1576 122.294 57.8463 121.897 57.714L116.359 55.8683C115.148 55.4645 115.148 53.7513 116.359 53.3476L121.897 51.5018Z" fill="black"/>
+                    </g>
+                    <defs>
+                        <clipPath id="clip0_844_34259">
+                            <rect width="149" height="189" fill="white" transform="translate(0.5)"/>
+                        </clipPath>
+                        <clipPath id="clip1_844_34259">
+                            <rect width="149" height="149" fill="white" transform="translate(0.5 40)"/>
+                        </clipPath>
+                    </defs>
+                </svg>
+                <p class="mt-5"><strong>{{`${this.servicePageModel.chatUnvailableMainMessage}`}}</strong></p>
+                <p class="fs-2">{{`${this.servicePageModel.chatUnavailableTryAgainMessage}`}}</p>
+            </div>
           <InstallDialogComponent v-if="!isInstalledPWA" :baseUrl="baseUrl" :logoImgRelativePath="navBarModel.logoImgRelativePath" />
-           <!-- <div>
-            <div class="c-prompt-suggestions">
-              <div class="c-prompt-suggestions_inner">
-                <button class="btn btn-outline-primary" @click="handleSuggestionClick('Tell me a fun fact')">Tell me a fun
-                  fact
-                </button>
-                <button class="btn btn-outline-primary" @click="handleSuggestionClick('What\'s the weather like today?')">What�s
-                  the weather like today?
-                </button>
-                <button class="btn btn-outline-primary" @click="handleSuggestionClick('Suggest a good movie')">Suggest a good
-                  movie
-                </button>
-                <button class="btn btn-outline-primary" @click="showAllSuggestions = true">More</button>
-              </div>
-            </div>
-
-            <div v-if="showAllSuggestions" class="c-prompt-overlay">
-              <div class="container">
-                <div class="d-flex justify-content-between align-items-center">
-                  <h3>Suggestions</h3>
-                  <button class="c-link primary-upper" @click="showAllSuggestions = false">
-                    Back
-                  </button>
-                </div>
-                <h4 class="mt-4">General</h4>
-                <div class="d-flex gap-2 flex-wrap mt-3">
-                  <button class="btn btn-outline-primary"
-                          @click="showAllSuggestions = false; handleSuggestionClick('What is today\'s news?')">
-                    What is today's news?
-                  </button>
-                  <button class="btn btn-outline-primary"
-                          @click="showAllSuggestions = false; handleSuggestionClick('Tell me a joke!')">
-                    Tell me a joke!
-                  </button>
-                  <button class="btn btn-outline-primary"
-                          @click="showAllSuggestions = false; handleSuggestionClick('Suggest a good movie')">
-                    Suggest a good movie
-                  </button>
-                </div>
-
-                <h4 class="mt-4">Technology</h4>
-                <div class="d-flex gap-2 flex-wrap mt-3">
-                  <button class="btn btn-outline-primary"
-                          @click="showAllSuggestions = false; handleSuggestionClick('Explain the latest tech trends')">
-                    Explain the latest tech trends
-                  </button>
-                  <button class="btn btn-outline-primary"
-                          @click="showAllSuggestions = false; handleSuggestionClick('What is Artificial Intelligence?')">
-                    What is Artificial Intelligence?
-                  </button>
-                  <button class="btn btn-outline-primary"
-                          @click="showAllSuggestions = false; handleSuggestionClick('Tell me about blockchain technology')">
-                    Tell me about blockchain technology
-                  </button>
-                </div>
-
-                <h4 class="mt-4">Travel</h4>
-                <div class="d-flex gap-2 flex-wrap mt-3">
-                  <button class="btn btn-outline-primary"
-                          @click="showAllSuggestions = false; handleSuggestionClick('Top places to visit in Europe')">
-                    Top places to visit in Europe
-                  </button>
-                  <button class="btn btn-outline-primary"
-                          @click="showAllSuggestions = false; handleSuggestionClick('What are the best travel tips?')">
-                    What are the best travel tips?
-                  </button>
-                  <button class="btn btn-outline-primary"
-                          @click="showAllSuggestions = false; handleSuggestionClick('Suggest a weekend getaway')">
-                    Suggest a weekend getaway
-                  </button>
-                </div>
-
-                <h4 class="mt-4">Health</h4>
-                <div class="d-flex gap-2 flex-wrap mt-3">
-                  <button class="btn btn-outline-primary"
-                          @click="showAllSuggestions = false; handleSuggestionClick('How to stay fit at home?')">
-                    How to stay fit at home?
-                  </button>
-                  <button class="btn btn-outline-primary"
-                          @click="showAllSuggestions = false; handleSuggestionClick('What are some healthy snacks?')">
-                    What are some healthy snacks?
-                  </button>
-                  <button class="btn btn-outline-primary"
-                          @click="showAllSuggestions = false; handleSuggestionClick('Tips for better sleep')">
-                    Tips for better sleep
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>-->
         </div>
     </div>
 </template>
