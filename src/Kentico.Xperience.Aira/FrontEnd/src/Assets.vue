@@ -9,7 +9,7 @@
             <NavBarComponent :airaBaseUrl="airaBaseUrl" :baseUrl="baseUrl" :navBarModel="navBarModel"/>
         </div>
 
-        <div class="c-app_body" :style="{ maxHeight: '60vh', overflowY: 'auto', overflowX: 'hidden' }">
+        <div class="c-app_body" :style="{ overflowY: 'auto', overflowX: 'hidden' }">
             <div class="container">
                 <form>
                     <input ref="fileInput" hidden type="file" :accept="fileInputAccept" class="d-none" multiple>
