@@ -1,6 +1,4 @@
-﻿using CMS.Membership;
-
-using HotChocolate.Authorization;
+﻿using HotChocolate.Authorization;
 
 using Kentico.Membership;
 using Kentico.Xperience.Admin.Base;
