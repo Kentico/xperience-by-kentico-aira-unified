@@ -2,8 +2,11 @@
 using System.Text.Json;
 
 using CMS.DataEngine;
+using CMS.Membership;
 
+using Kentico.Membership;
 using Kentico.Xperience.Aira.Admin.InfoModels;
+using Kentico.Xperience.Aira.Assets;
 using Kentico.Xperience.Aira.Chat.Models;
 
 using Microsoft.AspNetCore.Authentication;
@@ -47,22 +50,26 @@ internal class AiraEndpointDataSource : MutableEndpointDataSource
             CreateAiraEndpoint(configuration,
                 AiraCompanionAppConstants.ChatRelativeUrl,
                 nameof(AiraCompanionAppController.Index),
-                controller => controller.Index()
+                controller => controller.Index(),
+                requiredPermission: SystemPermissions.VIEW
             ),
             CreateAiraIFormCollectionEndpoint(configuration,
                 $"{AiraCompanionAppConstants.ChatRelativeUrl}/{AiraCompanionAppConstants.ChatMessageUrl}",
                 nameof(AiraCompanionAppController.PostChatMessage),
-                (controller, request) => controller.PostChatMessage(request)
+                (controller, request) => controller.PostChatMessage(request),
+                requiredPermission: SystemPermissions.VIEW
             ),
             CreateAiraIFormCollectionEndpoint(configuration,
                  $"{AiraCompanionAppConstants.SmartUploadRelativeUrl}/{AiraCompanionAppConstants.SmartUploadUploadUrl}",
                 nameof(AiraCompanionAppController.PostImages),
-                (controller, request) => controller.PostImages(request)
+                (controller, request) => controller.PostImages(request),
+                requiredPermission: SystemPermissions.CREATE
             ),
             CreateAiraEndpoint(configuration,
                 AiraCompanionAppConstants.SmartUploadRelativeUrl,
                 nameof(AiraCompanionAppController.Assets),
-                controller => controller.Assets()
+                controller => controller.Assets(),
+                requiredPermission: SystemPermissions.CREATE
             ),
             CreateAiraEndpoint(configuration,
                 AiraCompanionAppConstants.SigninRelativeUrl,
@@ -72,12 +79,14 @@ internal class AiraEndpointDataSource : MutableEndpointDataSource
             CreateAiraEndpointFromBody<AiraUsedPromptGroupModel>(configuration,
                 AiraCompanionAppConstants.RemoveUsedPromptGroupRelativeUrl,
                 nameof(AiraCompanionAppController.RemoveUsedPromptGroup),
-                (controller, model) => controller.RemoveUsedPromptGroup(model)
+                (controller, model) => controller.RemoveUsedPromptGroup(model),
+                requiredPermission: SystemPermissions.VIEW
             ),
             CreateAiraEndpoint(configuration,
                 $"{AiraCompanionAppConstants.SmartUploadRelativeUrl}/{AiraCompanionAppConstants.SmartUploadAllowedFileExtensionsUrl}",
                 nameof(AiraCompanionAppController.GetAllowedFileExtensions),
-                controller => controller.GetAllowedFileExtensions()
+                controller => controller.GetAllowedFileExtensions(),
+                requiredPermission: SystemPermissions.CREATE
             )
         ];
     }
@@ -85,11 +94,22 @@ internal class AiraEndpointDataSource : MutableEndpointDataSource
         AiraConfigurationItemInfo configurationInfo,
         string subPath,
         string actionName,
-        Func<AiraCompanionAppController, T, IActionResult> actionWithModel
+        Func<AiraCompanionAppController, T, IActionResult> actionWithModel,
+        string? requiredPermission = null
     ) where T : class, new()
     => CreateEndpoint($"{configurationInfo.AiraConfigurationItemAiraPathBase}/{subPath}", async context =>
     {
         var airaController = await GetAiraCompanionAppControllerInContext(context, actionName);
+
+        if (!await CheckHttps(context))
+        {
+            return;
+        }
+
+        if (requiredPermission is not null && !await CheckAuthorizationOrSetRedirectToSignIn(context, configurationInfo.AiraConfigurationItemAiraPathBase, requiredPermission))
+        {
+            return;
+        }
 
         if (context.Request.ContentType is not null &&
             string.Equals(context.Request.ContentType, "application/json", StringComparison.OrdinalIgnoreCase))
@@ -130,15 +150,22 @@ internal class AiraEndpointDataSource : MutableEndpointDataSource
         }
     });
 
-    private static Endpoint CreateAiraEndpoint(AiraConfigurationItemInfo configurationInfo, string subPath, string actionName, Func<AiraCompanionAppController, Task<IActionResult>> action)
+    private static Endpoint CreateAiraEndpoint(AiraConfigurationItemInfo configurationInfo,
+        string subPath,
+        string actionName,
+        Func<AiraCompanionAppController, Task<IActionResult>> action,
+        string? requiredPermission = null)
     => CreateEndpoint($"{configurationInfo.AiraConfigurationItemAiraPathBase}/{subPath}", async context =>
     {
         var airaController = await GetAiraCompanionAppControllerInContext(context, actionName);
 
         if (!await CheckHttps(context))
         {
-            context.Response.StatusCode = StatusCodes.Status403Forbidden;
-            await context.Response.WriteAsync("HTTPS is required.");
+            return;
+        }
+
+        if (requiredPermission is not null && !await CheckAuthorizationOrSetRedirectToSignIn(context, configurationInfo.AiraConfigurationItemAiraPathBase, requiredPermission))
+        {
             return;
         }
 
@@ -146,17 +173,24 @@ internal class AiraEndpointDataSource : MutableEndpointDataSource
         await result.ExecuteResultAsync(airaController.ControllerContext);
     });
 
-    private static Endpoint CreateAiraIFormCollectionEndpoint(AiraConfigurationItemInfo configurationItemInfo, string subPath, string actionName, Func<AiraCompanionAppController, IFormCollection, Task<IActionResult>> action)
+    private static Endpoint CreateAiraIFormCollectionEndpoint(AiraConfigurationItemInfo configurationItemInfo,
+        string subPath,
+        string actionName,
+        Func<AiraCompanionAppController, IFormCollection, Task<IActionResult>> action,
+        string? requiredPermission = null)
     => CreateEndpoint($"{configurationItemInfo.AiraConfigurationItemAiraPathBase}/{subPath}", async context =>
     {
         if (!await CheckHttps(context))
         {
-            context.Response.StatusCode = StatusCodes.Status403Forbidden;
-            await context.Response.WriteAsync("HTTPS is required.");
             return;
         }
 
         var airaController = await GetAiraCompanionAppControllerInContext(context, actionName);
+
+        if (requiredPermission is not null && !await CheckAuthorizationOrSetRedirectToSignIn(context, configurationItemInfo.AiraConfigurationItemAiraPathBase, requiredPermission))
+        {
+            return;
+        }
 
         if (context.Request.ContentType is null)
         {
@@ -263,4 +297,28 @@ internal class AiraEndpointDataSource : MutableEndpointDataSource
             routePattern: RoutePatternFactory.Parse(pattern),
             order: 0)
         .Build();
+
+    private static async Task<bool> CheckAuthorizationOrSetRedirectToSignIn(HttpContext context, string airaPathBase, string permission)
+    {
+        var adminUserManager = context.RequestServices.GetRequiredService<AdminUserManager>();
+        var airaAssetService = context.RequestServices.GetRequiredService<IAiraAssetService>();
+
+        var user = await adminUserManager.GetUserAsync(context.User);
+        var signinRedirectUrl = $"{airaPathBase}/{AiraCompanionAppConstants.SigninRelativeUrl}";
+
+        if (user is null)
+        {
+            context.Response.Redirect(signinRedirectUrl);
+            return false;
+        }
+
+        var hasAiraViewPermission = await airaAssetService.DoesUserHaveAiraCompanionAppPermission(permission, user.UserID);
+        if (!hasAiraViewPermission)
+        {
+            context.Response.Redirect(signinRedirectUrl);
+            return false;
+        }
+
+        return true;
+    }
 }
