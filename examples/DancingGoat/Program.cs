@@ -52,7 +52,7 @@ builder.Services.AddLocalization()
 
 builder.Services.AddDancingGoatServices();
 
-builder.Services.AddKenticoAira(builder.Configuration);
+builder.Services.AddKenticoAiraUnified(builder.Configuration);
 
 builder.Services.AddSingleton<IEmailActivityTrackingEvaluator, EmailActivityTrackingEvaluator>();
 
@@ -82,7 +82,7 @@ app.UseStatusCodePagesWithReExecute("/error/{0}");
 
 app.Kentico().MapRoutes();
 
-app.UseAiraEndpoints();
+app.UseAiraUnifiedEndpoints();
 
 app.MapControllerRoute(
    name: "error",

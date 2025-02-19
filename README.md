@@ -1,4 +1,4 @@
-# Xperience by Kentico Aira
+# Xperience by Kentico Aira Unified
 
 [![Kentico Labs](https://img.shields.io/badge/Kentico_Labs-grey?labelColor=orange&logo=data:image/svg+xml;base64,PHN2ZyBjbGFzcz0ic3ZnLWljb24iIHN0eWxlPSJ3aWR0aDogMWVtOyBoZWlnaHQ6IDFlbTt2ZXJ0aWNhbC1hbGlnbjogbWlkZGxlO2ZpbGw6IGN1cnJlbnRDb2xvcjtvdmVyZmxvdzogaGlkZGVuOyIgdmlld0JveD0iMCAwIDEwMjQgMTAyNCIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxwYXRoIGQ9Ik05NTYuMjg4IDgwNC40OEw2NDAgMjc3LjQ0VjY0aDMyYzE3LjYgMCAzMi0xNC40IDMyLTMycy0xNC40LTMyLTMyLTMyaC0zMjBjLTE3LjYgMC0zMiAxNC40LTMyIDMyczE0LjQgMzIgMzIgMzJIMzg0djIxMy40NEw2Ny43MTIgODA0LjQ4Qy00LjczNiA5MjUuMTg0IDUxLjIgMTAyNCAxOTIgMTAyNGg2NDBjMTQwLjggMCAxOTYuNzM2LTk4Ljc1MiAxMjQuMjg4LTIxOS41MnpNMjQxLjAyNCA2NDBMNDQ4IDI5NS4wNFY2NGgxMjh2MjMxLjA0TDc4Mi45NzYgNjQwSDI0MS4wMjR6IiAgLz48L3N2Zz4=)](https://github.com/Kentico/.github/blob/main/SUPPORT.md#labs-limited-support) 
 [![CI: Build and Test](https://github.com/Kentico/aira-unified/actions/workflows/ci.yml/badge.svg)](https://github.com/Kentico/aira-unified/actions/workflows/ci.yml) 
@@ -6,7 +6,7 @@
 
 ## Description
 
-Aira integration enabling for alternative administration UI and chatbot which can easily be added to an Xperience By Kentico project.
+Aira unified integration enabling for alternative administration UI and chatbot which can easily be added to an Xperience By Kentico project.
 ## Screenshots
 
 ![UI Application](/images/screenshots/ui_application.png)
@@ -27,15 +27,15 @@ Aira integration enabling for alternative administration UI and chatbot which ca
 Add the package to your application using the .NET CLI
 
 ```powershell
-dotnet add package Kentico.Xperience.Aira
+dotnet add package Kentico.Xperience.AiraUnified
 ```
 
 ## Quick Start
 
-1. Include `Kentico.Xperience.Aira` project in the solution.
+1. Include `Kentico.Xperience.AiraUnified` project in the solution.
 
    ```powershell
-   dotnet add package Kentico.Xperience.Aira
+   dotnet add package Kentico.Xperience.AiraUnified
    ```
 
 2. Register required services into DI container.
@@ -47,7 +47,7 @@ dotnet add package Kentico.Xperience.Aira
 
    // ...
 
-   builder.Services.AddKenticoAira();
+   builder.Services.AddKenticoAiraUnified();
 
    // ...
 
@@ -55,22 +55,22 @@ dotnet add package Kentico.Xperience.Aira
 
    // ...
    
-   app.UseAiraEndpoints();
+   app.UseAiraUnifiedEndpoints();
 
    app.Run();
 
    ```
 
-3. In the administration go to UI application 'Aira Companion App'.
-4. Fill out the Aira configuration form, populating the fields with your custom values.
-- Relative Path Base - the relative path where the Aira Companion App is available. The path is relative to the base url of your application.
-- Logo - the asset selectable from Media Library shown in the top left corner of the Aira Companion App pwa.
-- Chat Title - the title displayed on top of the screen of the chat page and the text of chat option in Aira Companion App menu.
-- Chat Image - the asset selectable from Media library shown on top of the screen of the chat page and next to the chat option text in Aira Companion App menu.
-- Smart Upload Title - the title displayed on top of the screen of the smart upload page and the text of smart upload option in Aira Companion App menu.
-- Smart Upload Image - the asset selectable from Media library shown on top of the screen of the smart upload page and next to the smart upload option text in Aira Companion App menu.
+3. In the administration go to UI application 'Aira Unified'.
+4. Fill out the Aira Unified configuration form, populating the fields with your custom values.
+- Relative Path Base - the relative path where the Aira Unified is available. The path is relative to the base url of your application.
+- Logo - the asset selectable from Media Library shown in the top left corner of the Aira Unified pwa.
+- Chat Title - the title displayed on top of the screen of the chat page and the text of chat option in Aira Unified menu.
+- Chat Image - the asset selectable from Media library shown on top of the screen of the chat page and next to the chat option text in Aira Unified menu.
+- Smart Upload Title - the title displayed on top of the screen of the smart upload page and the text of smart upload option in Aira Unified menu.
+- Smart Upload Image - the asset selectable from Media library shown on top of the screen of the smart upload page and next to the smart upload option text in Aira Unified menu.
 5. Return to administration dashboard and select a `Content Type` used for [Mass asset upload](https://docs.kentico.com/developers-and-admins/development/content-types#mass-asset-upload-configuration). Uploaded assets in the Smart upload page of this integration will be saved under this `Content type` in the Content hub.
-6. The users can now visit the Aira Companion App under the specified path.
+6. The users can now visit the Aira Unified under the specified path.
 
 ## Full Instructions
 

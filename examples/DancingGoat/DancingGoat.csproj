@@ -28,6 +28,6 @@
     <PackageReference Include="kentico.xperience.webapp" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Kentico.Xperience.Aira\Kentico.Xperience.Aira.csproj" />
+    <ProjectReference Include="..\..\src\Kentico.Xperience.AiraUnified\Kentico.Xperience.AiraUnified.csproj" />
   </ItemGroup>
 </Project>

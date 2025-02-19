@@ -1011,7 +1011,7 @@
           "System.IO.Hashing": "7.0.0"
         }
       },
-      "kentico.xperience.aira": {
+      "kentico.xperience.airaunified": {
         "type": "Project",
         "dependencies": {
           "Htmx": "[1.8.1, )",
