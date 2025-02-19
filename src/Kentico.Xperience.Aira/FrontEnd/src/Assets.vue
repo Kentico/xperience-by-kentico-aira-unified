@@ -151,22 +151,24 @@
                 }, 1000);
             },
             async retrieveAllowedExtensions() {
-                try {
-                    const response = await fetch(this.allowedFileExtensionsUrl, {
-                        method: 'GET'
-                    });
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! Status: ${response.status}`);
-                    }
-                    const extensionsString = await response.text();
-                    if (extensionsString) {
-                        this.allowedExtensions = extensionsString.split(';').map(ext => ext.toLowerCase());
-                        this.fileInputAccept = this.allowedExtensions.map(ext => `.${ext}`).join(',');
-                    } else {
-                        console.error('Unexpected response format:', extensionsString);
-                    }
-                } catch (error) {
+                const response = await fetch(this.allowedFileExtensionsUrl, {
+                    method: 'GET'
+                });
+                if (!response.ok)
+                {
                     console.error('An error occurred:', error.message);
+                    return;
+                }
+                const extensionsString = await response.text();
+                
+                if (extensionsString)
+                {
+                    this.allowedExtensions = extensionsString.split(';').map(ext => ext.toLowerCase());
+                    this.fileInputAccept = this.allowedExtensions.map(ext => `.${ext}`).join(',');
+                }
+                else
+                {
+                    console.error('Unexpected response format:', extensionsString);
                 }
             },
             async pickImage(event) {
