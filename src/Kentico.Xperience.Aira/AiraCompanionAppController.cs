@@ -63,7 +63,7 @@ public sealed class AiraCompanionAppController : Controller
             {
                 ChatAiraIconUrl = $"/{AiraCompanionAppConstants.RCLUrlPrefix}/{AiraCompanionAppConstants.PictureStarImgPath}",
                 ChatUnavailableIconUrl = $"/{AiraCompanionAppConstants.RCLUrlPrefix}/{AiraCompanionAppConstants.PictureChatBotSmileBubbleOrangeImgPath}",
-                ChatUnvailableMainMessage = Resource.ServicePageChatUnavailable,
+                ChatUnavailableMainMessage = Resource.ServicePageChatUnavailable,
                 ChatUnavailableTryAgainMessage = Resource.ServicePageChatTryAgainLater
             }
         };
