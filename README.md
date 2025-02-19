@@ -13,7 +13,7 @@ Aira integration enabling for alternative administration UI and chatbot which ca
 
 | Xperience Version |    Library Version   |
 | ----------------- | -------------------- |
-| >= 30.0.1         | >= 0.1.0-prerelase-1 |
+| >= 30.0.0         | >= 0.1.0-prerelase-1 |
 
 ### Dependencies
 
