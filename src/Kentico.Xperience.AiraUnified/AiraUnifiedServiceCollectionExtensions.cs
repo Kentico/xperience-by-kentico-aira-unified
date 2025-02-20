@@ -20,7 +20,7 @@ public static class AiraUnifiedServiceCollectionExtensions
     /// Adds Aira Unified services and custom module to application.
     /// </summary>
     /// <param name="services"><see cref="IServiceCollection"/>The application services.</param>
-    /// <param name="configuration"><see cref="IConfiguration"/>The application configuration.</param>
+    /// <param name="configuration">The application <see cref="IConfiguration"/>.</param>
     /// <returns>The <see cref="IServiceCollection"/> application services.</returns>
     public static IServiceCollection AddKenticoAiraUnified(this IServiceCollection services, IConfiguration configuration)
         => services.AddKenticoAiraUnifiedInternal(configuration);

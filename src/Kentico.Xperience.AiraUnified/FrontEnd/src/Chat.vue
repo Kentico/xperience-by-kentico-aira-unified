@@ -165,7 +165,7 @@
                             </clipPath>
                         </defs>
                     </svg>
-                    <p class="mt-5"><strong>{{`${this.servicePageModel.chatUnvailableMainMessage}`}}</strong></p>
+                    <p class="mt-5"><strong>{{`${this.servicePageModel.chatUnavailableMainMessage}`}}</strong></p>
                     <p class="fs-2">{{`${this.servicePageModel.chatUnavailableTryAgainMessage}`}}</p>
                 </div>
             </div>

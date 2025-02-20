@@ -13,19 +13,18 @@ using Kentico.Xperience.AiraUnified.Admin.InfoModels;
 
 namespace Kentico.Xperience.AiraUnified.Admin.InfoModels;
 
-[Serializable]
 public partial class AiraUnifiedChatSummaryInfo : AbstractInfo<AiraUnifiedChatSummaryInfo, IInfoProvider<AiraUnifiedChatSummaryInfo>>
 {
     /// <summary>
     /// Object type.
     /// </summary>
-    public const string OBJECT_TYPE = "kenticoaira.airaunifiedchatsummary";
+    public const string OBJECT_TYPE = "kenticoairaunified.airaunifiedchatsummary";
 
 
     /// <summary>
     /// Type information.
     /// </summary>
-    public static readonly ObjectTypeInfo TYPEINFO = new(typeof(IInfoProvider<AiraUnifiedChatSummaryInfo>), OBJECT_TYPE, "KenticoAira.AiraUnifiedChatSummary", nameof(AiraUnifiedChatSummaryId), null, nameof(AiraUnifiedChatSummaryGuid), null, null, null, null, null)
+    public static readonly ObjectTypeInfo TYPEINFO = new(typeof(IInfoProvider<AiraUnifiedChatSummaryInfo>), OBJECT_TYPE, "KenticoAiraUnified.AiraUnifiedChatSummary", nameof(AiraUnifiedChatSummaryId), null, nameof(AiraUnifiedChatSummaryGuid), null, null, null, null, null)
     {
         TouchCacheDependencies = true,
         DependsOn =

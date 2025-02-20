@@ -3,11 +3,7 @@
 /// <summary>
 /// Model for the Aira Unified chat message.
 /// </summary>
-<<<<<<<< HEAD:src/Kentico.Xperience.AiraUnified/Chat/Models/AiraUnifiedChatMessageViewModel.cs
 public class AiraUnifiedChatMessageViewModel
-========
-public class AiraChatMessageViewModel
->>>>>>>> main:src/Kentico.Xperience.AiraUnified/Chat/Models/AiraChatMessageViewModel.cs
 {
     /// <summary>
     /// The text message.

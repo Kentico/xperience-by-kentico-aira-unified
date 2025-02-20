@@ -163,49 +163,36 @@ internal class AiraUnifiedChatService : IAiraUnifiedChatService
     {
         var emailInsights = await airaUnifiedInsightsService.GetEmailInsights();
 
-        var draft = "Draft";
-        var scheduled = "Scheduled";
-
-        var reusableDraftContentInsights = await airaUnifiedInsightsService.GetContentInsights(ContentType.Reusable, userId, draft);
-        var reusableScheduledContentInsights = await airaUnifiedInsightsService.GetContentInsights(ContentType.Reusable, userId, scheduled);
-        var websiteDraftContentInsights = await airaUnifiedInsightsService.GetContentInsights(ContentType.Website, userId, draft);
-        var websiteScheduledContentInsights = await airaUnifiedInsightsService.GetContentInsights(ContentType.Website, userId, scheduled);
+        var reusableDraftContentInsights = await airaUnifiedInsightsService.GetContentInsights(ContentType.Reusable, userId, AiraUnifiedConstants.InsightsDraftIdentifier);
+        var reusableScheduledContentInsights = await airaUnifiedInsightsService.GetContentInsights(ContentType.Reusable, userId, AiraUnifiedConstants.InsightsScheduledIdentifier);
+        var websiteDraftContentInsights = await airaUnifiedInsightsService.GetContentInsights(ContentType.Website, userId, AiraUnifiedConstants.InsightsDraftIdentifier);
+        var websiteScheduledContentInsights = await airaUnifiedInsightsService.GetContentInsights(ContentType.Website, userId, AiraUnifiedConstants.InsightsScheduledIdentifier);
 
         var contactGroups = await contactGroupProvider.Get().GetEnumerableTypedResultAsync();
         var contactGroupNames = contactGroups.Select(x => x.ContactGroupDisplayName).ToArray();
 
         var contactGroupInsights = airaUnifiedInsightsService.GetContactGroupInsights(contactGroupNames);
 
-        var emailPrefix = "email";
-        var contentPrefix = "content";
-        var inDraftPrefix = "inDraft";
-        var scheduledPrefix = "inScheduled";
-        var reusableContentPrefix = "reusable";
-        var websiteContentPrefix = "website";
-        var allAccountsPrefix = "allAccounts";
-        var contactGroupPrefix = "contactGroup";
-        var countIdentifier = "count";
-        var ratioToAllContactsIdentifier = "ratioOfContactsInGroupToOtherContacts";
         var separator = '_';
 
         var resultInsights = new Dictionary<string, string>
         {
-            { string.Join(separator, contentPrefix, reusableContentPrefix, inDraftPrefix, countIdentifier), reusableDraftContentInsights.Items.Count.ToString()},
-            { string.Join(separator, contentPrefix, reusableContentPrefix, scheduledPrefix, countIdentifier), reusableScheduledContentInsights.Items.Count.ToString()},
-            { string.Join(separator, contentPrefix, websiteContentPrefix, inDraftPrefix, countIdentifier), websiteDraftContentInsights.Items.Count.ToString()},
-            { string.Join(separator, contentPrefix, websiteContentPrefix, scheduledPrefix, countIdentifier), websiteScheduledContentInsights.Items.Count.ToString()},
+            { string.Join(separator, AiraUnifiedConstants.InsightsContentIdentifier, AiraUnifiedConstants.InsightsReusableIdentifier, AiraUnifiedConstants.InsightsInDraftIdentifier, AiraUnifiedConstants.InsightsCountIdentifier), reusableDraftContentInsights.Items.Count.ToString()},
+            { string.Join(separator, AiraUnifiedConstants.InsightsContentIdentifier, AiraUnifiedConstants.InsightsReusableIdentifier, AiraUnifiedConstants.InsightsInScheduledIdentifier, AiraUnifiedConstants.InsightsCountIdentifier), reusableScheduledContentInsights.Items.Count.ToString()},
+            { string.Join(separator, AiraUnifiedConstants.InsightsContentIdentifier, AiraUnifiedConstants.InsightsWebsiteIdentifier, AiraUnifiedConstants.InsightsInDraftIdentifier, AiraUnifiedConstants.InsightsCountIdentifier), websiteDraftContentInsights.Items.Count.ToString()},
+            { string.Join(separator, AiraUnifiedConstants.InsightsContentIdentifier, AiraUnifiedConstants.InsightsWebsiteIdentifier, AiraUnifiedConstants.InsightsInScheduledIdentifier, AiraUnifiedConstants.InsightsCountIdentifier), websiteScheduledContentInsights.Items.Count.ToString()},
 
-            { string.Join(separator, allAccountsPrefix, countIdentifier), contactGroupInsights.AllCount.ToString() }
+            { string.Join(separator, AiraUnifiedConstants.InsightsAllAccountsIdentifier, AiraUnifiedConstants.InsightsCountIdentifier), contactGroupInsights.AllCount.ToString() }
         };
 
         foreach (var contactGroup in contactGroupInsights.Groups)
         {
             resultInsights.Add(
-                string.Join(separator, contactGroupPrefix, contactGroup.Name, countIdentifier), contactGroup.Count.ToString()
+                string.Join(separator, AiraUnifiedConstants.InsightsContactGroupIdentifier, contactGroup.Name, AiraUnifiedConstants.InsightsCountIdentifier), contactGroup.Count.ToString()
             );
 
             resultInsights.Add(
-                string.Join(separator, contactGroupPrefix, contactGroup.Name, ratioToAllContactsIdentifier), ((decimal)contactGroup.Count / contactGroupInsights.AllCount).ToString()
+                string.Join(separator, AiraUnifiedConstants.InsightsContactGroupIdentifier, contactGroup.Name, AiraUnifiedConstants.InsightsRatioToAllContactsIdentifier), ((decimal)contactGroup.Count / contactGroupInsights.AllCount).ToString()
             );
         }
 
@@ -219,14 +206,14 @@ internal class AiraUnifiedChatService : IAiraUnifiedChatService
             AddEmailInsight(nameof(EmailInsightsModel.SpamReports), emailInsight.EmailConfigurationName, emailInsight.SpamReports.ToString());
         }
 
-        AddContentItemsToInsights(reusableDraftContentInsights.Items, reusableContentPrefix, inDraftPrefix);
-        AddContentItemsToInsights(reusableScheduledContentInsights.Items, reusableContentPrefix, scheduledPrefix);
-        AddContentItemsToInsights(websiteDraftContentInsights.Items, websiteContentPrefix, inDraftPrefix);
-        AddContentItemsToInsights(websiteScheduledContentInsights.Items, websiteContentPrefix, scheduledPrefix);
+        AddContentItemsToInsights(reusableDraftContentInsights.Items, AiraUnifiedConstants.InsightsReusableIdentifier, AiraUnifiedConstants.InsightsInDraftIdentifier);
+        AddContentItemsToInsights(reusableScheduledContentInsights.Items, AiraUnifiedConstants.InsightsReusableIdentifier, AiraUnifiedConstants.InsightsInScheduledIdentifier);
+        AddContentItemsToInsights(websiteDraftContentInsights.Items, AiraUnifiedConstants.InsightsWebsiteIdentifier, AiraUnifiedConstants.InsightsInDraftIdentifier);
+        AddContentItemsToInsights(websiteScheduledContentInsights.Items, AiraUnifiedConstants.InsightsWebsiteIdentifier, AiraUnifiedConstants.InsightsInScheduledIdentifier);
 
         void AddEmailInsight(string statisticsParameter, string emailConfigurationName, string value) =>
             resultInsights.Add(
-                string.Join(separator, emailPrefix, statisticsParameter, emailConfigurationName),
+                string.Join(separator, AiraUnifiedConstants.InsightsEmailIdentifier, statisticsParameter, emailConfigurationName),
                 value
             );
 
@@ -235,7 +222,7 @@ internal class AiraUnifiedChatService : IAiraUnifiedChatService
             foreach (var contentItem in items)
             {
                 resultInsights.Add(
-                    string.Join(separator, contentPrefix, contentTypePrefix, releaseStatusPrefix, contentItem.DisplayName),
+                    string.Join(separator, AiraUnifiedConstants.InsightsEmailIdentifier, contentTypePrefix, releaseStatusPrefix, contentItem.DisplayName),
                     ""
                 );
             }

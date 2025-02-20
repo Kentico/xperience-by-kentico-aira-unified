@@ -14,19 +14,18 @@ namespace Kentico.Xperience.AiraUnified.Admin.InfoModels;
 /// <summary>
 /// Data conainer class for <see cref="AiraUnifiedChatPromptInfo"/>.
 /// </summary>
-[Serializable]
 public partial class AiraUnifiedChatPromptInfo : AbstractInfo<AiraUnifiedChatPromptInfo, IInfoProvider<AiraUnifiedChatPromptInfo>>
 {
     /// <summary>
     /// Object type.
     /// </summary>
-    public const string OBJECT_TYPE = "kenticoaira.airaunifiedchatprompt";
+    public const string OBJECT_TYPE = "kenticoairaunified.airaunifiedchatprompt";
 
 
     /// <summary>
     /// Type information.
     /// </summary>
-    public static readonly ObjectTypeInfo TYPEINFO = new(typeof(IInfoProvider<AiraUnifiedChatPromptInfo>), OBJECT_TYPE, "KenticoAira.AiraUnifiedChatPrompt", nameof(AiraUnifiedChatPromptId), null, nameof(AiraUnifiedChatPromptGuid), null, null, null, null, null)
+    public static readonly ObjectTypeInfo TYPEINFO = new(typeof(IInfoProvider<AiraUnifiedChatPromptInfo>), OBJECT_TYPE, "KenticoAiraUnified.AiraUnifiedChatPrompt", nameof(AiraUnifiedChatPromptId), null, nameof(AiraUnifiedChatPromptGuid), null, null, null, null, null)
     {
         TouchCacheDependencies = true,
         DependsOn =

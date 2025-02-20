@@ -14,19 +14,18 @@ namespace Kentico.Xperience.AiraUnified.Admin.InfoModels;
 /// <summary>
 /// Data container class for <see cref="AiraUnifiedConfigurationItemInfo"/>.
 /// </summary>
-[Serializable]
 public partial class AiraUnifiedConfigurationItemInfo : AbstractInfo<AiraUnifiedConfigurationItemInfo, IInfoProvider<AiraUnifiedConfigurationItemInfo>>
 {
     /// <summary>
     /// Object type.
     /// </summary>
-    public const string OBJECT_TYPE = "kenticoaira.airaunifiedconfigurationitem";
+    public const string OBJECT_TYPE = "kenticoairaunified.airaunifiedconfigurationitem";
 
 
     /// <summary>
     /// Type information.
     /// </summary>
-    public static readonly ObjectTypeInfo TYPEINFO = new(typeof(IInfoProvider<AiraUnifiedConfigurationItemInfo>), OBJECT_TYPE, "KenticoAira.AiraUnifiedConfigurationItem", nameof(AiraUnifiedConfigurationItemId), null, nameof(AiraUnifiedConfigurationItemGuid), null, null, null, null, null)
+    public static readonly ObjectTypeInfo TYPEINFO = new(typeof(IInfoProvider<AiraUnifiedConfigurationItemInfo>), OBJECT_TYPE, "KenticoAiraUnified.AiraUnifiedConfigurationItem", nameof(AiraUnifiedConfigurationItemId), null, nameof(AiraUnifiedConfigurationItemGuid), null, null, null, null, null)
     {
         TouchCacheDependencies = true,
         ContinuousIntegrationSettings =

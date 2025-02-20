@@ -12,7 +12,6 @@ using Kentico.Xperience.AiraUnified.Admin.InfoModels;
 
 namespace Kentico.Xperience.AiraUnified.Admin.InfoModels;
 
-[Serializable]
 public class AiraUnifiedChatMessageInfo : AbstractInfo<AiraUnifiedChatMessageInfo, IInfoProvider<AiraUnifiedChatMessageInfo>>
 {
     /// <summary>

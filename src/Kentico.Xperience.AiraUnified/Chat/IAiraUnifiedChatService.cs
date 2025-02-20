@@ -18,6 +18,7 @@ public interface IAiraUnifiedChatService
     /// Generates new suggested prompts for a user and saves them in the history.
     /// </summary>
     /// <param name="userId">Admin application user id.</param>
+    /// <param name="suggestions">The prompt suggestions.</param>
     /// <returns>A task returning a <see cref="AiraUnifiedChatMessageViewModel"/> with the generated prompts.</returns>
     AiraUnifiedPromptGroupModel SaveAiraPrompts(int userId, List<string> suggestions);
 

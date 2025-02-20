@@ -53,24 +53,12 @@ public static class AiraUnifiedConstants
     /// <summary>
     /// The name of the user role used for ai endpoint identifier.
     /// </summary>
-
     public const string AIRequestUserRoleName = "user";
 
     /// <summary>
     /// The ai endpoint.
     /// </summary>
-
     public const string AiraUnifiedAIEndpoint = "https://kenticoairaapimanager.azure-api.net/aira/rag";
-
-    /// <summary>
-    /// The name of the ai role used for ai endpoint identifier.
-    /// </summary>
-    public const string AIRequestAssistantRoleName = "assistant";
-
-    /// <summary>
-    /// The name of the user role used for ai endpoint identifier.
-    /// </summary>
-    public const string AIRequestUserRoleName = "user";
 
     /// <summary>
     /// The ai endpoint.
@@ -201,7 +189,6 @@ public static class AiraUnifiedConstants
     /// Insights count identifier.
     /// </summary>
     public const string InsightsCountIdentifier = "count";
-
 
     /// <summary>
     /// Insights ratio of contacts to other contacts identifier.

@@ -58,7 +58,7 @@ internal class AiraUnifiedModuleInstaller : IAiraUnifiedModuleInstaller
             typeof(AiraUnifiedChatPromptGroupInfo),
             nameof(AiraUnifiedChatPromptGroupInfo.AiraUnifiedChatPromptGroupId),
             [
-                new FormFieldDependencyModel
+                new FormFieldModel
                 {
                     ReferenceType = ObjectDependencyEnum.Required,
                     ReferenceToObjectType = UserInfo.OBJECT_TYPE,
@@ -75,11 +75,16 @@ internal class AiraUnifiedModuleInstaller : IAiraUnifiedModuleInstaller
             typeof(AiraUnifiedChatPromptInfo),
             nameof(AiraUnifiedChatPromptInfo.AiraUnifiedChatPromptId),
             [
-                new FormFieldDependencyModel
+                new FormFieldModel
                 {
                     ReferenceType = ObjectDependencyEnum.Required,
                     ReferenceToObjectType = AiraUnifiedChatPromptGroupInfo.OBJECT_TYPE,
                     FormFieldName = nameof(AiraUnifiedChatPromptInfo.AiraUnifiedChatPromptChatPromptGroupId)
+                },
+                new FormFieldModel
+                {
+                    FormFieldName = nameof(AiraUnifiedChatPromptInfo.AiraUnifiedChatPromptText),
+                    FormFieldType = FieldDataType.LongText
                 }
             ]
         );
@@ -92,11 +97,16 @@ internal class AiraUnifiedModuleInstaller : IAiraUnifiedModuleInstaller
             typeof(AiraUnifiedChatMessageInfo),
             nameof(AiraUnifiedChatMessageInfo.AiraUnifiedChatMessageId),
             [
-                new FormFieldDependencyModel
+                new FormFieldModel
                 {
                     ReferenceType = ObjectDependencyEnum.Required,
                     ReferenceToObjectType = UserInfo.OBJECT_TYPE,
                     FormFieldName = nameof(AiraUnifiedChatMessageInfo.AiraUnifiedChatMessageUserId)
+                },
+                new FormFieldModel
+                {
+                    FormFieldName = nameof(AiraUnifiedChatMessageInfo.AiraUnifiedChatMessageText),
+                    FormFieldType = FieldDataType.LongText
                 }
             ]
         );
@@ -109,11 +119,16 @@ internal class AiraUnifiedModuleInstaller : IAiraUnifiedModuleInstaller
             typeof(AiraUnifiedChatSummaryInfo),
             nameof(AiraUnifiedChatSummaryInfo.AiraUnifiedChatSummaryId),
             [
-                new FormFieldDependencyModel
+                new FormFieldModel
                 {
                     ReferenceType = ObjectDependencyEnum.Required,
                     ReferenceToObjectType = UserInfo.OBJECT_TYPE,
                     FormFieldName = nameof(AiraUnifiedChatSummaryInfo.AiraUnifiedChatSummaryUserId)
+                },
+                new FormFieldModel
+                {
+                    FormFieldType = FieldDataType.LongText,
+                    FormFieldName = nameof(AiraUnifiedChatSummaryInfo.AiraUnifiedChatSummaryContent)
                 }
             ]
         );
@@ -125,7 +140,7 @@ internal class AiraUnifiedModuleInstaller : IAiraUnifiedModuleInstaller
         string classDisplayName,
         Type infoType,
         string idPropertyName,
-        List<FormFieldDependencyModel>? dependencies = null)
+        List<FormFieldModel>? dependencies = null)
     {
         var info = DataClassInfoProvider.GetDataClassInfo(objectType) ??
             DataClassInfo.New(objectType);
@@ -139,14 +154,15 @@ internal class AiraUnifiedModuleInstaller : IAiraUnifiedModuleInstaller
         SetFormDefinition(info, infoType, idPropertyName, dependencies);
     }
 
-    private sealed class FormFieldDependencyModel
+    private sealed class FormFieldModel
     {
         public ObjectDependencyEnum ReferenceType { get; set; }
         public string FormFieldName { get; set; } = string.Empty;
-        public string ReferenceToObjectType { get; set; } = string.Empty;
+        public string? ReferenceToObjectType { get; set; }
+        public string? FormFieldType { get; set; }
     }
 
-    private static void SetFormDefinition(DataClassInfo info, Type infoType, string idPropertyName, List<FormFieldDependencyModel>? dependencies = null)
+    private static void SetFormDefinition(DataClassInfo info, Type infoType, string idPropertyName, List<FormFieldModel>? dependencies = null)
     {
         var formInfo = FormHelper.GetBasicFormDefinition(idPropertyName);
 
@@ -169,7 +185,7 @@ internal class AiraUnifiedModuleInstaller : IAiraUnifiedModuleInstaller
         }
     }
 
-    private static FormInfo AddFormItems(FormInfo formInfo, Type infoType, string idPropertyName, List<FormFieldDependencyModel>? dependencyProperties = null)
+    private static FormInfo AddFormItems(FormInfo formInfo, Type infoType, string idPropertyName, List<FormFieldModel>? formFieldModels = null)
     {
         var properties = infoType.GetProperties();
 
@@ -197,17 +213,29 @@ internal class AiraUnifiedModuleInstaller : IAiraUnifiedModuleInstaller
                     Type t when t == typeof(string) => FieldDataType.Text,
                     Type t when t == typeof(int) => FieldDataType.Integer,
                     Type t when t == typeof(DateTime) => FieldDataType.DateTime,
+                    Type t when t == typeof(Guid) => FieldDataType.Guid,
                     _ => formItem.DataType // Default case if no match is found
                 };
 
-                if (dependencyProperties is not null)
+                if (formFieldModels is not null)
                 {
-                    var dependency = dependencyProperties.FirstOrDefault(x => x.FormFieldName == property.Name);
+                    var formFieldModel = formFieldModels.FirstOrDefault(x => x.FormFieldName == property.Name);
 
-                    if (dependency is not null)
+                    if (formFieldModel is null)
                     {
-                        formItem.ReferenceToObjectType = dependency.ReferenceToObjectType;
-                        formItem.ReferenceType = dependency.ReferenceType;
+                        formInfo.AddFormItem(formItem);
+                        continue;
+                    }
+
+                    if (formFieldModel.ReferenceToObjectType is not null)
+                    {
+                        formItem.ReferenceToObjectType = formFieldModel.ReferenceToObjectType;
+                        formItem.ReferenceType = formFieldModel.ReferenceType;
+                    }
+
+                    if (formFieldModel.FormFieldType is not null)
+                    {
+                        formItem.DataType = formFieldModel.FormFieldType;
                     }
                 }
 
