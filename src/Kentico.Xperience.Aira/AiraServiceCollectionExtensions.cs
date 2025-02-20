@@ -20,6 +20,7 @@ public static class AiraServiceCollectionExtensions
     /// Adds Aira services and custom module to application."/>
     /// </summary>
     /// <param name="services"><see cref="IServiceCollection"/>The application services.</param>
+    /// <param name="configuration">The application <see cref="IConfiguration"/>.</param>
     /// <returns><see cref="IServiceCollection"/>The application services.</returns>
     public static IServiceCollection AddKenticoAira(this IServiceCollection services, IConfiguration configuration)
         => services.AddKenticoAiraInternal(configuration);

@@ -13,7 +13,6 @@ using Kentico.Xperience.Aira.Admin.InfoModels;
 
 namespace Kentico.Xperience.Aira.Admin.InfoModels;
 
-[Serializable]
 public partial class AiraChatSummaryInfo : AbstractInfo<AiraChatSummaryInfo, IInfoProvider<AiraChatSummaryInfo>>
 {
     /// <summary>

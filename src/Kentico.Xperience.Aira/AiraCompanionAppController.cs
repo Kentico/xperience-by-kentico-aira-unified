@@ -98,6 +98,7 @@ public sealed class AiraCompanionAppController : Controller
     /// <summary>
     /// Endpoint allowing chat communication via the chat interface.
     /// </summary>
+    /// <param name="request">The <see cref="IFormCollection"/> including the chat message.</param>
     [HttpPost]
     public async Task<IActionResult> PostChatMessage(IFormCollection request)
     {
@@ -175,7 +176,6 @@ public sealed class AiraCompanionAppController : Controller
     /// Endpoint allowing removal of a used suggested prompt group.
     /// </summary>
     /// <param name="model">The <see cref="AiraUsedPromptGroupModel"/> with the information about the prompt group.</param>
-    /// <returns></returns>
     [HttpPost]
     public IActionResult RemoveUsedPromptGroup([FromBody] AiraUsedPromptGroupModel model)
     {
@@ -187,6 +187,7 @@ public sealed class AiraCompanionAppController : Controller
     /// <summary>
     /// Endpoint allowing upload of the files via smart upload.
     /// </summary>
+    /// <param name="request">The <see cref="IFormCollection"/> request containing the uploaded files.</param>
     [HttpPost]
     public async Task<IActionResult> PostImages(IFormCollection request)
     {
@@ -226,7 +227,6 @@ public sealed class AiraCompanionAppController : Controller
     /// <summary>
     /// Endpoint retrieving the allowed smart upload file extensions.
     /// </summary>
-    /// <returns></returns>
     [HttpGet]
     public async Task<IActionResult> GetAllowedFileExtensions()
     {
@@ -238,7 +238,6 @@ public sealed class AiraCompanionAppController : Controller
     /// <summary>
     /// Endpoint exposing the manifest file for the PWA.
     /// </summary>
-    /// <returns></returns>
     [HttpGet($"/{AiraCompanionAppConstants.RCLUrlPrefix}/manifest.json")]
     [Produces("application/json")]
     public async Task<IActionResult> GetPwaManifest()

@@ -16,7 +16,6 @@ namespace Kentico.Xperience.Aira.Admin.InfoModels;
 /// <summary>
 /// Data conainer class for <see cref="AiraChatPromptGroupInfo"/>.
 /// </summary>
-[Serializable]
 internal class AiraChatPromptGroupInfo : AbstractInfo<AiraChatPromptGroupInfo, IInfoProvider<AiraChatPromptGroupInfo>>
 {
     /// <summary>
