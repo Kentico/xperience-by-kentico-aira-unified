@@ -144,5 +144,6 @@ segments_2i
 **/App_Data/RepoTemplate/*
 **/DancingGoat/assets/*
 **/index.js
+**/index.js.LICENSE.txt
 **/wwwroot/css/style.css
 **/wwwroot/css/style.css.map

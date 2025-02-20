@@ -35,6 +35,10 @@
 	<Target Name="NpmBuild" BeforeTargets="BeforeBuild" Condition=" '$(Configuration)|$(Platform)' != 'Debug|AnyCPU' ">
 		<Exec Command="npm run build" WorkingDirectory="$(MSBuildProjectDirectory)\FrontEnd" />
 	</Target>
+
+	<Target Name="NpmBuildCss" BeforeTargets="BeforeBuild" Condition=" '$(Configuration)|$(Platform)' != 'Debug|AnyCPU' ">
+		<Exec Command="npm run build-css" WorkingDirectory="$(MSBuildProjectDirectory)\FrontEnd" />
+	</Target>
 	
 	<ItemGroup>
 	  <EmbeddedResource Include="Resource.resx">
