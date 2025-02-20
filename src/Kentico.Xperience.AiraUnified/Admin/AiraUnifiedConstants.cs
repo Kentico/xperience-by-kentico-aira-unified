@@ -31,7 +31,7 @@ public static class AiraUnifiedConstants
     public const string SmartUploadUploadUrl = "upload";
 
     /// <summary>
-    /// Relative path to the PWA signin page.
+    /// Relative path to the PWA signIn page.
     /// </summary>
     public const string SigninRelativeUrl = "signin";
 
@@ -61,6 +61,21 @@ public static class AiraUnifiedConstants
     /// </summary>
 
     public const string AiraUnifiedAIEndpoint = "https://kenticoairaapimanager.azure-api.net/aira/rag";
+
+    /// <summary>
+    /// The name of the ai role used for ai endpoint identifier.
+    /// </summary>
+    public const string AIRequestAssistantRoleName = "assistant";
+
+    /// <summary>
+    /// The name of the user role used for ai endpoint identifier.
+    /// </summary>
+    public const string AIRequestUserRoleName = "user";
+
+    /// <summary>
+    /// The ai endpoint.
+    /// </summary>
+    public const string AiraAIEndpoint = "https://kenticoairaapimanager.azure-api.net/aira/rag";
 
     /// <summary>
     /// The identifier of the ai role used to identify the role in the database.
@@ -131,4 +146,65 @@ public static class AiraUnifiedConstants
     /// Resource is in development attribute of this module.
     /// </summary>
     public const bool ResourceIsInDevelopment = false;
+
+    /// <summary>
+    /// Insights email identifier.
+    /// </summary>
+    public const string InsightsEmailIdentifier = "email";
+
+    /// <summary>
+    /// Insights content identifier.
+    /// </summary>
+    public const string InsightsContentIdentifier = "content";
+
+    /// <summary>
+    /// Insights in draft identifier.
+    /// </summary>
+    public const string InsightsInDraftIdentifier = "inDraft";
+
+    /// <summary>
+    /// Insights draft identifier.
+    /// </summary>
+    public const string InsightsDraftIdentifier = "Draft";
+
+    /// <summary>
+    /// Insights scheduled identifier.
+    /// </summary>
+    public const string InsightsScheduledIdentifier = "Scheduled";
+
+    /// <summary>
+    /// Insights in scheduled identifier.
+    /// </summary>
+    public const string InsightsInScheduledIdentifier = "inScheduled";
+
+    /// <summary>
+    /// Insights reusable identifier.
+    /// </summary>
+    public const string InsightsReusableIdentifier = "reusable";
+
+    /// <summary>
+    /// Insights website identifier.
+    /// </summary>
+    public const string InsightsWebsiteIdentifier = "website";
+
+    /// <summary>
+    /// Insights all accounts identifier.
+    /// </summary>
+    public const string InsightsAllAccountsIdentifier = "allAccounts";
+
+    /// <summary>
+    /// Insights contact group identifier.
+    /// </summary>
+    public const string InsightsContactGroupIdentifier = "contactGroup";
+
+    /// <summary>
+    /// Insights count identifier.
+    /// </summary>
+    public const string InsightsCountIdentifier = "count";
+
+
+    /// <summary>
+    /// Insights ratio of contacts to other contacts identifier.
+    /// </summary>
+    public const string InsightsRatioToAllContactsIdentifier = "ratioOfContactsInGroupToOtherContacts";
 }
