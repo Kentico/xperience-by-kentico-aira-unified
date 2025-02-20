@@ -47,7 +47,7 @@ stages:
             value: Release
 
           - name: ProjectPath
-            value: src/Kentico.Xperience.Aira/Kentico.Xperience.Aira.csproj
+            value: src/Kentico.Xperience.AiraUnified/Kentico.Xperience.AiraUnified.csproj
 
         steps:
           - task: DotNetCoreCLI@2
