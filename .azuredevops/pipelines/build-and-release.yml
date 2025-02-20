@@ -56,23 +56,26 @@ stages:
               version: 20.10
               checkLatest: true
               
-          - task: PowerShell@2
+          - task: Npm@1
             displayName: npm run ci
             inputs:
+              command: custom
               workingDir: $(System.DefaultWorkingDirectory)/src/Kentico.Xperience.AiraUnified/FrontEnd
-              script: npm run ci --no-audit --no-fund 
+              customCommand: run ci --no-audit --no-fund 
 
-          - task: PowerShell@2
+          - task: Npm@1
             displayName: npm run build
             inputs:
+              command: custom
               workingDir: $(System.DefaultWorkingDirectory)/src/Kentico.Xperience.AiraUnified/FrontEnd
-              script: npm run build 
+              customCommand: run build 
 
-          - task: PowerShell@2
+          - task: Npm@1
             displayName: npm run build-css
             inputs:
+              command: custom
               workingDir: $(System.DefaultWorkingDirectory)/src/Kentico.Xperience.AiraUnified/FrontEnd
-              script: npm run build-css
+              customCommand: run build-css
         
           - task: DotNetCoreCLI@2
             displayName: Restore dotnet tools
