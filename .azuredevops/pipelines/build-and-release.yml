@@ -50,6 +50,12 @@ stages:
             value: src/Kentico.Xperience.AiraUnified/Kentico.Xperience.AiraUnified.csproj
 
         steps:
+          - task: UseNode@1
+            displayName: Use Node 20.10
+            inputs:
+              version: 20.10
+              checkLatest: true
+        
           - task: DotNetCoreCLI@2
             displayName: Restore dotnet tools
             inputs:
