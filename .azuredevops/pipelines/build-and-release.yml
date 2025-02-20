@@ -61,7 +61,7 @@ stages:
             inputs:
               command: custom
               workingDir: $(System.DefaultWorkingDirectory)/src/Kentico.Xperience.AiraUnified/FrontEnd
-              customCommand: run install --no-audit --no-fund 
+              customCommand: ci --no-audit --no-fund 
 
           - task: Npm@1
             displayName: npm run build
