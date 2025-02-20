@@ -308,13 +308,7 @@ internal class AiraEndpointDataSource : MutableEndpointDataSource
 
         var signInRedirectUrl = $"{airaPathBase}/{AiraCompanionAppConstants.SigninRelativeUrl}";
 
-        if (user is null)
-        {
-            context.Response.Redirect(signInRedirectUrl);
-            return false;
-        }
-
-        if (!userProvider.Get().WhereEquals(nameof(UserInfo.UserGUID), user.UserGUID).Any())
+        if (user is null || !userProvider.Get().WhereEquals(nameof(UserInfo.UserGUID), user.UserGUID).Any())
         {
             context.Response.Redirect(signInRedirectUrl);
             return false;
