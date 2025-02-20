@@ -26,20 +26,8 @@
 	<ItemGroup>
 		<AssemblyAttribute Include="CMS.AssemblyDiscoverableAttribute">
 		</AssemblyAttribute>
-
 	</ItemGroup>
 
-	<Target Name="NpmInstall" BeforeTargets="NpmBuild" Condition=" '$(Configuration)|$(Platform)' != 'Debug|AnyCPU' ">
-		<Exec Command="npm ci --no-audit --no-fund" WorkingDirectory="$(MSBuildProjectDirectory)\FrontEnd" />
-	</Target>
-	<Target Name="NpmBuild" BeforeTargets="BeforeBuild" Condition=" '$(Configuration)|$(Platform)' != 'Debug|AnyCPU' ">
-		<Exec Command="npm run build" WorkingDirectory="$(MSBuildProjectDirectory)\FrontEnd" />
-	</Target>
-
-	<Target Name="NpmBuildCss" BeforeTargets="BeforeBuild" Condition=" '$(Configuration)|$(Platform)' != 'Debug|AnyCPU' ">
-		<Exec Command="npm run build-css" WorkingDirectory="$(MSBuildProjectDirectory)\FrontEnd" />
-	</Target>
-	
 	<ItemGroup>
 	  <EmbeddedResource Include="Resource.resx">
 	    <Generator>ResXFileCodeGenerator</Generator>
