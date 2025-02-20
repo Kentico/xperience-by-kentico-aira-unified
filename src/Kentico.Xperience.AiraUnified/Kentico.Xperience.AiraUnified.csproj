@@ -6,12 +6,11 @@
 	</PropertyGroup>
 
 	<PropertyGroup>
-		<Product></Product>
+		<Product>Aira Unified</Product>
 		<Title>$(Product)</Title>
-		<PackageId></PackageId>
-    <Description></Description>
-    <RepositoryUrl></RepositoryUrl>
-  </PropertyGroup>
+		<PackageId>Kentico.Xperience.AiraUnified</PackageId>
+		<Description>Xperience by Kentico AI chat and upload companion application.</Description>
+	</PropertyGroup>
 
 	<PropertyGroup>
 		<AdminOrgName>kentico</AdminOrgName>
