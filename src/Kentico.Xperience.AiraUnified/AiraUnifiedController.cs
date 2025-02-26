@@ -282,13 +282,6 @@ public sealed class AiraUnifiedController : Controller
     [AllowAnonymous]
     public async Task<IActionResult> SignIn()
     {
-        var user = await adminUserManager.GetUserAsync(User);
-
-        if (user is not null)
-        {
-
-        }
-
         var airaUnifiedConfiguration = await airaUnifiedConfigurationService.GetAiraUnifiedConfiguration();
         var logoUrl = navBarService.GetMediaFileUrl(airaUnifiedConfiguration.AiraUnifiedConfigurationItemAiraRelativeLogoId)?.RelativePath;
         logoUrl = navBarService.GetSanitizedImageUrl(logoUrl, $"/{AiraUnifiedConstants.RCLUrlPrefix}/{AiraUnifiedConstants.PictureStarImgPath}", "Aira Unified Logo");
