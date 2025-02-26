@@ -313,7 +313,7 @@ internal class AiraUnifiedEndpointDataSource : MutableEndpointDataSource
             return false;
         }
 
-        var hasAiraViewPermission = await airaUnifiedAssetService.DoesUserHaveAiraUnifiedPermission(permission, user.UserID);
+        var hasAiraViewPermission = await airaUnifiedAssetService.DoesUserHaveAiraUnifiedPermission(permission, user.UserID) || user.IsAdministrator();
         if (!hasAiraViewPermission)
         {
             context.Response.Redirect(signInRedirectUrl);
