@@ -33,14 +33,14 @@ internal class AiraUnifiedConfigurationService : IAiraUnifiedConfigurationServic
             }
 
             var newConfigurationInfo = configurationModel.MapToAiraUnifiedConfigurationInfo();
-            airaUnifiedConfigurationProvider.Set(newConfigurationInfo);
+            await airaUnifiedConfigurationProvider.SetAsync(newConfigurationInfo);
 
             return true;
         }
 
         existingConfiguration = configurationModel.MapToAiraUnifiedConfigurationInfo(existingConfiguration);
 
-        airaUnifiedConfigurationProvider.Set(existingConfiguration);
+        await airaUnifiedConfigurationProvider.SetAsync(existingConfiguration);
 
         airaUnifiedEndpointDataSource.UpdateEndpoints();
 

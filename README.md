@@ -6,7 +6,8 @@
 
 ## Description
 
-Aira unified integration enabling for alternative administration UI and chatbot which can easily be added to an Xperience By Kentico project.
+Aira Unified integration provides an alternative administration UI and chatbot that can be easily added to an Xperience by Kentico (XbyK) project. It is designed for content editors and marketers who need essential functionality on mobile devices.
+
 ## Screenshots
 
 ![UI Application](/images/screenshots/ui_application.png)
@@ -17,7 +18,7 @@ Aira unified integration enabling for alternative administration UI and chatbot 
 | ----------------- | -------------------- |
 | >= 30.0.0         | >= 0.1.0-prerelase-1 |
 
-### Dependencies
+## Dependencies
 
 - [ASP.NET Core 8.0](https://dotnet.microsoft.com/en-us/download)
 - [Xperience by Kentico](https://docs.xperience.io/xp/changelog)
@@ -32,23 +33,30 @@ dotnet add package Kentico.Xperience.AiraUnified
 
 ## Quick Start
 
-1. Include `Kentico.Xperience.AiraUnified` project in the solution.
+1. Add the Aira Unified API subscription key to your `appsettings.json`:
+
+```json
+"AiraUnifiedOptions": {
+  "AiraUnifiedApiSubscriptionKey": "<your aira unified API key>"
+}
+```
+2. Configure your project for [HTTPS](https://learn.microsoft.com/en-us/aspnet/core/security/enforcing-ssl).
+
+3. Include the `Kentico.Xperience.AiraUnified` package in your project:
 
    ```powershell
    dotnet add package Kentico.Xperience.AiraUnified
    ```
 
-2. Register required services into DI container.
+4. Register the required services in `Program.cs`:
 
    ```csharp
-   // Program.cs
-
    var builder = WebApplication.CreateBuilder(args);
 
    // ...
-
-   builder.Services.AddKenticoAiraUnified();
-
+   
+   builder.Services.AddKenticoAiraUnified(builder.Configuration);
+   
    // ...
 
    var app = builder.Build();
@@ -56,21 +64,28 @@ dotnet add package Kentico.Xperience.AiraUnified
    // ...
    
    app.UseAiraUnifiedEndpoints();
-
+   
    app.Run();
-
    ```
 
-3. In the administration go to UI application 'Aira Unified'.
-4. Fill out the Aira Unified configuration form, populating the fields with your custom values.
-- Relative Path Base - the relative path where the Aira Unified is available. The path is relative to the base url of your application.
-- Logo - the asset selectable from Media Library shown in the top left corner of the Aira Unified pwa.
-- Chat Title - the title displayed on top of the screen of the chat page and the text of chat option in Aira Unified menu.
-- Chat Image - the asset selectable from Media library shown on top of the screen of the chat page and next to the chat option text in Aira Unified menu.
-- Smart Upload Title - the title displayed on top of the screen of the smart upload page and the text of smart upload option in Aira Unified menu.
-- Smart Upload Image - the asset selectable from Media library shown on top of the screen of the smart upload page and next to the smart upload option text in Aira Unified menu.
-5. Return to administration dashboard and select a `Content Type` used for [Mass asset upload](https://docs.kentico.com/developers-and-admins/development/content-types#mass-asset-upload-configuration). Uploaded assets in the Smart upload page of this integration will be saved under this `Content type` in the Content hub.
-6. The users can now visit the Aira Unified under the specified path.
+5. Configure the Aira Unified settings in the administration UI:
+   - **Relative Path Base**: Defines where Aira Unified is available.
+   - **Logo**: Select an asset from the Media Library.
+   - **Chat Title**: Title for the chat page.
+   - **Smart Upload Title**: Title for the smart upload page.
+   
+   ![Admin Configuration](/images/AiraUnifiedAdminConfiguration.png)
+
+6. Set up a `Content Type` for [Mass Asset Upload](https://docs.kentico.com/developers-and-admins/development/content-types#mass-asset-upload-configuration).
+7. Configure role-based permissions in the `Role Management` application:
+   - **View**: Access the Aira Unified chat.
+   - **Create/Update**: Access and upload content via Smart Upload.
+
+   ![Role Configuration](/images/ConfigureAiraUnifiedPermissions.png)
+
+8. In case of using this library in a project with XbyK versions > 30.2.0 the Aira Unified expects a workspace named "Kentico Default" (code name 'KenticoDefault'). In that case, add a workspace with a code name `KenticoDefault` workspace.
+
+9. Users can now sign in to the Aira Unified app - `<your-path-base>/signin`.
 
 ## Full Instructions
 
@@ -82,7 +97,7 @@ To activate the communication of AIRA Unified app with the AIRA service, you nee
 
 To see the guidelines for Contributing to Kentico open source software, please see [Kentico's `CONTRIBUTING.md`](https://github.com/Kentico/.github/blob/main/CONTRIBUTING.md) for more information and follow the [Kentico's `CODE_OF_CONDUCT`](https://github.com/Kentico/.github/blob/main/CODE_OF_CONDUCT.md).
 
-Instructions and technical details for contributing to **this** project can be found in [Contributing Setup](./docs/Contributing-Setup.md).
+Find project-specific contribution details in [Contributing Setup](./docs/Contributing-Setup.md).
 
 ## License
 

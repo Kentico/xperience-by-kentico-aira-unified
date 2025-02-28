@@ -1,5 +1,8 @@
 ﻿using DancingGoat;
+using DancingGoat.Helpers.Generators;
 using DancingGoat.Models;
+
+using CMS.Base;
 
 using Kentico.Activities.Web.Mvc;
 using Kentico.Content.Web.Mvc.Routing;
@@ -14,8 +17,6 @@ using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.AspNetCore.Mvc;
 
 using Samples.DancingGoat;
-
-using CMS.Base;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -124,10 +125,10 @@ static void ConfigureMembershipServices(IServiceCollection services)
         // Ensures, that disabled member cannot sign in.
         options.SignIn.RequireConfirmedAccount = true;
     })
-       .AddUserStore<ApplicationUserStore<ApplicationUser>>()
-       .AddRoleStore<NoOpApplicationRoleStore>()
-       .AddUserManager<UserManager<ApplicationUser>>()
-       .AddSignInManager<SignInManager<ApplicationUser>>();
+        .AddUserStore<ApplicationUserStore<ApplicationUser>>()
+        .AddRoleStore<NoOpApplicationRoleStore>()
+        .AddUserManager<UserManager<ApplicationUser>>()
+        .AddSignInManager<SignInManager<ApplicationUser>>();
 
     services.ConfigureApplicationCookie(options =>
     {
@@ -148,8 +149,13 @@ static void ConfigureMembershipServices(IServiceCollection services)
 
     services.Configure<AdminIdentityOptions>(options =>
     {
-        // The expiration time span of 8 hours is set for demo purposes only. In production environment, set expiration according to best practices.
+        // The expiration time span of 8 hours is set for demo purposes only. In production environments, set expiration according to best practices.
         options.AuthenticationOptions.ExpireTimeSpan = TimeSpan.FromHours(8);
+
+        // The forbidden passwords are set for demo purposes only. In production environments, set password options according to best practices.
+        var companySpecificKeywords = new List<string> { "kentico", "dancinggoat", "admin", "coffee" };
+        var specificNumberCombinations = new List<string> { "2023", "23", "2024", "24", "2025", "25" };
+        options.PasswordOptions.ForbiddenPasswords = ForbiddenPasswordGenerator.Generate(companySpecificKeywords, specificNumberCombinations);
     });
 
     services.AddAuthorization();
