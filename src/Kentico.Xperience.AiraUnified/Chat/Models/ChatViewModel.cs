@@ -30,6 +30,8 @@ public class ChatViewModel
     /// </summary>
     public string HistoryUrl { get; set; } = string.Empty;
 
+    public string PromptLibraryUrl { get; set; } = string.Empty;
+
     /// <summary>
     /// Relative path of the endpoint which retrieves the navigation model <see cref="NavBar.NavBarViewModel"/>.
     /// </summary>

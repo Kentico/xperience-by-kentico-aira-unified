@@ -62,11 +62,13 @@ public sealed class AiraUnifiedController : Controller
         var navigationUrl = navigationService.BuildUriOrNull(configuration.BaseUrl, configuration.AiraUnifiedPathBase, AiraUnifiedConstants.NavigationUrl);
         var historyUrl = navigationService.BuildUriOrNull(configuration.BaseUrl, configuration.AiraUnifiedPathBase, AiraUnifiedConstants.ChatRelativeUrl, AiraUnifiedConstants.ChatHistoryUrl);
         var chatUrl = navigationService.BuildUriOrNull(configuration.BaseUrl, configuration.AiraUnifiedPathBase, AiraUnifiedConstants.ChatRelativeUrl, AiraUnifiedConstants.ChatMessageUrl);
+        var promptLibraryUrl = navigationService.BuildUriOrNull(configuration.BaseUrl, configuration.AiraUnifiedPathBase, AiraUnifiedConstants.ChatRelativeUrl, AiraUnifiedConstants.ChatPromptLibraryUrl);
 
         if (removePromptUrl is null
             || navigationUrl is null
             || historyUrl is null
-            || chatUrl is null)
+            || chatUrl is null
+            || promptLibraryUrl is null)
         {
             eventLogService.LogError(nameof(AiraUnifiedController), nameof(Index), InvalidPathBaseErrorMessage);
 
@@ -88,12 +90,45 @@ public sealed class AiraUnifiedController : Controller
             NavigationUrl = navigationUrl.ToString(),
             NavigationPageIdentifier = AiraUnifiedConstants.ChatRelativeUrl,
             HistoryUrl = historyUrl.ToString(),
+            PromptLibraryUrl = promptLibraryUrl.ToString(),
             ChatUrl = chatUrl.ToString(),
             LogoImgRelativePath = logoUrl
         };
 
         return View("~/Chat/Chat.cshtml", chatModel);
     }
+
+    [HttpGet]
+    public async Task<IActionResult> GetPromptLibrary()
+    => await Task.FromResult(Ok(new ChatPromptLibraryViewModel
+    {
+        PromptCategories = [
+            new() {
+                CategoryName = "General",
+                Prompts = [
+                    "What is today's news ?",
+                    "Tell me a joke",
+                    "Suggest a good movie"
+                ]
+            },
+            new() {
+                CategoryName = "Travel",
+                Prompts = [
+                    "Top places to visit in Europe",
+                    "What area the best travel tips ?",
+                    "Suggest a weekend getaway"
+                ]
+            },
+            new() {
+                CategoryName = "Health",
+                Prompts = [
+                    "How to stay fit at home ?",
+                    "What are some healthy snacks ?",
+                    "Tips for better sleep"
+                ]
+            }
+        ]
+    }));
 
     /// <summary>
     /// Retrieves the navigation view model.
