@@ -2,7 +2,7 @@
 
 This library enables the use of the Aira Unified chat and smart uploader, serving as an alternative admin user interface optimized for smartphones.
 
-## Accessing the Aira Unified PWA
+## Accessing the Aira Unified PWA (Progressive Web App)
 
 After successfully configuring the Aira Unified application in the Xperience admin UI and assigning the required roles to the appropriate users, as detailed in the [README](../README.md), those users can access the application on their smartphones.
 
