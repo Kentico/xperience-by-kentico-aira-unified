@@ -6,7 +6,7 @@
         </div>
 
         <div class="c-app_header">
-            <NavBarComponent :airaUnifiedBaseUrl="airaUnifiedBaseUrl" :baseUrl="baseUrl" :navBarModel="navBarModel"/>
+            <NavBarComponent :airaUnifiedBaseUrl="airaUnifiedBaseUrl" :navigationPageIdentifier="navigationPageIdentifier" :navigationUrl="navigationUrl" :baseUrl="baseUrl"/>
         </div>
 
         <div class="c-app_body" :style="{ overflowY: 'auto', overflowX: 'hidden' }">
@@ -103,10 +103,12 @@ export default {
     props: {
         airaUnifiedBaseUrl: null,
         baseUrl: null,
-        navBarModel: null,
         allowedFileExtensionsUrl: null,
         selectFilesButton: null,
         uploadSuccessfulMessage: null,
+        uploadUrl: null,
+        navigationUrl: null,
+        navigationPageIdentifier: null
     },
     data() {
         return {
@@ -119,6 +121,7 @@ export default {
             fileInputAccept: '',
             allowedExtensions: [],
             isLoaded: true,
+            navBarModel: null,
 
             alertResultIconUrl: "",
             uploadResultMessage: ""
@@ -219,7 +222,7 @@ export default {
                 if (!this.formIsValid) return;
                 const formData = new FormData();
                 this.files.forEach(f => formData.append('files', f));
-                const response = await fetch(`${this.baseUrl}${this.airaUnifiedBaseUrl}/${this.navBarModel.smartUploadItem.url}/upload`, {
+                const response = await fetch(`${this.uploadUrl}`, {
                     method: 'POST',
                     body: formData,
                     mode: "same-origin",

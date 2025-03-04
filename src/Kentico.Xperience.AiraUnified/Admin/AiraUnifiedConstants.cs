@@ -16,6 +16,16 @@ public static class AiraUnifiedConstants
     public const string ChatMessageUrl = "message";
 
     /// <summary>
+    /// Relative path for retrieval of user's chat history.
+    /// </summary>
+    public const string ChatHistoryUrl = "history";
+
+    /// <summary>
+    /// Relative path for retrieval of the navigation model <see cref="NavBar.NavBarViewModel"/> data.
+    /// </summary>
+    public const string NavigationUrl = "nav";
+
+    /// <summary>
     /// Relative path to the smart upload page in the PWA.
     /// </summary>
     public const string SmartUploadRelativeUrl = "assets";

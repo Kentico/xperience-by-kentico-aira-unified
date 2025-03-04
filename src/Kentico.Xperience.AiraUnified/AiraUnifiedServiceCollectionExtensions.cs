@@ -38,7 +38,7 @@ public static class AiraUnifiedServiceCollectionExtensions
             .AddScoped<IAiraUnifiedInsightsService, AiraUnifiedInsightsService>()
             .AddScoped<IAiraUnifiedAssetService, AiraUnifiedAssetService>()
             .AddScoped<IAiraUnifiedChatService, AiraUnifiedChatService>()
-            .AddScoped<INavBarService, NavBarService>()
+            .AddScoped<INavigationService, NavigationService>()
             .Configure<AiraUnifiedOptions>(configuration.GetSection(nameof(AiraUnifiedOptions)));
 
         return services;

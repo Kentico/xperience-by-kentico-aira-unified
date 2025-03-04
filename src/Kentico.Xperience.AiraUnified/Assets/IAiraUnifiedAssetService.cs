@@ -1,4 +1,7 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Kentico.Content.Web.Mvc;
+using Kentico.Xperience.AiraUnified.Admin.InfoModels;
+
+using Microsoft.AspNetCore.Http;
 
 namespace Kentico.Xperience.AiraUnified.Assets;
 
@@ -27,4 +30,30 @@ public interface IAiraUnifiedAssetService
     /// </summary>
     /// <returns>Allowed file extensions.</returns>
     Task<string> GetAllowedFileExtensions();
+
+    /// <summary>
+    /// Retrieves url for a file displayed in the PWA.
+    /// </summary>
+    /// <param name="identifier">Identifier of the file.</param>
+    /// <returns><see cref="IMediaFileUrl"/>The file reference.</returns>
+    IMediaFileUrl? GetMediaFileUrl(string identifier);
+
+    /// <summary>
+    /// Retrieves url of an image with configured url or logs warning if it doesn't exist.
+    /// </summary>
+    /// <param name="configuredUrl"></param>
+    /// <param name="defaultUrl"></param>
+    /// <param name="imagePurpose"></param>
+    string GetSanitizedImageUrl(string? configuredUrl, string defaultUrl, string imagePurpose);
+
+    /// <summary>
+    /// Retrieves url of the aira unified logo specified in the configuration.
+    /// </summary>
+    /// <param name="configuration"></param>
+    string GetSanitizedLogoUrl(AiraUnifiedConfigurationItemInfo configuration);
+
+    /// <summary>
+    /// Retrieves url of the aira unified logo specified in the configuration.
+    /// </summary>
+    Task<string> GetSanitizedLogoUrl();
 }

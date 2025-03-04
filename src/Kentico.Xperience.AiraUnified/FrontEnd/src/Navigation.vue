@@ -2,7 +2,7 @@
     <nav class="navbar">
         <div class="container">
             <div class="navbar-brand">
-                <img alt="Kentico" id="aira-unified-app-logo" :src="`${this.baseUrl}${this.navBarModel.logoImgRelativePath}`">  
+                <img alt="Kentico" id="aira-unified-app-logo" :src="`${this.baseUrl}${this.navBarModel?.logoImgRelativePath}`">
             </div>
             <h1 class="c-app_title" id="aira-unified-title">
                 <svg id="aira-unified-title-img" class="c-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -12,12 +12,12 @@
                 </svg>
 
                 <span id="aira-unified-title-text">
-                    {{ `${this.navBarModel.titleText}` }}
+                    {{ navBarModel?.titleText }}
                 </span>
             </h1>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
-                <svg class="c-icon" id="burger-icon" :style="{ color: `${this.themeColor}` }">
-                    <use :xlink:href="`${this.baseUrl}/_content/Kentico.Xperience.AiraUnified/img/icons.svg#hamburger-menu`"></use>
+                <svg class="c-icon" id="burger-icon" :style="{ color: themeColor }">
+                    <use :xlink:href="`${baseUrl}/_content/Kentico.Xperience.AiraUnified/img/icons.svg#hamburger-menu`"></use>
                 </svg>
             </button>
         </div>
@@ -27,20 +27,20 @@
                 <div class="navbar-nav">
                     <div class="c-nav">
                         <div class="c-nav_content" id="aira-unified-menu-submenu-items">
-                            <a class="d-flex align-items-center gap-2 btn" :href="`${this.baseUrl}${this.airaUnifiedBaseUrl}/${this.navBarModel.chatItem.url}`">
-                                <img :src="`${this.baseUrl}${this.navBarModel.chatItem.menuImage}`" class="c-icon text-primary" />
-                                {{`${this.navBarModel.chatItem.title}`}}
+                            <a class="d-flex align-items-center gap-2 btn" v-if="navBarModel?.chatItem" :href="`${navBarModel.chatItem.url}`">
+                                <img :src="`${baseUrl}${navBarModel.chatItem.menuImage}`" class="c-icon text-primary" />
+                                {{ navBarModel.chatItem.title }}
                             </a>
-                            <a class="d-flex align-tems-center gap-2 btn" :href="`${this.baseUrl}${this.airaUnifiedBaseUrl}/${this.navBarModel.smartUploadItem.url}`">
-                                <img :src="`${this.baseUrl}${this.navBarModel.smartUploadItem.menuImage}`" class="c-icon text-primary" />
-                                {{`${this.navBarModel.smartUploadItem.title}`}}
+                            <a class="d-flex align-items-center gap-2 btn" v-if="navBarModel?.smartUploadItem" :href="`${navBarModel.smartUploadItem.url}`">
+                                <img :src="`${baseUrl}${navBarModel.smartUploadItem.menuImage}`" class="c-icon text-primary" />
+                                {{ navBarModel.smartUploadItem.title }}
                             </a>
                         </div>
 
                         <hr class="c-nav_hr">
                         <div class="c-nav_footer">
                             <p class="text-center fs-1">
-                                {{`${this.navBarModel.menuMessage}`}}
+                                {{ navBarModel?.menuMessage }}
                             </p>
                             <p id="appVersion" class="mt-3"></p>
                             <p>© 2024 Kentico. All rights reserved.</p>
@@ -53,30 +53,52 @@
 </template>
 
 <script>
-
 export default {
-    components: {
-    },
     props: {
-        baseUrl: null,
-        navBarModel: null,
-        airaUnifiedBaseUrl: null
+        baseUrl: {
+            type: String,
+            required: true
+        },
+        airaUnifiedBaseUrl: {
+            type: String,
+            required: true
+        },
+        navigationUrl: {
+            type: String,
+            required: true
+        },
+        navigationPageIdentifier: {
+            type: String,
+            required: true
+        }
     },
     data() {
         return {
             themeColor: "#8107c1",
-            themeColorInRgb: "rgb(129, 7, 193)",
-            submitButton: null,
-            started: false
+            navBarModel: null
         }
     },
     mounted() {
-        this.main();
+        this.retrieveNavBar();
     },
     methods: {
-        main() {
-            
-        },
+        async retrieveNavBar() {
+            const response = await fetch(this.navigationUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    pageIdentifier: this.navigationPageIdentifier,
+                }),
+            });
+
+            if (!response.ok) {
+                console.error('Error fetching navigation data');
+            }
+
+            this.navBarModel = await response.json();
+        }
     }
 }
 </script>

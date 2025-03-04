@@ -15,10 +15,13 @@
      data-aira-unified-base-url="@Model.PathBase"
      data-ai-icon-url="@Model.AIIconImagePath"
      data-base-url="@baseUrl"
-     data-nav-bar-model='@Html.Raw(Json.Serialize(Model.NavBarViewModel))'
-     data-history='@Html.Raw(Json.Serialize(Model.History))'
      data-use-prompt-url='@Model.RemovePromptUrl'
-     data-service-page-model='@Html.Raw(Json.Serialize(Model.ServicePageViewModel))'>
+     data-service-page-model='@Html.Raw(Json.Serialize(Model.ServicePageViewModel))'
+     data-history-url="@Model.HistoryUrl"
+     data-navigation-url="@Model.NavigationUrl"
+     data-navigation-page-identifier="@Model.NavigationPageIdentifier"
+     data-chat-url="@Model.ChatUrl"
+     data-logo-img-relative-path="@Model">
 </div>
 
 <script>

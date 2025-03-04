@@ -13,6 +13,9 @@
     "build-css": "sass ./src/assets/sass/style.scss ../../Kentico.Xperience.AiraUnified/wwwroot/css/style.css",
     "watch-css": "sass --watch ./src/assets/sass/style.scss:../../Kentico.Xperience.AiraUnified/wwwroot/css/style.css"
   },
+  "engines": {
+    "node": ">=20.10.0"
+  },
   "devDependencies": {
     "@babel/cli": "^7.25.9",
     "@babel/core": "^7.26.0",

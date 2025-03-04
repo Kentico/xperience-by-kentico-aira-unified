@@ -15,7 +15,7 @@ The requirements to setup, develop, and build this project are listed below.
 
 - [Node.js](https://nodejs.org/en/download) 20.10.0 or newer
 - [NVM for Windows](https://github.com/coreybutler/nvm-windows) to manage multiple installed versions of Node.js
-- See `engines` in the solution `package.json` for specific version requirements
+- See `engines` in the [`package.json`](/src/Kentico.Xperience.AiraUnified/FrontEnd/package.json) for specific version requirements
 
 ### C# Editor
 
@@ -42,7 +42,7 @@ SQL Server 2019 or newer compatible database
 Running the sample project requires creating a new Xperience by Kentico database using the included template.
 
 Change directory in your console to `./examples/DancingGoat` and follow the instructions in the Xperience
-documentation on [creating a new database](https://docs.xperience.io/xp26/developers-and-admins/installation#Installation-CreatetheprojectdatabaseCreateProjectDatabase).
+documentation on [creating a new database](https://docs.kentico.com/developers-and-admins/installation#Installation-CreateProjectDatabase).
 
 ## Development Workflow
 

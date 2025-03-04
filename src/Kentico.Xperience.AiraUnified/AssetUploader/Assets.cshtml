@@ -15,8 +15,11 @@
 <div id="assets-app"
     data-aira-unified-base-url="@Model.PathBase"
     data-base-url="@baseUrl"
-    data-nav-bar-model='@Html.Raw(Json.Serialize(Model.NavBarViewModel))'
     data-allowed-file-extensions-url="@Model.AllowedFileExtensionsUrl"
     data-select-files-button="@Model.SelectFilesButton"
-    data-upload-successful-message="@Model.FilesUploadedMessage">
+    data-upload-successful-message="@Model.FilesUploadedMessage"
+    data-upload-url="@Model.UploadUrl"
+    data-navigation-url="@Model.NavigationUrl"
+    data-navigation-page-identifier="@Model.NavigationPageIdentifier"
+>
 </div>

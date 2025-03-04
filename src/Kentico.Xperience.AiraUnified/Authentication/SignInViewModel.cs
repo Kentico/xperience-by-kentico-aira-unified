@@ -5,7 +5,7 @@ public class SignInViewModel
     /// <summary>
     /// Url of the chat page relative to the Aira unified base url.
     /// </summary>
-    public string ChatRelativeUrl { get; set; } = string.Empty;
+    public string ChatUrl { get; set; } = string.Empty;
 
     /// <summary>
     /// Aira unified base url.

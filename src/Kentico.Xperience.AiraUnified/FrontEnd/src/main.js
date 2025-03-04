@@ -6,38 +6,48 @@ import { createApp } from "vue";
 function mountChat(chatElement) {
     const airaUnifiedBaseUrl = chatElement.dataset.airaUnifiedBaseUrl;
     const baseUrl = chatElement.dataset.baseUrl || "";
-    const navBarModel = JSON.parse(chatElement.dataset.navBarModel || "{}");
-    const rawHistory = JSON.parse(chatElement.dataset.history || {});
     const aiIconUrl = chatElement.dataset.aiIconUrl || "";
     const usePromptUrl = chatElement.dataset.usePromptUrl || "";
     const servicePageModel = JSON.parse(chatElement.dataset.servicePageModel || {});
+    const historyUrl = chatElement.dataset.historyUrl || "";
+    const navigationUrl = chatElement.dataset.navigationUrl || "";
+    const navigationPageIdentifier = chatElement.dataset.navigationPageIdentifier || "";
+    const chatUrl = chatElement.dataset.chatUrl || "";
+    const logoImgRelativePath = chatElement.dataset.logoImgRelativePath || "";
 
     createApp(ChatComponent, {
         airaUnifiedBaseUrl,
         aiIconUrl,
         baseUrl,
         usePromptUrl,
-        navBarModel,
-        rawHistory,
-        servicePageModel
+        servicePageModel,
+        historyUrl,
+        navigationUrl,
+        navigationPageIdentifier,
+        chatUrl,
+        logoImgRelativePath
     }).mount("#chat-app");
 }
 
 function mountAssets(assetsElement) {
     const airaUnifiedBaseUrl = assetsElement.dataset.airaUnifiedBaseUrl;
     const baseUrl = assetsElement.dataset.baseUrl || "";
-    const navBarModel = JSON.parse(assetsElement.dataset.navBarModel || "{}");
     const allowedFileExtensionsUrl = assetsElement.dataset.allowedFileExtensionsUrl || "";
     const selectFilesButton = assetsElement.dataset.selectFilesButton || "";
     const uploadSuccessfulMessage = assetsElement.dataset.uploadSuccessfulMessage || "";
+    const navigationUrl = assetsElement.dataset.navigationUrl || "";
+    const navigationPageIdentifier = assetsElement.dataset.navigationPageIdentifier || "";
+    const uploadUrl = assetsElement.dataset.uploadUrl || "";
     
     createApp(AssetsComponent, {
         airaUnifiedBaseUrl,
         baseUrl,
-        navBarModel,
         allowedFileExtensionsUrl,
         selectFilesButton,
         uploadSuccessfulMessage,
+        uploadUrl,
+        navigationUrl,
+        navigationPageIdentifier
     }).mount("#assets-app");
 }
 

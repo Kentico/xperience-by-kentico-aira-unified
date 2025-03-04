@@ -1,6 +1,4 @@
-﻿using System.Text.RegularExpressions;
-
-using CMS.DataEngine;
+﻿using CMS.DataEngine;
 using CMS.Membership;
 
 using Kentico.Xperience.Admin.Base;
@@ -49,7 +47,7 @@ internal class AiraUnifiedConfigurationEditPage : ModelEditPage<AiraUnifiedConfi
 
     protected override async Task<ICommandResponse> ProcessFormData(AiraUnifiedConfigurationModel model, ICollection<IFormItem> formItems)
     {
-        if (!IsValidSubpath(model.RelativePathBase))
+        if (!model.RelativePathBase.IsValidSubpath())
         {
             return ResponseFrom(new FormSubmissionResult(
                 FormSubmissionStatus.ValidationFailure
@@ -74,27 +72,5 @@ internal class AiraUnifiedConfigurationEditPage : ModelEditPage<AiraUnifiedConfi
         }
 
         return response;
-    }
-
-    private static bool IsValidSubpath(string path)
-    {
-        if (string.IsNullOrEmpty(path) || path[0] != '/' || (path.Length > 1 && path[1] == '/'))
-        {
-            return false;
-        }
-
-        var pattern = @"^\/[a-zA-Z0-9-_\/]+$";
-
-        if (!Regex.IsMatch(path, pattern))
-        {
-            return false;
-        }
-
-        if (path.EndsWith('/'))
-        {
-            return false;
-        }
-
-        return true;
     }
 }

@@ -6,11 +6,13 @@
 
 ## Description
 
-Aira Unified integration provides an alternative administration UI and chatbot that can be easily added to an Xperience by Kentico (XbyK) project. It is designed for content editors and marketers who need essential functionality on mobile devices.
+Aira Unified integration provides an alternative administration UI and chatbot that can be easily added to an Xperience by Kentico project. It is designed for content editors and marketers who need essential functionality on mobile devices.
 
 ## Screenshots
 
-![UI Application](/images/screenshots/ui_application.png)
+![UI Chat](/images/AiraUnifiedChat.jpg)
+
+![UI Smart Uploader](/images/SmartAssetUploader.jpg)
 
 ## Library Version Matrix
 
@@ -23,7 +25,13 @@ Aira Unified integration provides an alternative administration UI and chatbot t
 - [ASP.NET Core 8.0](https://dotnet.microsoft.com/en-us/download)
 - [Xperience by Kentico](https://docs.xperience.io/xp/changelog)
 
-## Package Installation
+## Full Instructions
+
+To activate the communication of Aira Unified app with the Aira service, you need to request an activation key. Please contact us at productmanagement@xperience.io for more information.
+
+Follow the steps below to add the Aira Unified app to your Xperience project.
+
+### Package Installation
 
 Add the package to your application using the .NET CLI
 
@@ -31,13 +39,13 @@ Add the package to your application using the .NET CLI
 dotnet add package Kentico.Xperience.AiraUnified
 ```
 
-## Quick Start
+### Quick Start
 
-1. Add the Aira Unified API subscription key to your `appsettings.json`:
+1. Add the Aira Unified API subscription key to your `appsettings.json`.:
 
 ```json
 "AiraUnifiedOptions": {
-  "AiraUnifiedApiSubscriptionKey": "<your aira unified API key>"
+  "AiraUnifiedApiSubscriptionKey": "<your Aira Unified API key>"
 }
 ```
 2. Configure your project for [HTTPS](https://learn.microsoft.com/en-us/aspnet/core/security/enforcing-ssl).
@@ -69,6 +77,8 @@ dotnet add package Kentico.Xperience.AiraUnified
    ```
 
 5. Configure the Aira Unified settings in the administration UI:
+   Open the **Aira Unified** application in the Xperience administration.
+   Fill in:
    - **Relative Path Base**: Defines where Aira Unified is available.
    - **Logo**: Select an asset from the Media Library.
    - **Chat Title**: Title for the chat page.
@@ -77,21 +87,20 @@ dotnet add package Kentico.Xperience.AiraUnified
    ![Admin Configuration](/images/AiraUnifiedAdminConfiguration.png)
 
 6. Set up a `Content Type` for [Mass Asset Upload](https://docs.kentico.com/developers-and-admins/development/content-types#mass-asset-upload-configuration).
+
 7. Configure role-based permissions in the `Role Management` application:
    - **View**: Access the Aira Unified chat.
-   - **Create/Update**: Access and upload content via Smart Upload.
+   - **Create**: Access and upload content via Smart Upload.
 
    ![Role Configuration](/images/ConfigureAiraUnifiedPermissions.png)
 
-8. In case of using this library in a project with XbyK versions > 30.2.0 the Aira Unified expects a workspace named "Kentico Default" (code name 'KenticoDefault'). In that case, add a workspace with a code name `KenticoDefault` workspace.
+At the moment the administrator user/role must be assigned to a custom role with the correct permission.
+
+8. Aira Unified expects a workspace named "Kentico Default" (code name 'KenticoDefault'). When using this library in a project with Xperience versions > 30.2.0, add a workspace with the code name `KenticoDefault`.
 
 9. Users can now sign in to the Aira Unified app - `<your-path-base>/signin`.
 
-## Full Instructions
-
-You can view and start the DancingGoat example project.
-
-To activate the communication of AIRA Unified app with the AIRA service, you need to request an activation key. Please contact us at productmanagement@xperience.io for more information.
+View the [Usage Guide](docs/Usage-Guide.md) for more instructions.
 
 ## Contributing
 
