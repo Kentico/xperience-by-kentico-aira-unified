@@ -180,9 +180,7 @@ internal class AiraUnifiedEndpointDataSource : MutableEndpointDataSource
     {
         var airaUnifiedController = await GetAiraUnifiedControllerInContext(context, actionName);
 
-        if (!await CheckHttps(context) ||
-            (requiredPermission is not null && !await AuthorizeOrSetRedirectToSignIn(context, configurationInfo.AiraUnifiedConfigurationItemAiraPathBase, requiredPermission))
-        )
+        if (!await ValidateRequestXorSetRedirect(context, configurationInfo, requiredPermission))
         {
             return;
         }
@@ -234,9 +232,7 @@ internal class AiraUnifiedEndpointDataSource : MutableEndpointDataSource
     {
         var airaUnifiedController = await GetAiraUnifiedControllerInContext(context, actionName);
 
-        if (!await CheckHttps(context) ||
-            (requiredPermission is not null && !await AuthorizeOrSetRedirectToSignIn(context, configurationInfo.AiraUnifiedConfigurationItemAiraPathBase, requiredPermission))
-        )
+        if (!await ValidateRequestXorSetRedirect(context, configurationInfo, requiredPermission))
         {
             return;
         }
