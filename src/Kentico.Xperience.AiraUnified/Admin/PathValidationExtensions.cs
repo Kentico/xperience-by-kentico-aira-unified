@@ -2,7 +2,7 @@
 
 namespace Kentico.Xperience.AiraUnified.Admin;
 
-internal static class PathValidationHelper
+internal static class PathValidationExtensions
 {
     public static bool IsValidSubpath(this string path) =>
         !string.IsNullOrEmpty(path)

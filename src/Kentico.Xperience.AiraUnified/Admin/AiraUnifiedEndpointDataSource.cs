@@ -105,6 +105,10 @@ internal class AiraUnifiedEndpointDataSource : MutableEndpointDataSource
             )
         ];
     }
+    private static async Task<bool> ValidateRequestXorSetRedirect(HttpContext context, AiraUnifiedConfigurationItemInfo configurationInfo, string? requiredPermission = null)
+    => await CheckHttps(context)
+        && (requiredPermission is null || await AuthorizeOrSetRedirectToSignIn(context, configurationInfo.AiraUnifiedConfigurationItemAiraPathBase, requiredPermission));
+
     private static Endpoint CreateAiraEndpointFromBody<T>(
         AiraUnifiedConfigurationItemInfo configurationInfo,
         string subPath,
@@ -116,9 +120,7 @@ internal class AiraUnifiedEndpointDataSource : MutableEndpointDataSource
     {
         var airaUnifiedController = await GetAiraUnifiedControllerInContext(context, actionName);
 
-        if (!await CheckHttps(context) ||
-            (requiredPermission is not null && !await AuthorizeOrSetRedirectToSignIn(context, configurationInfo.AiraUnifiedConfigurationItemAiraPathBase, requiredPermission))
-        )
+        if (!await ValidateRequestXorSetRedirect(context, configurationInfo, requiredPermission))
         {
             return;
         }
@@ -173,9 +175,7 @@ internal class AiraUnifiedEndpointDataSource : MutableEndpointDataSource
     {
         var airaUnifiedController = await GetAiraUnifiedControllerInContext(context, actionName);
 
-        if (!await CheckHttps(context) ||
-            (requiredPermission is not null && !await AuthorizeOrSetRedirectToSignIn(context, configurationInfo.AiraUnifiedConfigurationItemAiraPathBase, requiredPermission))
-        )
+        if (!await ValidateRequestXorSetRedirect(context, configurationInfo, requiredPermission))
         {
             return;
         }
@@ -227,9 +227,7 @@ internal class AiraUnifiedEndpointDataSource : MutableEndpointDataSource
     {
         var airaUnifiedController = await GetAiraUnifiedControllerInContext(context, actionName);
 
-        if (!await CheckHttps(context) ||
-            (requiredPermission is not null && !await AuthorizeOrSetRedirectToSignIn(context, configurationInfo.AiraUnifiedConfigurationItemAiraPathBase, requiredPermission))
-        )
+        if (!await ValidateRequestXorSetRedirect(context, configurationInfo, requiredPermission))
         {
             return;
         }
@@ -267,9 +265,7 @@ internal class AiraUnifiedEndpointDataSource : MutableEndpointDataSource
     {
         var airaUnifiedController = await GetAiraUnifiedControllerInContext(context, actionName);
 
-        if (!await CheckHttps(context) ||
-            (requiredPermission is not null && !await AuthorizeOrSetRedirectToSignIn(context, configurationItemInfo.AiraUnifiedConfigurationItemAiraPathBase, requiredPermission))
-        )
+        if (!await ValidateRequestXorSetRedirect(context, configurationItemInfo, requiredPermission))
         {
             return;
         }
