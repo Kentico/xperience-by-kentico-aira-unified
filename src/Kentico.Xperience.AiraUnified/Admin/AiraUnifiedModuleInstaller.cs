@@ -4,6 +4,7 @@ using CMS.DataEngine;
 using CMS.FormEngine;
 using CMS.Membership;
 using CMS.Modules;
+using CMS.Workspaces;
 
 using Kentico.Xperience.AiraUnified.Admin.InfoModels;
 
@@ -47,7 +48,15 @@ internal class AiraUnifiedModuleInstaller : IAiraUnifiedModuleInstaller
             AiraUnifiedConfigurationItemInfo.OBJECT_TYPE,
             classDisplayName: "Aira Unified Configuration Item",
             typeof(AiraUnifiedConfigurationItemInfo),
-            nameof(AiraUnifiedConfigurationItemInfo.AiraUnifiedConfigurationItemId)
+            nameof(AiraUnifiedConfigurationItemInfo.AiraUnifiedConfigurationItemId),
+            [
+                new FormFieldModel
+                {
+                    ReferenceType = ObjectDependencyEnum.Required,
+                    ReferenceToObjectType = WorkspaceInfo.OBJECT_TYPE,
+                    FormFieldName = nameof(AiraUnifiedConfigurationItemInfo.AiraUnifiedConfigurationWorkspaceName)
+                }
+            ]
         );
 
         InstallAiraUnifiedClass(

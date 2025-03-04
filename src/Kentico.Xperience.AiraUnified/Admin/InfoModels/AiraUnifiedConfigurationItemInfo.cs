@@ -82,6 +82,18 @@ public partial class AiraUnifiedConfigurationItemInfo : AbstractInfo<AiraUnified
 
 
     /// <summary>
+    /// Workspace name.
+    /// </summary>
+    [DatabaseField]
+    [Required]
+    public virtual string AiraUnifiedConfigurationWorkspaceName
+    {
+        get => ValidationHelper.GetString(GetValue(nameof(AiraUnifiedConfigurationWorkspaceName)), string.Empty);
+        set => SetValue(nameof(AiraUnifiedConfigurationWorkspaceName), value);
+    }
+
+
+    /// <summary>
     /// Aira unified chat page title.
     /// </summary>
     [DatabaseField]

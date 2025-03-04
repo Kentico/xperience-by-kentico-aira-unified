@@ -2,6 +2,7 @@
 
 using Kentico.Xperience.Admin.Base.FormAnnotations;
 using Kentico.Xperience.AiraUnified.Admin.InfoModels;
+using Kentico.Xperience.AiraUnified.Admin.Providers;
 
 namespace Kentico.Xperience.AiraUnified.Admin;
 
@@ -25,8 +26,12 @@ public class AiraUnifiedConfigurationModel
     public string ChatTitle { get; set; } = string.Empty;
 
     [RequiredValidationRule]
-    [TextInputComponent(Label = "Smart Upload Title", Order = 5, ExplanationText = "Title of the smart upload.")]
+    [TextInputComponent(Label = "Smart Upload Title", Order = 3, ExplanationText = "Title of the smart upload.")]
     public string SmartUploadTitle { get; set; } = string.Empty;
+
+    [RequiredValidationRule]
+    [DropDownComponent(Label = "Workspace", DataProviderType = typeof(WorkspaceProvider), Order = 4, ExplanationText = "The workspace used by the smart uploader.")]
+    public string Workspace { get; set; } = string.Empty;
 
     public AiraUnifiedConfigurationModel() { }
 
@@ -47,19 +52,20 @@ public class AiraUnifiedConfigurationModel
         }
 
         ChatTitle = info.AiraUnifiedConfigurationItemAiraUnifiedChatTitle;
-
+        Workspace = info.AiraUnifiedConfigurationWorkspaceName;
         SmartUploadTitle = info.AiraUnifiedConfigurationItemAiraSmartUploadTitle;
     }
 
-    public AiraUnifiedConfigurationItemInfo MapToAiraUnifiedConfigurationInfo(AiraUnifiedConfigurationItemInfo? info = null)
+    public AiraUnifiedConfigurationItemInfo MapToAiraUnifiedConfigurationInfo(
+        AiraUnifiedConfigurationItemInfo? info = null
+    )
     {
         info ??= new AiraUnifiedConfigurationItemInfo();
         info.AiraUnifiedConfigurationItemAiraPathBase = RelativePathBase;
         info.AiraUnifiedConfigurationItemAiraRelativeLogoId = GetImageIdentifier(Logo);
-
         info.AiraUnifiedConfigurationItemAiraUnifiedChatTitle = ChatTitle;
-
         info.AiraUnifiedConfigurationItemAiraSmartUploadTitle = SmartUploadTitle;
+        info.AiraUnifiedConfigurationWorkspaceName = Workspace;
 
         return info;
     }

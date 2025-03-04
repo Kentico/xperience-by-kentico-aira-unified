@@ -94,8 +94,6 @@ dotnet add package Kentico.Xperience.AiraUnified
 
    ![Role Configuration](/images/ConfigureAiraUnifiedPermissions.png)
 
-At the moment the administrator user/role must be assigned to a custom role with the correct permission.
-
 8. Aira Unified expects a workspace named "Kentico Default" (code name 'KenticoDefault'). When using this library in a project with Xperience versions > 30.2.0, add a workspace with the code name `KenticoDefault`.
 
 9. Users can now sign in to the Aira Unified app - `<your-path-base>/signin`.

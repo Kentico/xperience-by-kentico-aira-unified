@@ -145,9 +145,11 @@ internal class AiraUnifiedAssetService : IAiraUnifiedAssetService
 
         var contentItemAssetColumnCodeName = massAssetConfigurationInfo["AssetFieldName"];
 
+        var workspaceName = (await airaUnifiedConfigurationService.GetAiraUnifiedConfiguration()).AiraUnifiedConfigurationWorkspaceName;
+
         foreach (var file in files)
         {
-            var createContentItemParameters = new CreateContentItemParameters(contentType.ClassName, null, file.FileName, languageName, "KenticoDefault");
+            var createContentItemParameters = new CreateContentItemParameters(contentType.ClassName, null, file.FileName, languageName, workspaceName);
 
             var fileCreated = await CreateContentAssetItem(createContentItemParameters, file, userId, contentItemAssetColumnCodeName);
 
