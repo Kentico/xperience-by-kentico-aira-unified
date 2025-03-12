@@ -18,6 +18,7 @@ Aira Unified integration provides an alternative administration UI and chatbot t
 
 | Xperience Version |    Library Version   |
 | ----------------- | -------------------- |
+| >= 30.2.0         | >= 0.2.0-prerelase-2 |
 | >= 30.0.0         | >= 0.1.0-prerelase-1 |
 
 ## Dependencies
