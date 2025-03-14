@@ -131,30 +131,37 @@ public sealed class AiraUnifiedController : Controller
 
         // User can not be null, because he is already checked in the AiraUnifiedEndpointDataSource middleware.
         var history = await airaUnifiedChatService.GetUserChatHistory(user!.UserID);
+        var chatThreadState = history.Count == 0 ? ChatStateType.initial : ChatStateType.returning;
 
-        if (history.Count == 0)
+        var initialMessages = await airaUnifiedChatService.GetInitialAIMessage(chatThreadState);
+
+        if (initialMessages is null || initialMessages.Responses is null)
         {
-            history = [
-                new AiraUnifiedChatMessageViewModel
-                {
-                    Message = Resource.InitialAiraMessageIntroduction,
-                    Role = AiraUnifiedConstants.AiraUnifiedChatRoleName
-                },
-                new AiraUnifiedChatMessageViewModel
-                {
-                    Message = Resource.InitialAiraMessagePromptExplanation,
-                    Role = AiraUnifiedConstants.AiraUnifiedChatRoleName
-                }
-            ];
+            history.Add(new AiraUnifiedChatMessageViewModel
+            {
+                ServiceUnavailable = true
+            });
 
             return Ok(history);
         }
 
-        history.Add(new AiraUnifiedChatMessageViewModel
+        foreach (var message in initialMessages.Responses)
         {
-            Message = Resource.WelcomeBackAiraMessage,
-            Role = AiraUnifiedConstants.AiraUnifiedChatRoleName
-        });
+            history.Add(new AiraUnifiedChatMessageViewModel
+            {
+                Message = message.Content,
+                Role = AiraUnifiedConstants.AiraUnifiedChatRoleName
+            });
+        }
+
+        var lastMessage = history[^1];
+
+        if (initialMessages.SuggestedQuestions is not null)
+        {
+            var promptGroup = airaUnifiedChatService.SaveAiraPrompts(user.UserID, initialMessages.SuggestedQuestions);
+            lastMessage.QuickPrompts = promptGroup.QuickPrompts;
+            lastMessage.QuickPromptsGroupId = promptGroup.QuickPromptsGroupId.ToString();
+        }
 
         return Ok(history);
     }
@@ -206,14 +213,14 @@ public sealed class AiraUnifiedController : Controller
                 return Ok(result);
             }
 
-            airaUnifiedChatService.SaveMessage(aiResponse.Response, user.UserID, AiraUnifiedConstants.AiraUnifiedChatRoleName);
+            airaUnifiedChatService.SaveMessage(aiResponse.Responses[0].Content, user.UserID, AiraUnifiedConstants.AiraUnifiedChatRoleName);
 
             airaUnifiedChatService.UpdateChatSummary(user.UserID, message);
 
             result = new AiraUnifiedChatMessageViewModel
             {
                 Role = AiraUnifiedConstants.AiraUnifiedChatRoleName,
-                Message = aiResponse.Response
+                Message = aiResponse.Responses[0].Content
             };
 
             if (aiResponse.SuggestedQuestions is not null)

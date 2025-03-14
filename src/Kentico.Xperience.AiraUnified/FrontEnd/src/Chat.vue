@@ -562,6 +562,11 @@ export default {
             const rawHistory = await historyResponse.json();
             
             for (const x of rawHistory) {
+                if (x.serviceUnavailable)
+                {
+                    this.serviceAvailable = false
+                }
+
                 const messageViewModel = this.getMessageViewModel(x);
                 
                 this.history.push(messageViewModel);

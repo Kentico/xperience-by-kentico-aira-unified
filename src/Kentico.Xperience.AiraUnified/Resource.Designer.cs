@@ -61,24 +61,6 @@ namespace Kentico.Xperience.AiraUnified {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Hi, I&apos;m AIRA your AI powered coworker. I can answer questions about your Kentico Xperience data and even carry out tasks for you. Let me show you how I work.....
-        /// </summary>
-        internal static string InitialAiraMessageIntroduction {
-            get {
-                return ResourceManager.GetString("InitialAiraMessageIntroduction", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Every time you open the chat dialog you can ask me directly or you can use some pre-made requests called prompts.
-        /// </summary>
-        internal static string InitialAiraMessagePromptExplanation {
-            get {
-                return ResourceManager.GetString("InitialAiraMessagePromptExplanation", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to This is a PREVIEW version. Expect updates and improvements..
         /// </summary>
         internal static string NavigationMenuMessage {
@@ -120,15 +102,6 @@ namespace Kentico.Xperience.AiraUnified {
         internal static string SmartUploadSelectFilesButton {
             get {
                 return ResourceManager.GetString("SmartUploadSelectFilesButton", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to What can I help you with ?.
-        /// </summary>
-        internal static string WelcomeBackAiraMessage {
-            get {
-                return ResourceManager.GetString("WelcomeBackAiraMessage", resourceCulture);
             }
         }
     }

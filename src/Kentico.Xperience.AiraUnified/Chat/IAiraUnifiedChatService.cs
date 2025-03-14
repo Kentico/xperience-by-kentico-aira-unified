@@ -46,6 +46,13 @@ public interface IAiraUnifiedChatService
     Task<AiraUnifiedAIResponse?> GetAIResponseOrNull(string message, int numberOfIncludedHistoryMessages, int userId);
 
     /// <summary>
+    /// Gets an initial ai message displayed in a new thread or when returning to a thread.
+    /// </summary>
+    /// <param name="chatState">The <see cref="ChatStateType"/> of the chat context.</param>
+    /// <returns></returns>
+    Task<AiraUnifiedAIResponse?> GetInitialAIMessage(ChatStateType chatState);
+
+    /// <summary>
     /// Updates the chat summary of a user.
     /// </summary>
     /// <param name="userId">The user id.</param>

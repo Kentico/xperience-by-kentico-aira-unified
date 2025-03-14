@@ -140,9 +140,31 @@ internal class AiraUnifiedChatService : IAiraUnifiedChatService
         {
             ChatMessage = message,
             ConversationHistory = textMessageHistory,
-            AppInsights = await GenerateInsights(userId)
+            AppInsights = await GenerateInsights(userId),
+            ChatState = nameof(ChatStateType.ongoing)
         };
 
+        return await ExecuteAIRequest(request);
+    }
+
+    public async Task<AiraUnifiedAIResponse?> GetInitialAIMessage(ChatStateType chatState)
+    {
+        var request = new AiraUnifiedAIRequest
+        {
+            ChatState = chatState switch
+            {
+                ChatStateType.initial => nameof(ChatStateType.initial),
+                ChatStateType.returning => nameof(ChatStateType.returning),
+                ChatStateType.ongoing => nameof(ChatStateType.ongoing),
+                _ => throw new NotImplementedException($"The {chatState} is missing implementation in {nameof(GetAIResponseOrNull)}")
+            }
+        };
+
+        return await ExecuteAIRequest(request);
+    }
+
+    private async Task<AiraUnifiedAIResponse?> ExecuteAIRequest(AiraUnifiedAIRequest request)
+    {
         var jsonRequest = JsonSerializer.Serialize(request);
         var content = new StringContent(jsonRequest, System.Text.Encoding.UTF8, "application/json");
         content.Headers.Add("Ocp-Apim-Subscription-Key", airaUnifiedOptions.AiraUnifiedApiSubscriptionKey);
