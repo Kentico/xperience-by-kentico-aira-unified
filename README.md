@@ -20,7 +20,7 @@ mobile devices.
 
 | Xperience Version | Library Version       |
 |-------------------|-----------------------|
-| >= 30.2.0         | >= 0.3.2-prerelease-3 |
+| >= 30.2.0         | >= 0.3.2-prerelease-4 |
 | >= 30.0.0         | >= 0.1.0-prerelease-1 |
 
 ## Dependencies
