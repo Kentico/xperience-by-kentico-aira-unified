@@ -6,6 +6,10 @@
 
 ## Description
 
+> [!NOTE]
+> This project is deprecated and is no longer under active development.
+> For the latest AIRA capabilities in Xperience by Kentico, please visit the [Xperience by Kentico AIRA documentation](https://docs.kentico.com/documentation/business-users/aira).
+
 The Aira Unified integration provides an alternative administration UI and a chatbot that can be easily added to an
 Xperience by Kentico project. It is designed for content editors and marketers who need essential functionality on
 mobile devices.
@@ -19,7 +23,7 @@ mobile devices.
 ## Library Version Matrix
 
 | Xperience Version | Library Version       |
-|-------------------|-----------------------|
+| ----------------- | --------------------- |
 | >= 30.2.0         | >= 0.3.2-prerelease-4 |
 | >= 30.0.0         | >= 0.1.0-prerelease-1 |
 
@@ -80,28 +84,28 @@ For detailed configuration options, see [Configuration Options](docs/configurati
    var builder = WebApplication.CreateBuilder(args);
 
    // ...
-   
+
    builder.Services.AddKenticoAiraUnified(builder.Configuration);
-   
+
    // ...
 
    var app = builder.Build();
 
    // ...
-   
+
    app.UseAiraUnifiedEndpoints();
-   
+
    app.Run();
    ```
 
 5. Configure the Aira Unified settings in the administration UI:
    Open the **Aira Unified** application in the Xperience administration.
    Fill in:
-    - **Relative Path Base**: Defines where Aira Unified is available.
-    - **Logo**: Select an asset from the Media Library.
-    - **Chat Title**: Title for the chat page.
-    - **Smart Upload Title**: Title for the smart upload page.
-    - **Workspace**: The workspace used by the smart uploader.
+   - **Relative Path Base**: Defines where Aira Unified is available.
+   - **Logo**: Select an asset from the Media Library.
+   - **Chat Title**: Title for the chat page.
+   - **Smart Upload Title**: Title for the smart upload page.
+   - **Workspace**: The workspace used by the smart uploader.
 
    ![Admin Configuration](/images/AiraUnifiedAdminConfiguration.png)
 
@@ -109,8 +113,8 @@ For detailed configuration options, see [Configuration Options](docs/configurati
    for [Mass Asset Upload](https://docs.kentico.com/developers-and-admins/development/content-types#mass-asset-upload-configuration).
 
 7. Configure role-based permissions in the `Role Management` application:
-    - **View**: Access the Aira Unified chat.
-    - **Create**: Access and upload content via Smart Upload.
+   - **View**: Access the Aira Unified chat.
+   - **Create**: Access and upload content via Smart Upload.
 
    ![Role Configuration](/images/ConfigureAiraUnifiedPermissions.png)
 
